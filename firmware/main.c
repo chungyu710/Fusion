@@ -6,8 +6,8 @@
 
 void main(void)
 {
-	led_initialize();
 	system_initialize();
+	led_initialize();
 
 	while (1)
 	{
