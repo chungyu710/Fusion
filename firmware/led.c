@@ -1,6 +1,7 @@
 #include "led.h"
 
 #include <xc.h>
+#include <pic16f690.h>
 
 #include "system.h"
 
