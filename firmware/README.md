@@ -1,4 +1,8 @@
-## Installing the XC8 Compiler on Linux
+# Firmware
+
+The PIC16F690 microcontroller runs embedded C firmware to read sensor data and relay it to the host.  The C firmware must be cross-compiled using Microchip's XC8 compiler toolchain.
+
+## Installing XC8 on Linux
 
 Go to your home directory.
 ```
@@ -39,3 +43,12 @@ Delete the installer if everything went well.
 ```
 rm xc8-installer
 ```
+
+## Compiling Code
+
+From the top-level directory (`firmware/`):
+```
+make
+```
+
+This will compile and link all source files under `firmware/`.  The output hex file should be found at `build/fusion.hex`.  You can flash this to the PIC using MPLAB IPE and a PICKit3 ICSP.
