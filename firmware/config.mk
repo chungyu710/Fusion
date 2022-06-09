@@ -11,6 +11,7 @@ LIBS +=
 # source file directories
 DIR += peripherals
 DIR += drivers
+DIR += tests
 
 # artifacts folder
 ART = build

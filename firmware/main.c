@@ -4,6 +4,8 @@
 #include "system.h"
 #include "led.h"
 
+#include "tests/blink.h"
+
 void main(void)
 {
 	system_initialize();
@@ -11,6 +13,6 @@ void main(void)
 
 	while (1)
 	{
-
+		blink();
 	}
 }
