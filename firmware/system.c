@@ -5,17 +5,19 @@
 
 #include "led.h"
 
-// CONFIGURATION BITS //
+// ======= CONFIGURATION BITS ======= //
 
-#pragma config FOSC = INTRCIO
-#pragma config WDTE = OFF
-#pragma config PWRTE = OFF
-#pragma config MCLRE = OFF
-#pragma config CP = OFF
-#pragma config CPD = OFF
-#pragma config BOREN = OFF
-#pragma config IESO = OFF
-#pragma config FCMEN = OFF
+#pragma config FOSC = INTRCIO   // use internal oscillotor and use clock pins as GPIO
+#pragma config WDTE = OFF       // disable watchdog timer
+#pragma config PWRTE = OFF      // disable powerup timer
+#pragma config MCLRE = OFF      // set MCLR pin as digital input
+#pragma config CP = OFF         // disable program memory protection
+#pragma config CPD = OFF        // disable data memory protection
+#pragma config BOREN = OFF      // disable brownout reset
+#pragma config IESO = OFF       // disable internal-external switchover
+#pragma config FCMEN = OFF      // disable failsafe clock monitor
+
+// ================================== //
 
 #define LED_DELAY    200000
 #define LED_BLINKS   3
@@ -29,18 +31,18 @@ void system_initialize(void)
 	TRISB = 0b00000000;
 	TRISC = 0b00000000;
 
-	// clear all pins
+	// set all pins to 0 V
 	PORTA = 0b00000000;
 	PORTB = 0b00000000;
 	PORTC = 0b00000000;
 
 	// ANALOGUE (1) / DIGITAL (0) //
 
-	// disable all ADC channels
+	// disable all ADC channels on pins
 	ANSEL  = 0b00000000;
 	ANSELH = 0b00000000;
 
-	// OSCILLATOR FREQUENCY //
+	// OSCILLATOR //
 
 	OSCCONbits.IRCF = 0b111;      // set clock frequency to 8 MHz
 	OSCCONbits.SCS = 1;           // use internal oscillator as system clock
