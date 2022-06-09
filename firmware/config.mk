@@ -5,7 +5,7 @@ FLAGS += -mc90lib
 
 LIBS +=
 
-DIR +=
+DIR += peripherals
 
 ART = build
 BIN = fusion
