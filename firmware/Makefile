@@ -59,7 +59,7 @@ $(ART)/%.p1: %.c
 
 $(ART)/%.d: %.c
 	@$(CC) $(FLAGS) -MM $< -MF $@
-	@mv $(subst .c,.i,$<) $(ART)
+	@mv $(subst .c,.i,$(notdir $<)) $(ART)
 
 ifneq ($(MAKECMDGOALS), clean)
 -include $(addprefix $(ART)/, $(DEP))
