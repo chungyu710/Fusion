@@ -5,17 +5,15 @@
 
 #include "led.h"
 
-#define SECOND_US   1000000
-
 void blink(void)
 {
-	_delay(3 * SECOND_US);
+	_delay(3000000);
 
 	while (1)
 	{
 		led_on();
-		_delay(SECOND_US);
+		_delay(1000000);
 		led_off();
-		_delay(SECOND_US);
+		_delay(1000000);
 	}
 }
