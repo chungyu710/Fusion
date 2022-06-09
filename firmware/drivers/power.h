@@ -4,6 +4,6 @@
 #include "types.h"
 
 void power_initialize(void);
-S16 power_voltage(void);
+U16 power_voltage(void);   // reported in mV
 
 #endif /* POWER_H */
