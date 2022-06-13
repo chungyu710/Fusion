@@ -24,9 +24,16 @@
 
 void system_initialize(void)
 {
-	// INPUT (1) / OUTPUT (0) //
+	// OSCILLATOR //
+
+	OSCCONbits.IRCF = 0b111;      // set clock frequency to 8 MHz
+	OSCCONbits.SCS = 1;           // use internal oscillator as system clock
+	OSCTUNEbits.TUN = 0b00000;    // use factory-calibrated frequency
+
+	// GPIO //
 
 	// set all pins out outputs
+	// input = 1, output = 0
 	TRISA = 0b00000000;
 	TRISB = 0b00000000;
 	TRISC = 0b00000000;
@@ -36,17 +43,14 @@ void system_initialize(void)
 	PORTB = 0b00000000;
 	PORTC = 0b00000000;
 
-	// ANALOGUE (1) / DIGITAL (0) //
-
 	// disable all ADC channels on pins
+	// analogue = 1, digital = 0
 	ANSEL  = 0b00000000;
 	ANSELH = 0b00000000;
 
-	// OSCILLATOR //
+	// DRIVERS //
 
-	OSCCONbits.IRCF = 0b111;      // set clock frequency to 8 MHz
-	OSCCONbits.SCS = 1;           // use internal oscillator as system clock
-	OSCTUNEbits.TUN = 0b00000;    // use factory-calibrated frequency
+	led_initialize();
 
 	// STARTUP INDICATOR //
 
