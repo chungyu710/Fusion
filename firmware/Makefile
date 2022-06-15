@@ -30,8 +30,6 @@ endif
 OBJ := $(SRC:.c=.p1)
 DEP := $(SRC:.c=.d)
 
-OBJ := $(addprefix $(ART)/, $(OBJ))
-
 BIN := $(BIN).hex
 
 # ======= CREATE ARTIFACTS DIRECTORY ======= #
@@ -44,8 +42,9 @@ endif
 
 # ======= LINK ======= #
 
-$(ART)/$(BIN): $(OBJ)
-	@echo "LD   $^"
+$(ART)/$(BIN): $(addprefix $(ART)/, $(OBJ))
+	@echo "LD"
+	@echo "$(OBJ)"
 	@$(CC) $(LIBS) $(FLAGS) $^ -o $@
 	@echo "BIN  $@"
 
@@ -68,5 +67,6 @@ endif
 # ======= CLEAN ======= #
 
 clean:
-	@echo "RM   $(ART)/"
+	@echo "RM"
+	@echo "$(wildcard $(ART)/**)"
 	@rm -rf $(ART)
