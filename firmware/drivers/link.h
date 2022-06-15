@@ -20,8 +20,8 @@ struct Sensors
 	Flex flex;
 };
 
-typedef Request Request;
-typedef Sensors Sensors;
+typedef enum Request Request;
+typedef struct Sensors Sensors;
 
 void link_initialize(void);
 // other stuff here ....... like send and receive stuff
