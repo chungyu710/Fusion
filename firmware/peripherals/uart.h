@@ -2,7 +2,7 @@
 #define UART_H
 
 void uart_initialize(void);
-void uart_transmit(void * buffer, unsigned int size);
-void uart_receive(void * buffer, unsigned int size);
+void uart_transmit(void * data, unsigned int size);
+void uart_receive(void * data, unsigned int size);
 
 #endif /* UART_H */
