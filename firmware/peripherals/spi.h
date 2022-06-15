@@ -1,8 +1,10 @@
 #ifndef SPI_H
 #define SPI_H
 
+#include "types.h"
+
 void spi_initialize(void);
-void spi_transmit(void * data, unsigned int size);
-void spi_receive(void * data, unsigned int size);
+void spi_transmit(void * data, U8 length);
+void spi_receive(void * data, U8 length);
 
 #endif /* SPI_H */

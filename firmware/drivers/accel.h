@@ -3,14 +3,14 @@
 
 #include "types.h"
 
+typedef struct Accel Accel;
+
 struct Accel
 {
 	U16 x;
 	U16 y;
 	U16 z;
 };
-
-typedef struct Accel Accel;
 
 void accel_initialize(void);
 void accel_read(Accel * accel);

@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+typedef struct Flex Flex;
+
 struct Flex
 {
 	U16 thumb;
@@ -11,8 +13,6 @@ struct Flex
 	U16 ring;
 	U16 pinky;
 };
-
-typedef struct Flex Flex;
 
 void flex_initialize(void);
 void flex_read(Flex * flex);

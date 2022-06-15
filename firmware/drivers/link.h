@@ -6,6 +6,12 @@
 #include "gyro.h"
 #include "flex.h"
 
+typedef enum Request Request;
+typedef enum Result Result;
+
+typedef struct Response Response;
+typedef struct Sensors Sensors;
+
 enum Request
 {
 	REQUEST_ACCEL,
@@ -32,7 +38,7 @@ struct Sensors
 	Flex flex;
 };
 
-struct Header
+struct Response
 {
 	U8 result;
 	U8 length;
@@ -40,10 +46,7 @@ struct Header
 	U8 sequence;
 };
 
-typedef enum Request Request;
-typedef struct Sensors Sensors;
-
 void link_initialize(void);
-// other stuff here ....... like send and receive stuff
+void link_respond(Result result, void * data, U8 length);
 
 #endif /* LINK_H */
