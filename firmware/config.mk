@@ -9,6 +9,7 @@ FLAGS += -mc90lib
 LIBS +=
 
 # source file directories
+# NOTE: include paths are searched in this order
 DIR += peripherals
 DIR += drivers
 DIR += tests
