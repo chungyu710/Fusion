@@ -1,11 +1,11 @@
-#include "blink.h"
+#include "tests/led.h"
 
 #include <xc.h>
 #include <pic16f690.h>
 
-#include "led.h"
+#include "drivers/led.h"
 
-void blink(void)
+void test_led_blink(void)
 {
 	_delay(3000000);
 

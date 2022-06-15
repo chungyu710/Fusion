@@ -3,7 +3,7 @@
 
 #include "system.h"
 
-#include "tests/blink.h"
+#include "tests/led.h"
 
 void main(void)
 {
@@ -11,6 +11,6 @@ void main(void)
 
 	while (1)
 	{
-		blink();
+		test_led_blink();
 	}
 }
