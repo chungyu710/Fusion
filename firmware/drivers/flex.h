@@ -5,11 +5,11 @@
 
 struct Flex
 {
-	U8 thumb;
-	U8 index;
-	U8 middle;
-	U8 ring;
-	U8 pinky;
+	U16 thumb;
+	U16 index;
+	U16 middle;
+	U16 ring;
+	U16 pinky;
 };
 
 typedef struct Flex Flex;

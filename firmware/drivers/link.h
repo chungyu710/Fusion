@@ -1,12 +1,16 @@
 #ifndef LINK_H
 #define LINK_H
 
+#include "types.h"
 #include "accel.h"
 #include "gyro.h"
 #include "flex.h"
 
 enum Request
 {
+	REQUEST_ACCEL,
+	REQUEST_GYRO,
+	REQUEST_FLEX,
 	REQUEST_SENSORS,
 	REQUEST_BATTERY,
 
