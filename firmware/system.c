@@ -3,6 +3,8 @@
 #include <xc.h>
 #include <pic16f690.h>
 
+#include "gpio.h"
+#include "adc.h"
 #include "led.h"
 
 // ======= CONFIGURATION BITS ======= //
@@ -30,23 +32,10 @@ void system_initialize(void)
 	OSCCONbits.SCS = 1;           // use internal oscillator as system clock
 	OSCTUNEbits.TUN = 0b00000;    // use factory-calibrated frequency
 
-	// GPIO //
+	// PERIPHERALS //
 
-	// set all pins out outputs
-	// input = 1, output = 0
-	TRISA = 0b00000000;
-	TRISB = 0b00000000;
-	TRISC = 0b00000000;
-
-	// set all pins to 0 V
-	PORTA = 0b00000000;
-	PORTB = 0b00000000;
-	PORTC = 0b00000000;
-
-	// disable all ADC channels on pins
-	// analogue = 1, digital = 0
-	ANSEL  = 0b00000000;
-	ANSELH = 0b00000000;
+	gpio_initialize();
+	adc_initialize();
 
 	// DRIVERS //
 

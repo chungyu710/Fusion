@@ -15,6 +15,6 @@ struct Flex
 typedef struct Flex Flex;
 
 void flex_initialize(void);
-// functions to read flex sensors
+void flex_read(Flex * flex);
 
 #endif /* FLEX_H */
