@@ -23,12 +23,14 @@ enum Request
 	NUM_REQUESTS
 };
 
-enum Result
+enum Status
 {
-	RESULT_SUCCESS,
-	RESULT_ERROR,
+	STATUS_SUCCESS,
+	STATUS_ERROR,
+	STATUS_LOW_BATTERY,
+	STATUS_UNKNOWN_COMMAND,
 
-	NUM_RESULTS
+	NUM_STATUS
 };
 
 struct Sensors
@@ -40,10 +42,9 @@ struct Sensors
 
 struct Response
 {
-	U8 result;
+	U8 status;
 	U8 length;
 	U8 checksum;
-	U8 sequence;
 };
 
 void link_initialize(void);
