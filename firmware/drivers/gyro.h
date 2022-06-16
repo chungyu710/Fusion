@@ -12,7 +12,20 @@ struct Gyro
 	U16 roll;
 };
 
+enum
+{
+	GYRO_RANGE_125_DPS,
+	GYRO_RANGE_250_DPS,
+	GYRO_RANGE_500_DPS,
+	GYRO_RANGE_1000_DPS,
+	GYRO_RANGE_2000_DPS,
+
+	NUM_GRYO_RANGES
+};
+
 void gyro_initialize(void);
-// functions to read gyro and accel
+void gyro_read(Gyro * gyro);
+void gyro_set_range(U8 range);
+U8 gyro_get_range(void);
 
 #endif /* GYRO_H */

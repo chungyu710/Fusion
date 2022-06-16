@@ -6,21 +6,37 @@
 #include "gyro.h"
 #include "flex.h"
 
-typedef enum Request Request;
-typedef enum Result Result;
-
+typedef enum Command Command;
+typedef enum Status Status;
 typedef struct Response Response;
 typedef struct Sensors Sensors;
 
-enum Request
+struct Sensors
 {
-	REQUEST_ACCEL,
-	REQUEST_GYRO,
-	REQUEST_FLEX,
-	REQUEST_SENSORS,
-	REQUEST_BATTERY,
+	Accel accel;
+	Gyro gyro;
+	Flex flex;
+};
 
-	NUM_REQUESTS
+enum
+{
+	SENSOR_GROUP_ALL,
+	SENSOR_GROUP_ACCEL,
+	SENSOR_GROUP_GYRO,
+	SENSOR_GROUP_FLEX,
+
+	NUM_SENSOR_GROUPS
+};
+
+enum Command
+{
+	COMMAND_PING,
+	COMMAND_ACCEL,
+	COMMAND_GYRO,
+	COMMAND_SENSORS,
+	COMMAND_BATTERY,
+
+	NUM_COMMANDS
 };
 
 enum Status
@@ -28,16 +44,9 @@ enum Status
 	STATUS_SUCCESS,
 	STATUS_ERROR,
 	STATUS_LOW_BATTERY,
-	STATUS_UNKNOWN_COMMAND,
+	STATUS_UNKNOWN_REQUEST,
 
-	NUM_STATUS
-};
-
-struct Sensors
-{
-	Accel accel;
-	Gyro gyro;
-	Flex flex;
+	NUM_STATUSES
 };
 
 struct Response
@@ -48,6 +57,6 @@ struct Response
 };
 
 void link_initialize(void);
-void link_respond(Result result, void * data, U8 length);
+void link_respond(Status status, void * data, U8 length);
 
 #endif /* LINK_H */
