@@ -4,7 +4,7 @@
 #include "types.h"
 
 typedef struct Accel Accel;
-typedef struct Accel_Range Accel_Range;
+typedef enum Accel_Range Accel_Range;
 
 struct Accel
 {
