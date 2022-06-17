@@ -19,7 +19,9 @@ enum Gyro_Range
 	GYRO_RANGE_250_DPS,
 	GYRO_RANGE_500_DPS,
 	GYRO_RANGE_1000_DPS,
-	GYRO_RANGE_2000_DPS
+	GYRO_RANGE_2000_DPS,
+
+	NUM_GYRO_RANGES
 };
 
 void gyro_initialize(void);

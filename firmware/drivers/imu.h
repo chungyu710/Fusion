@@ -1,8 +1,6 @@
 #ifndef IMU_H
 #define IMU_H
 
-#include <stdbool.h>
-
 #include "types.h"
 
 void imu_initialize(void);
