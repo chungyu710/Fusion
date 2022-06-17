@@ -4,6 +4,7 @@
 #include "types.h"
 
 typedef struct Gyro Gyro;
+typedef enum Gyro_Range Gyro_Range;
 
 struct Gyro
 {
@@ -12,7 +13,7 @@ struct Gyro
 	U16 roll;
 };
 
-enum
+enum Gyro_Range
 {
 	GYRO_RANGE_125_DPS,
 	GYRO_RANGE_250_DPS,
@@ -23,7 +24,6 @@ enum
 
 void gyro_initialize(void);
 void gyro_read(Gyro * gyro);
-void gyro_set_range(U8 range);
-U8 gyro_get_range(void);
+void gyro_set_range(Gyro_Range range);
 
 #endif /* GYRO_H */

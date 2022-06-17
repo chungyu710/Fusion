@@ -10,6 +10,7 @@ typedef enum Command Command;
 typedef enum Status Status;
 typedef struct Response Response;
 typedef struct Sensors Sensors;
+typedef enum Sensor_Group Sensor_Group;
 
 struct Sensors
 {
@@ -18,7 +19,7 @@ struct Sensors
 	Flex flex;
 };
 
-enum
+enum Sensor_Group
 {
 	SENSOR_GROUP_ALL,
 	SENSOR_GROUP_ACCEL,
