@@ -27,6 +27,7 @@ sudo ./xc8-installer
 Add the XC8 tools to your PATH environment variable.
 ```
 echo 'export PATH="${PATH}:/opt/microchip/xc8/v2.36/bin/"' >> ~/.bashrc
+echo 'export PATH="${PATH}:/opt/microchip/mplabx/v5.50/mplab_platform/mplab_ipe/bin"' >> ~/.bashrc
 ```
 
 Reload your `.bashrc`.
@@ -52,3 +53,14 @@ make
 ```
 
 This will compile and link all source files under `firmware/`.  The output hex file should be found at `build/fusion.hex`.  You can flash this to the PIC using MPLAB IPE and a PICKit3 ICSP.
+
+## Flashing the PIC
+
+```
+ipecmd.sh -TPPK3 -P16F690 -M -F"<absolute/path/to/fusion.hex>"
+```
+
+The path to the hex file must not contain spaces, e.g.:
+```
+ipecmd.sh -TPPK3 -P16F690 -M -F"/Users/Kyle/capstone/firmware/build/fusion.hex"
+```
