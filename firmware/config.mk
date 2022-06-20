@@ -13,6 +13,7 @@ LIBS +=
 DIR += peripherals
 DIR += drivers
 DIR += tests
+DIR += temp
 
 # artifacts folder
 ART = build
