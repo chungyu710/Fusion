@@ -6,11 +6,11 @@
 #include "system.h"
 
 #define LED        RC4
-#define LED_TRIS   TRISC4
+#define TRIS_LED   TRISC4
 
 void led_initialize(void)
 {
-	LED_TRIS = OUTPUT;
+	TRIS_LED = OUTPUT;
 }
 
 void led_on(void)
