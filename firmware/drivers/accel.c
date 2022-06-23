@@ -5,6 +5,10 @@
 #include <stddef.h>
 
 #include "imu.h"
+#include "system.h"
+
+#define ACCEL_RANGE_MASK     0xF3
+#define ACCEL_RANGE_OFFSET   2
 
 void accel_initialize(void)
 {
@@ -29,4 +33,25 @@ void accel_read(Accel * accel)
 	imu_read(OUTX_L_A, accel, sizeof(Accel));
 }
 
-void accel_set_range(Accel_Range range);
+Status accel_set_range(Accel_Range range)
+{
+	switch (range)
+	{
+		case ACCEL_RANGE_2G:
+		case ACCEL_RANGE_4G:
+		case ACCEL_RANGE_8G:
+		case ACCEL_RANGE_16G:
+		{
+			U8 value = imu_read_register(CTRL1_XL);
+			value &= ACCEL_RANGE_MASK;
+			value |= (U8)(range << ACCEL_RANGE_OFFSET);
+			imu_write_register(CTRL1_XL, value);
+			return STATUS_SUCCESS;
+		}
+
+		default:
+		{
+			return STATUS_ERROR;
+		}
+	}
+}

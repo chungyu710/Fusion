@@ -5,9 +5,9 @@
 #include "accel.h"
 #include "gyro.h"
 #include "flex.h"
+#include "system.h"
 
 typedef enum Command Command;
-typedef enum Status Status;
 typedef struct Response Response;
 typedef struct Sensors Sensors;
 typedef enum Sensor_Group Sensor_Group;
@@ -35,14 +35,6 @@ enum Command
 	COMMAND_SENSORS     = 0x30,
 	COMMAND_BATTERY     = 0x40,
 	COMMAND_RESET       = 0x50
-};
-
-enum Status
-{
-	STATUS_SUCCESS         = 0x0,
-	STATUS_ERROR           = 0x1,
-	STATUS_UNKNOWN_REQUEST = 0x2,
-	STATUS_LOW_BATTERY     = 0x3
 };
 
 struct Response

@@ -7,6 +7,16 @@
 #define DIGITAL    0
 #define ANALOGUE   1
 
+typedef enum Status Status;
+
+enum Status
+{
+	STATUS_SUCCESS         = 0x0,
+	STATUS_ERROR           = 0x1,
+	STATUS_UNKNOWN_REQUEST = 0x2,
+	STATUS_LOW_BATTERY     = 0x3
+};
+
 void system_initialize(void);
 
 #endif /* SYSTEM_H */

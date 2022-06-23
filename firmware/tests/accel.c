@@ -8,6 +8,8 @@
 
 void test_accel(void)
 {
+	accel_set_range(ACCEL_RANGE_2G);
+
 	while (1)
 	{
 		Accel accel;

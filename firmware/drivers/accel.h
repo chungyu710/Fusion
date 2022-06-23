@@ -2,6 +2,7 @@
 #define ACCEL_H
 
 #include "types.h"
+#include "system.h"
 
 typedef struct Accel Accel;
 typedef enum Accel_Range Accel_Range;
@@ -15,16 +16,14 @@ struct Accel
 
 enum Accel_Range
 {
-	ACCEL_RANGE_2G,
-	ACCEL_RANGE_4G,
-	ACCEL_RANGE_8G,
-	ACCEL_RANGE_16G,
-
-	NUM_ACCEL_RANGES
+	ACCEL_RANGE_2G = 0x0,
+	ACCEL_RANGE_4G = 0x2,
+	ACCEL_RANGE_8G = 0x3,
+	ACCEL_RANGE_16G = 0x1
 };
 
 void accel_initialize(void);
 void accel_read(Accel * accel);
-void accel_set_range(Accel_Range range);
+Status accel_set_range(Accel_Range range);
 
 #endif /* ACCEL_H */

@@ -4,16 +4,6 @@
 #include <pic16f690.h>
 #include <stddef.h>
 
-
-
-
-
-
-
-
-
-#include <stdio.h>
-
 #include "system.h"
 
 #define TRIS_SCK   TRISB6
