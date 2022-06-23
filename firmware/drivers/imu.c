@@ -8,7 +8,7 @@
 
 void imu_initialize(void)
 {
-	// TODO: one-time register setup for IMU
+	imu_write_register(CTRL3_C, 0x01);   // reset the IMU and set all registers to their default value
 }
 
 void imu_read(U8 address, void * data, U8 length)

@@ -3,6 +3,15 @@
 
 #include "types.h"
 
+#define CTRL1_XL     0x10
+#define CTRL2_G      0x11
+#define CTRL3_C      0x12
+
+#define STATUS_REG   0x1E
+
+#define OUTX_L_A     0x28
+#define OUTX_H_A     0x29
+
 void imu_initialize(void);
 void imu_read(U8 address, void * data, U8 length);
 void imu_write(U8 address, void * data, U8 length);
