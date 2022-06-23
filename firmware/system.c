@@ -9,6 +9,7 @@
 #include "spi.h"
 #include "imu.h"
 #include "accel.h"
+#include "temp/uart.h"   // TODO: Remove this once UART drivers are done (along with Makefile stuff)
 
 // ======= CONFIGURATION BITS ======= //
 
@@ -44,6 +45,7 @@ void system_initialize(void)
 	// DRIVERS //
 
 	led_initialize();
+	uart_initialize();
 	imu_initialize();
 	accel_initialize();
 
