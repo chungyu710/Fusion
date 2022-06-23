@@ -15,13 +15,16 @@ void main(void)
 
 	uart_initialize();   // TODO: Remove this once UART drivers are done (along with Makefile stuff)
 
-	imu_write(0x10, 0xEF);      // set accel settings
-	U8 value = imu_read(0x10);  // read back accel settings
-	printf("accel settings 0x%02X\r\n", value);
+	U8 write = 0xFE;
+	U8 read;
+	imu_write(0x10, &write, 1);   // set accel settings
+	imu_read(0x10, &read, 1);     // read back accel settings
+	printf("accel settings 0x%02X\r\n", read);
 
 	while (1)
 	{
-		printf("0x%02X\r\n", imu_read(0x0F));
+		imu_read(0x0F, &read, 1);
+		printf("0x%02X\r\n", read);
 		_delay(1000000);
 	}
 }
