@@ -6,7 +6,6 @@
 #include "system.h"
 
 #include "temp/uart.h"
-#include "spi.h"
 #include "imu.h"
 
 void main(void)
@@ -15,16 +14,13 @@ void main(void)
 
 	uart_initialize();   // TODO: Remove this once UART drivers are done (along with Makefile stuff)
 
-	U8 write = 0xFE;
-	U8 read;
-	imu_write(0x10, &write, 1);   // set accel settings
-	imu_read(0x10, &read, 1);     // read back accel settings
-	printf("accel settings 0x%02X\r\n", read);
+	imu_write_register(0x10, 0xDD);   // set accel settings
+	U8 value = imu_read_register(0x10);     // read back accel settings
+	printf("accel settings 0x%02X\r\n", value);
 
 	while (1)
 	{
-		imu_read(0x0F, &read, 1);
-		printf("0x%02X\r\n", read);
+		printf("WHO_AM_I: 0x%02X\r\n", imu_read_register(0x0F));
 		_delay(1000000);
 	}
 }

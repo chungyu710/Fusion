@@ -40,3 +40,15 @@ void imu_write(U8 address, void * data, U8 length)
 	spi_transmit(data, length);
 	spi_release();
 }
+
+U8 imu_read_register(U8 address)
+{
+	U8 data;
+	imu_read(address, &data, 1);
+	return data;
+}
+
+void imu_write_register(U8 address, U8 value)
+{
+	imu_write(address, &value, 1);
+}
