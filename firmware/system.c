@@ -7,6 +7,7 @@
 #include "adc.h"
 #include "led.h"
 #include "spi.h"
+#include "imu.h"
 
 // ======= CONFIGURATION BITS ======= //
 
@@ -42,6 +43,7 @@ void system_initialize(void)
 	// DRIVERS //
 
 	led_initialize();
+	imu_initialize();
 
 	// STARTUP INDICATOR //
 

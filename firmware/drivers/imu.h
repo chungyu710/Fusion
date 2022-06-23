@@ -5,6 +5,6 @@
 
 void imu_initialize(void);
 U8 imu_read(U8 address);
-int imu_write(U8 address, U8 data);
+void imu_write(U8 address, U8 data);
 
 #endif /* IMU_H */

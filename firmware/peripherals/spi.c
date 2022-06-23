@@ -43,9 +43,8 @@ void spi_initialize(void)
 	(1 GHz) which is much higher than Fosc.
 	*/
 
-	SSPSTATbits.SMP = 0;   // sample SDI at the middle of SDO cycle
-	SSPSTATbits.CKE = 0;   // SDO driven on falling edge, SDI captured on rising edge
-
+	SSPSTATbits.SMP = 0;        // sample SDI at the middle of SDO cycle
+	SSPSTATbits.CKE = 0;        // SDO driven on falling edge, SDI captured on rising edge
 	SSPCONbits.CKP = 1;         // SCK idle high
 	SSPCONbits.SSPM = 0b0000;   // SPI master mode at Fosc/4 (fastest speed)
 	SSPCONbits.SSPEN = 1;       // enable SPI and configure SCK, SDI, and SDO
