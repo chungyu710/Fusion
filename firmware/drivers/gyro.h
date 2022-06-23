@@ -8,9 +8,9 @@ typedef enum Gyro_Range Gyro_Range;
 
 struct Gyro
 {
-	U16 pitch;
-	U16 yaw;
-	U16 roll;
+	S16 pitch;
+	S16 roll;
+	S16 yaw;
 };
 
 enum Gyro_Range

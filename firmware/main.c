@@ -7,11 +7,15 @@
 
 #include "temp/uart.h"
 #include "imu.h"
-#include "accel.h"
+
+#include "tests/gyro.h"
+#include "tests/accel.h"
 
 void main(void)
 {
 	system_initialize();
+	//test_gyro();
+	test_accel();
 
 	//imu_write_register(0x10, 0xDD);   // set accel settings
 	//U8 value = imu_read_register(0x10);     // read back accel settings
@@ -21,9 +25,6 @@ void main(void)
 
 	while (1)
 	{
-		Accel accel;
-		accel_read(&accel);
-		printf("X: %d, Y: %d, Z: %d\r\n", accel.x, accel.y, accel.z);
 		_delay(100000);
 	}
 }

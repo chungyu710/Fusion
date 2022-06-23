@@ -8,9 +8,9 @@ typedef enum Accel_Range Accel_Range;
 
 struct Accel
 {
-	U16 x;
-	U16 y;
-	U16 z;
+	S16 x;
+	S16 y;
+	S16 z;
 };
 
 enum Accel_Range

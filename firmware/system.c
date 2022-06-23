@@ -6,10 +6,11 @@
 #include "gpio.h"
 #include "adc.h"
 #include "led.h"
+#include "temp/uart.h"   // TODO: Remove this once UART drivers are done (along with Makefile stuff)
 #include "spi.h"
 #include "imu.h"
 #include "accel.h"
-#include "temp/uart.h"   // TODO: Remove this once UART drivers are done (along with Makefile stuff)
+#include "gyro.h"
 
 // ======= CONFIGURATION BITS ======= //
 
@@ -48,6 +49,7 @@ void system_initialize(void)
 	uart_initialize();
 	imu_initialize();
 	accel_initialize();
+	gyro_initialize();
 
 	// STARTUP INDICATOR //
 

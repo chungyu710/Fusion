@@ -9,8 +9,6 @@
 
 void test_endian(void)
 {
-	system_initialize();
-
 	U8 bytes [] = {0xAB, 0xCD};
 	U16 value = *(U16 *)bytes;
 
