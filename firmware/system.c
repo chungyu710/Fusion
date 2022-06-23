@@ -6,6 +6,7 @@
 #include "gpio.h"
 #include "adc.h"
 #include "led.h"
+#include "spi.h"
 
 // ======= CONFIGURATION BITS ======= //
 
@@ -36,6 +37,7 @@ void system_initialize(void)
 
 	gpio_initialize();
 	adc_initialize();
+	spi_initialize();
 
 	// DRIVERS //
 
