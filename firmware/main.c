@@ -17,14 +17,10 @@ void main(void)
 	//test_gyro();
 	test_accel();
 
-	//imu_write_register(0x10, 0xDD);   // set accel settings
-	//U8 value = imu_read_register(0x10);     // read back accel settings
-	//printf("accel settings 0x%02X\r\n", value);
-
 	printf("WHO_AM_I: 0x%02X\r\n", imu_read_register(0x0F));
 
 	while (1)
 	{
-		_delay(100000);
+		_delay(10000);
 	}
 }

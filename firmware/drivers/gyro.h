@@ -2,6 +2,7 @@
 #define GYRO_H
 
 #include "types.h"
+#include "system.h"
 
 typedef struct Gyro Gyro;
 typedef enum Gyro_Range Gyro_Range;
@@ -15,17 +16,18 @@ struct Gyro
 
 enum Gyro_Range
 {
-	GYRO_RANGE_125_DPS,
-	GYRO_RANGE_250_DPS,
-	GYRO_RANGE_500_DPS,
-	GYRO_RANGE_1000_DPS,
-	GYRO_RANGE_2000_DPS,
+	// values for IMU CTRL2_G register
+	GYRO_RANGE_250_DPS = 0,
+	GYRO_RANGE_500_DPS = 1,
+	GYRO_RANGE_1000_DPS = 2,
+	GYRO_RANGE_2000_DPS = 3,
+	GYRO_RANGE_125_DPS = 5,   // dummy value (uses separate bit)
 
-	NUM_GYRO_RANGES
+	GYRO_RANGE_UNKNOWN
 };
 
 void gyro_initialize(void);
 void gyro_read(Gyro * gyro);
-void gyro_set_range(Gyro_Range range);
+Status gyro_set_range(Gyro_Range range);
 
 #endif /* GYRO_H */

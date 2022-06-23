@@ -16,10 +16,13 @@ struct Accel
 
 enum Accel_Range
 {
-	ACCEL_RANGE_2G = 0x0,
-	ACCEL_RANGE_4G = 0x2,
-	ACCEL_RANGE_8G = 0x3,
-	ACCEL_RANGE_16G = 0x1
+	// values for IMU CTRL1_XL register
+	ACCEL_RANGE_2G = 0,
+	ACCEL_RANGE_16G = 1,
+	ACCEL_RANGE_4G = 2,
+	ACCEL_RANGE_8G = 3,
+
+	ACCEL_RANGE_UNKNOWN
 };
 
 void accel_initialize(void);

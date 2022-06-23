@@ -35,23 +35,14 @@ void accel_read(Accel * accel)
 
 Status accel_set_range(Accel_Range range)
 {
-	switch (range)
+	if (range >= ACCEL_RANGE_UNKNOWN)
 	{
-		case ACCEL_RANGE_2G:
-		case ACCEL_RANGE_4G:
-		case ACCEL_RANGE_8G:
-		case ACCEL_RANGE_16G:
-		{
-			U8 value = imu_read_register(CTRL1_XL);
-			value &= ACCEL_RANGE_MASK;
-			value |= (U8)(range << ACCEL_RANGE_OFFSET);
-			imu_write_register(CTRL1_XL, value);
-			return STATUS_SUCCESS;
-		}
-
-		default:
-		{
-			return STATUS_ERROR;
-		}
+		return STATUS_ERROR;
 	}
+
+	U8 value = imu_read_register(CTRL1_XL);
+	value &= ACCEL_RANGE_MASK;
+	value |= (U8)(range << ACCEL_RANGE_OFFSET);
+	imu_write_register(CTRL1_XL, value);
+	return STATUS_SUCCESS;
 }

@@ -8,6 +8,8 @@
 
 void test_gyro(void)
 {
+	gyro_set_range(GYRO_RANGE_125_DPS);
+
 	while (1)
 	{
 		Gyro gyro;
