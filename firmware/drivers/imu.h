@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#define WHO_AM_I     0x0F
+
 #define CTRL1_XL     0x10
 #define CTRL2_G      0x11
 #define CTRL3_C      0x12

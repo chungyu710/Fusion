@@ -1,6 +1,5 @@
 #include <xc.h>
 #include <pic16f690.h>
-#include <string.h>
 #include <stdio.h>
 
 #include "system.h"
@@ -17,7 +16,7 @@ void main(void)
 	//test_gyro();
 	test_accel();
 
-	printf("WHO_AM_I: 0x%02X\r\n", imu_read_register(0x0F));
+	printf("WHO_AM_I: 0x%02X\r\n", imu_read_register(WHO_AM_I));
 
 	while (1)
 	{
