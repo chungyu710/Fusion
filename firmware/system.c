@@ -16,10 +16,10 @@
 #pragma config FOSC = INTRCIO   // use internal oscillotor and use clock pins as GPIO
 #pragma config WDTE = OFF       // disable watchdog timer
 #pragma config PWRTE = OFF      // disable powerup timer
-#pragma config MCLRE = OFF      // set MCLR pin as digital input
+#pragma config MCLRE = OFF      // set MCLR pin as digital input (disable reset functionality)
 #pragma config CP = OFF         // disable program memory protection
 #pragma config CPD = OFF        // disable data memory protection
-#pragma config BOREN = OFF      // disable brownout reset
+#pragma config BOREN = ON       // enable brownout reset (ensures that power-on reset works properly)
 #pragma config IESO = OFF       // disable internal-external switchover
 #pragma config FCMEN = OFF      // disable failsafe clock monitor
 
