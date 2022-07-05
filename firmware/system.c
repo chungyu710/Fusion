@@ -1,7 +1,6 @@
 #include "system.h"
 
 #include <xc.h>
-#include <pic16f690.h>
 
 #include "gpio.h"
 #include "adc.h"

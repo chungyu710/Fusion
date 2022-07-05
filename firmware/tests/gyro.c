@@ -1,7 +1,6 @@
 #include "tests/gyro.h"
 
 #include <xc.h>
-#include <pic16f690.h>
 #include <stdio.h>
 
 #include "drivers/gyro.h"

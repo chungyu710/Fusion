@@ -1,7 +1,6 @@
 #include "spi.h"
 
 #include <xc.h>
-#include <pic16f690.h>
 #include <stddef.h>
 
 #include "system.h"

@@ -1,7 +1,6 @@
 #include "adc.h"
 
 #include <xc.h>
-#include <pic16f690.h>
 
 void adc_initialize(void)
 {

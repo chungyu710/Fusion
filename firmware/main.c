@@ -1,5 +1,4 @@
 #include <xc.h>
-#include <pic16f690.h>
 #include <stdio.h>
 
 #include "system.h"

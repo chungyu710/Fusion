@@ -1,7 +1,6 @@
 #include "tests/led.h"
 
 #include <xc.h>
-#include <pic16f690.h>
 
 #include "drivers/led.h"
 
