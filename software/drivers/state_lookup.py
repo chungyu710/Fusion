@@ -1,8 +1,5 @@
 import json
 
-# States
-states=["START", "MOVE_LEFT", "MOVE_RIGHT", "MOVE_UP", "MOVE_DOWN"]
-
 def get_states_from_json():
     with open("software/drivers/states.json", "r") as f:
         return json.load(f)
@@ -11,7 +8,8 @@ def get_states_from_json():
 # accel is expected to be a json object
 def get_state_based_on_accel(accel):
     state_values = get_states_from_json()
-    
+    # States
+    states=["START", "MOVE_LEFT", "MOVE_RIGHT", "MOVE_UP", "MOVE_DOWN"]
     for state in states:
         if (check_accel_values(state_values[state]['accel'], accel)):
             return state
