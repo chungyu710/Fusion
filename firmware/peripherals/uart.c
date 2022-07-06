@@ -5,10 +5,10 @@
 
 void uart_initialize(void) {
   // initilaize the SPBRGH, SPBRG register pair and the BRGH and BRG16 bits to achieve the desired baud rate of 9600 bits/sec
-	TXSTAbits.BRGH 		= 1;
+	TXSTAbits.BRGH    = 1;
 	BAUDCTLbits.BRG16 = 1;
-	SPBRGH		 				= 0;
-	SPBRG		  				= 207;  // this is the calculated value based on 9600 baud and 8 MHz clk
+	SPBRGH            = 0;
+	SPBRG             = 207;  // this is the calculated value based on 9600 baud and 8 MHz clk
 
 	TXSTAbits.TXEN 		= 1;		// enables transmitter circuitry
 	RCSTAbits.CREN		= 1;		// enables receiver circuitry
