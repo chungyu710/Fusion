@@ -1,7 +1,6 @@
 #include "uart.h"
 
 #include <xc.h>
-#include <pic16f690.h>
 
 void uart_initialize(void) {
   // initilaize the SPBRGH, SPBRG register pair and the BRGH and BRG16 bits to achieve the desired baud rate of 9600 bits/sec
@@ -10,10 +9,10 @@ void uart_initialize(void) {
 	SPBRGH            = 0;
 	SPBRG             = 207;  // this is the calculated value based on 9600 baud and 8 MHz clk
 
-	TXSTAbits.TXEN 		= 1;		// enables transmitter circuitry
-	RCSTAbits.CREN		= 1;		// enables receiver circuitry
-	TXSTAbits.SYNC 		= 0;		// configures to async operation
-	RCSTAbits.SPEN 		= 1;		// enables EUSART and sets TX/CK pin as an output
+	TXSTAbits.TXEN    = 1;		// enables transmitter circuitry
+	RCSTAbits.CREN    = 1;		// enables receiver circuitry
+	TXSTAbits.SYNC    = 0;		// configures to async operation
+	RCSTAbits.SPEN    = 1;		// enables EUSART and sets TX/CK pin as an output
 }
 
 void uart_transmit(void * data, U8 length) {

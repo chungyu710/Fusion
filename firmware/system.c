@@ -6,7 +6,7 @@
 #include "gpio.h"
 #include "adc.h"
 #include "led.h"
-#include "peripherals/uart.h"
+#include "uart.h"
 
 // ======= CONFIGURATION BITS ======= //
 

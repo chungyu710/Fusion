@@ -12,7 +12,6 @@ void main(void)
 	system_initialize();
 
 	while(1) {
-		// test_led_blink();
 		test_uart_echo();
 	}
 }
