@@ -3,7 +3,6 @@
 
 #include "system.h"
 
-#include "temp/uart.h"
 #include "imu.h"
 
 #include "tests/gyro.h"

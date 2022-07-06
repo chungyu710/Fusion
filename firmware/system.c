@@ -5,7 +5,7 @@
 #include "gpio.h"
 #include "adc.h"
 #include "led.h"
-#include "temp/uart.h"   // TODO: Remove this once UART drivers are done (along with Makefile stuff)
+#include "uart.h"
 #include "spi.h"
 #include "imu.h"
 #include "accel.h"
