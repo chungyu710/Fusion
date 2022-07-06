@@ -6,6 +6,7 @@
 #include "gpio.h"
 #include "adc.h"
 #include "led.h"
+#include "peripherals/uart.h"
 
 // ======= CONFIGURATION BITS ======= //
 
@@ -40,6 +41,7 @@ void system_initialize(void)
 	// DRIVERS //
 
 	led_initialize();
+	uart_initialize();
 
 	// STARTUP INDICATOR //
 
