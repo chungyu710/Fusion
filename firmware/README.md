@@ -64,3 +64,12 @@ The path to the hex file must not contain spaces, e.g.:
 ```
 ipecmd.sh -TPPK3 -P16F690 -M -F"/Users/Kyle/capstone/firmware/build/fusion.hex"
 ```
+
+## Pairing Bluetooth Modules
+
+Use `miniterm.py` that came with pyserial.
+
+## USB-TTL Converter
+
+Install the CP210x drivers
+https://www.silabs.com/interface/usb-bridges/classic/device.cp2102
