@@ -4,6 +4,7 @@ CC = xc8-cc
 # compiler / linker flags
 FLAGS += -mcpu=16f690
 FLAGS += -mc90lib
+FLAGS += -mwarn=0
 
 # linker libraries
 LIBS +=
