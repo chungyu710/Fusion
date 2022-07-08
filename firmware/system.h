@@ -18,5 +18,6 @@ enum Status
 };
 
 void system_initialize(void);
+void system_service(void);
 
 #endif /* SYSTEM_H */

@@ -24,7 +24,7 @@ enum Sensor_Group
 	SENSOR_GROUP_ALL   = 0x0,
 	SENSOR_GROUP_ACCEL = 0x1,
 	SENSOR_GROUP_GYRO  = 0x2,
-	SENSOR_GROUP_FLEX  = 0x3
+	SENSOR_GROUP_FLEX  = 0x3,
 };
 
 enum Command

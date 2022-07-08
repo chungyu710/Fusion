@@ -10,6 +10,7 @@
 #include "imu.h"
 #include "accel.h"
 #include "gyro.h"
+#include "link.h"
 
 // ======= CONFIGURATION BITS ======= //
 
@@ -41,11 +42,11 @@ void system_initialize(void)
 	gpio_initialize();
 	adc_initialize();
 	spi_initialize();
+	uart_initialize();
 
 	// DRIVERS //
 
 	led_initialize();
-	uart_initialize();
 	imu_initialize();
 	accel_initialize();
 	gyro_initialize();
@@ -60,3 +61,101 @@ void system_initialize(void)
 		_delay(LED_DELAY);
 	}
 }
+
+//void system_service(U8 request)
+//{
+//	Command command = request & 0xF0;
+//	U8 metadata = request & 0x0F;
+//	Status status;
+//	void * data;
+//	U8 length;
+
+//	switch (command)
+//	{
+//		case COMMAND_PING:
+//		{
+//			status = STATUS_SUCCESS;
+//			data = NULL;
+//			length = 0;
+//		}
+
+//		case COMMAND_ACCEL_RANGE:
+//		{
+//			Accel_Range range = metadata;
+//			Status status = accel_set_range(range);
+//			break;
+//		}
+
+//		case COMMAND_GYRO_RANGE:
+//		{
+//			Gyro_Range range = metadata;
+//			Status status = gyro_set_range(range);
+//			break;
+//		}
+
+//		case COMMAND_SENSORS:
+//		{
+//			Sensors sensors;
+
+//			accel_read(&sensors.accel);
+//			gyro_read(&sensors.gyro);
+//			flex_read(&sensors.flex);
+
+//			Sensor_Group group = metadata;
+
+//			switch (group)
+//			{
+//				case SENSOR_GROUP_ALL:
+//				{
+//					status = STATUS_SUCCESS;
+//					data = &sensors;
+//					length = sizeof(Sensors);
+//					break;
+//				}
+
+//				case SENSOR_GROUP_ACCEL:
+//				{
+//					status = STATUS_SUCCESS;
+//					data = &sensors.accel;
+//					length = sizeof(Accel);
+//					break;
+//				}
+
+//				case SENSOR_GROUP_GYRO:
+//				{
+//					status = STATUS_SUCCESS;
+//					data = &sensors.gyro;
+//					length = sizeof(Gyro);
+//					break;
+//				}
+
+//				case SENSOR_GROUP_FLEX:
+//				{
+//					status = STATUS_SUCCESS;
+//					data = &sensors.flex;
+//					length = sizeof(Flex);
+//					break;
+//				}
+
+//				default:
+//				{
+//					status = STATUS_ERROR;
+//					data = NULL;
+//					length = 0;
+//				}
+//			}
+
+//			break;
+//		}
+
+//		case COMMAND_BATTERY:
+//			break;
+//		case COMMAND_RESET:
+//			break;
+
+//		default:
+//			break;
+//	}
+
+//	link_respond(status, data, length);
+//}
