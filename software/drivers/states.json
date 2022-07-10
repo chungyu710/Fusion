@@ -1,0 +1,97 @@
+{
+    "START" : {
+        "accel": {
+            "x" :{"min": 5, "max": 9},
+            "y": {"min": 10, "max": 20},
+            "z":{"min": 10, "max": 20}
+        },
+        "gyro": {
+            "pitch": {"min": 10, "max": 20},
+            "yaw": {"min": 10, "max": 20},
+            "roll":{"min": 10, "max": 20}
+        },
+        "flex": {
+            "thumb": {"min": 20, "max": 30},
+            "index": {"min": 20, "max": 30},
+            "middle":{"min": 20, "max": 30},
+            "ring":{"min": 20, "max": 30},
+            "pinky":{"min": 20, "max": 30}
+        }
+    },
+    "MOVE_LEFT" : {
+        "accel": {
+            "x" :{"min": 10, "max": 20},
+            "y": {"min": 10, "max": 20},
+            "z":{"min": 10, "max": 20}
+        },
+        "gyro": {
+            "pitch": {"min": 10, "max": 20},
+            "yaw": {"min": 10, "max": 20},
+            "roll":{"min": 10, "max": 20}
+        },
+        "flex": {
+            "thumb": {"min": 20, "max": 30},
+            "index": {"min": 20, "max": 30},
+            "middle":{"min": 20, "max": 30},
+            "ring":{"min": 20, "max": 30},
+            "pinky":{"min": 20, "max": 30}
+        }
+    },
+    "MOVE_RIGHT" : {
+        "accel": {
+            "x" :{"min": 5, "max": 10},
+            "y": {"min": 20, "max": 30},
+            "z":{"min": 10, "max": 20}
+        },
+        "gyro": {
+            "pitch": {"min": 10, "max": 20},
+            "yaw": {"min": 10, "max": 20},
+            "roll":{"min": 10, "max": 20}
+        },
+        "flex": {
+            "thumb": {"min": 20, "max": 30},
+            "index": {"min": 20, "max": 30},
+            "middle":{"min": 20, "max": 30},
+            "ring":{"min": 20, "max": 30},
+            "pinky":{"min": 20, "max": 30}
+        }
+    },
+    "MOVE_UP" : {
+        "accel": {
+            "x" :{"min": 10, "max": 20},
+            "y": {"min": 10, "max": 20},
+            "z":{"min": 10, "max": 20}
+        },
+        "gyro": {
+            "pitch": {"min": 10, "max": 20},
+            "yaw": {"min": 10, "max": 20},
+            "roll":{"min": 10, "max": 20}
+        },
+        "flex": {
+            "thumb": {"min": 20, "max": 30},
+            "index": {"min": 20, "max": 30},
+            "middle":{"min": 20, "max": 30},
+            "ring":{"min": 20, "max": 30},
+            "pinky":{"min": 20, "max": 30}
+        }
+    },
+    "MOVE_DOWN" : {
+        "accel": {
+            "x" :{"min": 10, "max": 20},
+            "y": {"min": 10, "max": 20},
+            "z":{"min": 10, "max": 20}
+        },
+        "gyro": {
+            "pitch": {"min": 10, "max": 20},
+            "yaw": {"min": 10, "max": 20},
+            "roll":{"min": 10, "max": 20}
+        },
+        "flex": {
+            "thumb": {"min": 20, "max": 30},
+            "index": {"min": 20, "max": 30},
+            "middle":{"min": 20, "max": 30},
+            "ring":{"min": 20, "max": 30},
+            "pinky":{"min": 20, "max": 30}
+        }
+    }
+}
