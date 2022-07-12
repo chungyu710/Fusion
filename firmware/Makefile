@@ -34,10 +34,12 @@ BIN := $(BIN).hex
 
 # ======= CREATE ARTIFACTS DIRECTORY ======= #
 
+ifneq ($(MAKECMDGOALS), clean)
 ifneq ($(DIR), )
 $(shell mkdir -p $(addprefix $(ART)/, $(DIR)))
 else
 $(shell mkdir -p $(ART))
+endif
 endif
 
 # ======= LINK ======= #
