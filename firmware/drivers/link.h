@@ -7,6 +7,9 @@
 #include "flex.h"
 #include "system.h"
 
+#define MASK_COMMAND    0xF0
+#define MASK_METADATA   0x0F
+
 typedef enum Command Command;
 typedef struct Response Response;
 typedef struct Sensors Sensors;

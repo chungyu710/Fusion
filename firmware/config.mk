@@ -13,7 +13,7 @@ LIBS +=
 # NOTE: include paths are searched in this order
 DIR += peripherals
 DIR += drivers
-DIR += tests
+DIR += tests   # keep this last since some files use the same names
 
 # artifacts folder
 ART = build

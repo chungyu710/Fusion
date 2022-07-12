@@ -1,6 +1,7 @@
 #include "system.h"
 
 #include <xc.h>
+#include <stddef.h>
 
 #include "gpio.h"
 #include "adc.h"
@@ -62,10 +63,46 @@ void system_initialize(void)
 	}
 }
 
+void system_service(U8 request)
+{
+	Response response;
+	Sensors sensors;
+	void * payload;
+	Command command = request & MASK_COMMAND;
+	response.checksum = 3;
+
+	if (command == COMMAND_SENSORS)
+	{
+		accel_read(&sensors.accel);
+		gyro_read(&sensors.gyro);
+
+		// dummy data until flex is working
+		//flex_read(&sensors.flex);
+		sensors.flex.thumb = 6;
+		sensors.flex.index = 9;
+		sensors.flex.middle = 4;
+		sensors.flex.ring = 2;
+		sensors.flex.pinky = 0;
+
+		response.length = sizeof(Sensors);
+		response.status = STATUS_SUCCESS;
+		payload = &sensors;
+	}
+	else
+	{
+		response.status = STATUS_ERROR;
+		response.length = 0;
+		payload = NULL;
+	}
+
+	uart_transmit(&response, sizeof(Response));
+	uart_transmit(payload, response.length);
+}
+
 //void system_service(U8 request)
 //{
-//	Command command = request & 0xF0;
-//	U8 metadata = request & 0x0F;
+//	Command command = request & MASK_COMMAND;
+//	U8 metadata = request & MASK_METADATA;
 //	Status status;
 //	void * data;
 //	U8 length;
