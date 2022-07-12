@@ -7,6 +7,8 @@
 #define DIGITAL    0
 #define ANALOGUE   1
 
+#include "types.h"
+
 typedef enum Status Status;
 
 enum Status
@@ -18,6 +20,6 @@ enum Status
 };
 
 void system_initialize(void);
-void system_service(void);
+void system_service(U8 request);
 
 #endif /* SYSTEM_H */
