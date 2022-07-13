@@ -85,7 +85,7 @@ void system_service_sensors_only(U8 request)
 		sensors.flex.ring = 2;
 		sensors.flex.pinky = 0;
 
-		response.length = sizeof(Sensors);
+		response.length = sizeof(sensors);
 		response.status = STATUS_SUCCESS;
 		payload = &sensors;
 	}
@@ -96,7 +96,7 @@ void system_service_sensors_only(U8 request)
 		payload = NULL;
 	}
 
-	uart_transmit(&response, sizeof(Response));
+	uart_transmit(&response, sizeof(response));
 	uart_transmit(payload, response.length);
 }
 
@@ -123,28 +123,28 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 		case SENSOR_GROUP_ALL:
 		{
 			*data = &sensors;
-			*length = sizeof(Sensors);
+			*length = sizeof(sensors);
 			break;
 		}
 
 		case SENSOR_GROUP_ACCEL:
 		{
 			*data = &sensors.accel;
-			*length = sizeof(Accel);
+			*length = sizeof(sensors.accel);
 			break;
 		}
 
 		case SENSOR_GROUP_GYRO:
 		{
 			*data = &sensors.gyro;
-			*length = sizeof(Gyro);
+			*length = sizeof(sensors.gyro);
 			break;
 		}
 
 		case SENSOR_GROUP_FLEX:
 		{
 			*data = &sensors.flex;
-			*length = sizeof(Flex);
+			*length = sizeof(sensors.flex);
 			break;
 		}
 	}
