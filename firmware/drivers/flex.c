@@ -15,3 +15,9 @@
 #define ANSEL_MIDDLE   // need to figure these out
 #define ANSEL_RING   // need to figure these out
 #define ANSEL_PINKY   // need to figure these out
+
+void flex_initialize(void);
+void flex_read(Flex * flex)
+{
+
+}
