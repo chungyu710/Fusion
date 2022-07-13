@@ -123,28 +123,28 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 		case SENSOR_GROUP_ALL:
 		{
 			*data = &sensors;
-			*length = sizeof(sensors);
+			*length = sizeof(Sensors);
 			break;
 		}
 
 		case SENSOR_GROUP_ACCEL:
 		{
 			*data = &sensors.accel;
-			*length = sizeof(sensors.accel);
+			*length = sizeof(Accel);
 			break;
 		}
 
 		case SENSOR_GROUP_GYRO:
 		{
 			*data = &sensors.gyro;
-			*length = sizeof(sensors.gyro);
+			*length = sizeof(Gyro);
 			break;
 		}
 
 		case SENSOR_GROUP_FLEX:
 		{
 			*data = &sensors.flex;
-			*length = sizeof(sensors.flex);
+			*length = sizeof(Flex);
 			break;
 		}
 	}

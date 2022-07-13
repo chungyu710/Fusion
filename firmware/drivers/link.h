@@ -47,7 +47,6 @@ struct Response
 	U8 checksum;
 };
 
-void link_initialize(void);
 void link_respond(Status status, void * data, U8 length);
 
 #endif /* LINK_H */
