@@ -12,6 +12,7 @@
 #include "accel.h"
 #include "gyro.h"
 #include "link.h"
+#include "battery.h"
 
 // ======= CONFIGURATION BITS ======= //
 
@@ -63,7 +64,7 @@ void system_initialize(void)
 	}
 }
 
-void system_service(U8 request)
+void system_service_sensors_only(U8 request)
 {
 	Response response;
 	Sensors sensors;
@@ -99,100 +100,112 @@ void system_service(U8 request)
 	uart_transmit(payload, response.length);
 }
 
-//void system_service(U8 request)
-//{
-//	Command command = request & MASK_COMMAND;
-//	U8 metadata = request & MASK_METADATA;
-//	Status status;
-//	void * data;
-//	U8 length;
+static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
+{
+	Sensors sensors;
 
-//	switch (command)
-//	{
-//		case COMMAND_PING:
-//		{
-//			status = STATUS_SUCCESS;
-//			data = NULL;
-//			length = 0;
-//		}
+	accel_read(&sensors.accel);
+	gyro_read(&sensors.gyro);
+	flex_read(&sensors.flex);
 
-//		case COMMAND_ACCEL_RANGE:
-//		{
-//			Accel_Range range = metadata;
-//			Status status = accel_set_range(range);
-//			break;
-//		}
+	Status status = STATUS_SUCCESS;
 
-//		case COMMAND_GYRO_RANGE:
-//		{
-//			Gyro_Range range = metadata;
-//			Status status = gyro_set_range(range);
-//			break;
-//		}
+	switch (group)
+	{
+		default:
+		{
+			status = STATUS_ERROR;
+			*data = NULL;
+			*length = 0;
+			break;
+		}
 
-//		case COMMAND_SENSORS:
-//		{
-//			Sensors sensors;
+		case SENSOR_GROUP_ALL:
+		{
+			*data = &sensors;
+			*length = sizeof(sensors);
+			break;
+		}
 
-//			accel_read(&sensors.accel);
-//			gyro_read(&sensors.gyro);
-//			flex_read(&sensors.flex);
+		case SENSOR_GROUP_ACCEL:
+		{
+			*data = &sensors.accel;
+			*length = sizeof(sensors.accel);
+			break;
+		}
 
-//			Sensor_Group group = metadata;
+		case SENSOR_GROUP_GYRO:
+		{
+			*data = &sensors.gyro;
+			*length = sizeof(sensors.gyro);
+			break;
+		}
 
-//			switch (group)
-//			{
-//				case SENSOR_GROUP_ALL:
-//				{
-//					status = STATUS_SUCCESS;
-//					data = &sensors;
-//					length = sizeof(Sensors);
-//					break;
-//				}
+		case SENSOR_GROUP_FLEX:
+		{
+			*data = &sensors.flex;
+			*length = sizeof(sensors.flex);
+			break;
+		}
+	}
 
-//				case SENSOR_GROUP_ACCEL:
-//				{
-//					status = STATUS_SUCCESS;
-//					data = &sensors.accel;
-//					length = sizeof(Accel);
-//					break;
-//				}
+	return status;
+}
 
-//				case SENSOR_GROUP_GYRO:
-//				{
-//					status = STATUS_SUCCESS;
-//					data = &sensors.gyro;
-//					length = sizeof(Gyro);
-//					break;
-//				}
+void system_service(U8 request)
+{
+	Command command = request & MASK_COMMAND;
+	U8 metadata = request & MASK_METADATA;
 
-//				case SENSOR_GROUP_FLEX:
-//				{
-//					status = STATUS_SUCCESS;
-//					data = &sensors.flex;
-//					length = sizeof(Flex);
-//					break;
-//				}
+	switch (command)
+	{
+		default:
+		{
+			link_respond(STATUS_ERROR, NULL, 0);
+			break;
+		}
 
-//				default:
-//				{
-//					status = STATUS_ERROR;
-//					data = NULL;
-//					length = 0;
-//				}
-//			}
+		case COMMAND_PING:
+		{
+			link_respond(STATUS_SUCCESS, NULL, 0);
+			break;
+		}
 
-//			break;
-//		}
+		case COMMAND_ACCEL_RANGE:
+		{
+			Status status = accel_set_range(metadata);
+			link_respond(status, NULL, 0);
+			break;
+		}
 
-//		case COMMAND_BATTERY:
-//			break;
-//		case COMMAND_RESET:
-//			break;
+		case COMMAND_GYRO_RANGE:
+		{
+			Status status = gyro_set_range(metadata);
+			link_respond(status, NULL, 0);
+			break;
+		}
 
-//		default:
-//			break;
-//	}
+		case COMMAND_SENSORS:
+		{
+			void * data;
+			U8 length;
+			Status status = read_sensors(metadata, &data, &length);
+			link_respond(status, data, length);
+			break;
+		}
 
-//	link_respond(status, data, length);
-//}
+		case COMMAND_BATTERY:
+		{
+			U16 voltage = battery_voltage();
+			link_respond(STATUS_SUCCESS, &voltage, sizeof(voltage));
+			break;
+		}
+
+		case COMMAND_RESET:
+		{
+			// reset here?  then send response?  or send response  first  then reset?
+			link_respond(STATUS_ERROR, NULL, 0);
+			break;
+		}
+	}
+}
