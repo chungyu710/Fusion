@@ -45,7 +45,6 @@ def configure_and_open(port):
         if not ping(ser):
             print("Glove not responding!!! attempt:", retries)
             retries += 1
-            time.sleep(0.2)
         else:
             break
 

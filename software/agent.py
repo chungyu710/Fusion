@@ -11,16 +11,16 @@ class Agent:
     def state_start(self):
         return None
     def state_move_left(self):
-        pyautogui.move(-30, 0) 
+        pyautogui.move(-15, 0) 
         return True
     def state_move_right(self):
-        pyautogui.move(30, 0) 
+        pyautogui.move(15, 0) 
         return True
     def state_move_up(self):
-        pyautogui.move(0, -30)
+        pyautogui.move(0, -15)
         return True
     def state_move_down(self):
-        pyautogui.move(0, 30) 
+        pyautogui.move(0, 15) 
         return True
 
 # def driver():
