@@ -23,15 +23,14 @@ class Agent:
         pyautogui.move(0, 30) 
         return True
 
-def driver():
-    agent = Agent()
-    try:
-        while True:
-            # TODO: pass in acceleration array 
-            state = state_lookup.get_state_based_on_accel("pass in acceleration array here")
-            agent.perform_action(state.lower())
-    except KeyboardInterrupt:
-        print('\n')
+# def driver():
+#     agent = Agent()
+#     try:
+#         while True:
+#             # TODO: pass in acceleration array 
+#             state = state_lookup.get_state_based_on_accel("pass in acceleration array here")
+#             agent.perform_action(state.lower())
+#     except KeyboardInterrupt:
+#         print('\n')
 
-driver()
-
+# driver()
