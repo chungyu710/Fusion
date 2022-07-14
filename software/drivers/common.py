@@ -1,7 +1,7 @@
 # Commands:
-PING = "\x00"
-SENSORS_ALL = "\x30"
-SENSOR_ACCELEROMETER = "\x31"
+PING = b"\x00"
+SENSORS_ALL = b"\x30"
+SENSOR_ACCELEROMETER = b"\x31"
 
 class Sensors:
     def __init__(self, accel_data, gyro_data, flex_data):
@@ -41,3 +41,4 @@ class Flex:
 
     def __str__(self):
         return "Flex sensor values: " + " (thumb, index, middle, ring, pinky): (" + str(self.thumb) + ", " + str(self.index) + ", " +  str(self.middle) + ", " + str(self.ring) + ", " +  str(self.pinky) + ")\n"
+    
