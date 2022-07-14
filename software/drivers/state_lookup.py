@@ -1,7 +1,7 @@
 import json
 
 def get_states_from_json():
-    with open("states.json", "r") as f:
+    with open("software/drivers/states.json", "r") as f:
         return json.load(f)
     
 # accel: {"x": V, "y": V, "z": V}

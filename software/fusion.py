@@ -20,25 +20,33 @@ if __name__ == '__main__':
     #                    format="%(asctime)s [%(levelname)s] %(message)s",
     #                    handlers=[logging.FileHandler("debug.log", 'w'), logging.StreamHandler()])
 
+    NEUTRAL_OF_ACCEL_X = -50
+    NEUTRAL_OF_ACCEL_Y = 8290
+    NEUTRAL_OF_ACCEL_Z = 810
+
+    SENSOR_MIN_OF_ACCEL_X = -8200
+    SENSOR_MIN_OF_ACCEL_Y = -8200
+    SENSOR_MIN_OF_ACCEL_Z = -8200
+    
+    SENSOR_MAX_OF_ACCEL_X = 8200
+    SENSOR_MAX_OF_ACCEL_Y = 8200
+    SENSOR_MAX_OF_ACCEL_Z = 8200
+
     serial_port = configure_and_open(PORT)
     agent = Agent()
-    i = 0
-    for i in range(2000000000):
+    
+    while True:
         sensor_data = get_all_sensor_data(serial_port)
-        print(sensor_data.accel_data)
-        plt.axis([0, 500, -10000, 10000])
-
-        plt.scatter(i, sensor_data.accel_data.y)
-        plt.pause(0.01)
-
-    plt.show()
-        # i+= 1
-        # scaled_accel = Accelerometer(0,0,0)
-        # scaled_accel.x = scale_sensors(100, sensor_data.accel_data.x, SENSOR_MAX_OF_ACCEL_X, SENSOR_MIN_OF_ACCEL_X, NEUTRAL_OF_ACCEL_X)
-        # scaled_accel.y = scale_sensors(100, sensor_data.accel_data.y, SENSOR_MAX_OF_ACCEL_Y, SENSOR_MIN_OF_ACCEL_Y, NEUTRAL_OF_ACCEL_Y)
-        # scaled_accel.z = scale_sensors(100, sensor_data.accel_data.z, SENSOR_MAX_OF_ACCEL_Z, SENSOR_MIN_OF_ACCEL_Z, NEUTRAL_OF_ACCEL_Z)
-        # state = get_state_based_on_accel(scaled_accel)
-        # agent.perform_action(state.lower())
+        scaled_accel = Accelerometer(0,0,0)
+        scaled_accel.x = scale_sensors(100, sensor_data.accel_data.x, SENSOR_MAX_OF_ACCEL_X, SENSOR_MIN_OF_ACCEL_X, NEUTRAL_OF_ACCEL_X)
+        scaled_accel.y = scale_sensors(100, sensor_data.accel_data.y, SENSOR_MAX_OF_ACCEL_Y, SENSOR_MIN_OF_ACCEL_Y, NEUTRAL_OF_ACCEL_Y)
+        scaled_accel.z = scale_sensors(100, sensor_data.accel_data.z, SENSOR_MAX_OF_ACCEL_Z, SENSOR_MIN_OF_ACCEL_Z, NEUTRAL_OF_ACCEL_Z)
+        print("scaled accel x " + str(scaled_accel.x))
+        print("scaled accel y " + str(scaled_accel.y))
+        print("scaled accel z " + str(scaled_accel.z))
+        state = get_state_based_on_accel(scaled_accel)
+        print(state)
+        agent.perform_action(state.lower())
 
 
 # code from agent
