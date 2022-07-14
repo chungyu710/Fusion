@@ -18,7 +18,7 @@ def get_state_based_on_accel(accel):
 
 # expected format exmaple -> {'x': {'min': 10, 'max': 20}, 'y': {'min': 10, 'max': 20}, 'z': {'min': 10, 'max': 20}}
 # sensor format exanple (expected to be json) -> {"x": V, "y": V, "z": V}
-def check_accel_values(expected, sensor):
+def check_accel_values(expected, accel):
     x_min = expected['x']['min']
     x_max = expected['x']['max']
     y_min = expected['y']['min']
@@ -26,7 +26,7 @@ def check_accel_values(expected, sensor):
     z_min = expected['z']['min']
     z_max = expected['z']['max']
 
-    return ((sensor['x'] >= x_min and sensor['x'] <= x_max) and 
-            (sensor['y'] >= y_min and sensor['y'] <= y_max) and 
-            (sensor['z'] >= z_min and sensor['z'] <= z_max))
+    return ((accel.x >= x_min and accel.x <= x_max) and 
+            (accel.y >= y_min and accel.y <= y_max) and 
+            (accel.z >= z_min and accel.z <= z_max))
 
