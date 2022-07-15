@@ -1,3 +1,4 @@
+from tabnanny import verbose
 from drivers.state_lookup import *
 from drivers.deserializer import *
 from drivers.calibration_processor import *
@@ -5,6 +6,9 @@ from agent import *
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+from drivers.velocity import *
+
+pyautogui.PAUSE = 0.001   # reduces pyautogui lag
 
 #import logging
 
@@ -20,9 +24,9 @@ if __name__ == '__main__':
     #                    format="%(asctime)s [%(levelname)s] %(message)s",
     #                    handlers=[logging.FileHandler("debug.log", 'w'), logging.StreamHandler()])
 
-    NEUTRAL_OF_ACCEL_X = -50
+    NEUTRAL_OF_ACCEL_X = -200
     NEUTRAL_OF_ACCEL_Y = 8290
-    NEUTRAL_OF_ACCEL_Z = 810
+    NEUTRAL_OF_ACCEL_Z = 1162
 
     SENSOR_MIN_OF_ACCEL_X = -8200
     SENSOR_MIN_OF_ACCEL_Y = -8200
@@ -36,17 +40,25 @@ if __name__ == '__main__':
     agent = Agent()
 
     while True:
-        sensor_data = get_all_sensor_data(serial_port)
-        scaled_accel = Accelerometer()
-        scaled_accel.x = scale_sensors(100, sensor_data.accel.x, SENSOR_MAX_OF_ACCEL_X, SENSOR_MIN_OF_ACCEL_X, NEUTRAL_OF_ACCEL_X)
-        scaled_accel.y = scale_sensors(100, sensor_data.accel.y, SENSOR_MAX_OF_ACCEL_Y, SENSOR_MIN_OF_ACCEL_Y, NEUTRAL_OF_ACCEL_Y)
-        scaled_accel.z = scale_sensors(100, sensor_data.accel.z, SENSOR_MAX_OF_ACCEL_Z, SENSOR_MIN_OF_ACCEL_Z, NEUTRAL_OF_ACCEL_Z)
-        print("scaled accel x " + str(scaled_accel.x))
-        print("scaled accel y " + str(scaled_accel.y))
-        print("scaled accel z " + str(scaled_accel.z))
-        state = get_state_based_on_accel(scaled_accel)
+        sensors = get_all_sensor_data(serial_port)
+        sensors.accel.x = scale_sensors(100, sensors.accel.x, SENSOR_MAX_OF_ACCEL_X, SENSOR_MIN_OF_ACCEL_X, NEUTRAL_OF_ACCEL_X)
+        sensors.accel.y = scale_sensors(100, sensors.accel.y, SENSOR_MAX_OF_ACCEL_Y, SENSOR_MIN_OF_ACCEL_Y, NEUTRAL_OF_ACCEL_Y)
+        sensors.accel.z = scale_sensors(100, sensors.accel.z, SENSOR_MAX_OF_ACCEL_Z, SENSOR_MIN_OF_ACCEL_Z, NEUTRAL_OF_ACCEL_Z)
+        print(sensors.accel)
+
+        state = get_state_based_on_accel(sensors.accel)
         print(state)
-        agent.perform_action(state.lower())
+
+        velocity = calculate_velocity(sensors.accel)
+        print(velocity)
+
+        #pyautogui.move(-sensors.accel.z, 0)
+
+        sensors.gyro.roll = deadzone(scale_sensors(50, sensors.gyro.roll, 4000, -4000, 21), 5)
+        sensors.gyro.yaw = deadzone(scale_sensors(50, sensors.gyro.yaw, 10000, -10000, -37), 5)
+        print(sensors.gyro)
+        pyautogui.move(-sensors.gyro.roll, -sensors.gyro.yaw)
+        #agent.perform_action(state.lower())
 
 
 # code from agent
