@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import argparse
 from drivers.velocity import *
 
-pyautogui.PAUSE = 0.001   # reduces pyautogui lag
+pyautogui.PAUSE = 0   # reduces pyautogui lag
 
 #import logging
 
@@ -52,10 +52,10 @@ if __name__ == '__main__':
         velocity = calculate_velocity(sensors.accel)
         print(velocity)
 
-        #pyautogui.move(-sensors.accel.z, 0)
+        #pyautogui.move(abs(sensors.accel.z), 0)
 
-        sensors.gyro.roll = deadzone(scale_sensors(50, sensors.gyro.roll, 4000, -4000, 21), 5)
-        sensors.gyro.yaw = deadzone(scale_sensors(50, sensors.gyro.yaw, 10000, -10000, -37), 5)
+        sensors.gyro.roll = scale_sensors(50, sensors.gyro.roll, 4000, -4000, 21)
+        sensors.gyro.yaw = scale_sensors(50, sensors.gyro.yaw, 4000, -4000, -37)
         print(sensors.gyro)
         pyautogui.move(-sensors.gyro.roll, -sensors.gyro.yaw)
         #agent.perform_action(state.lower())
