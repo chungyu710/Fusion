@@ -1,11 +1,5 @@
-from socket import timeout
-from parso import parse
-from requests import head
 from drivers.common import *
-import argparse
 import serial
-import argparse
-import time
 import log
 
 BAUDRATE = 115200
@@ -53,39 +47,53 @@ def configure_and_open(port):
 def ping(ser):
     send(PING, ser)
     status, length, checksum = get_header_data(ser)
-    
+
     # TODO: Uncomment it after ping command functionality uploaded to the device
     # if status != STATUS_SUCCESS:
     #     return False
-    
+
     return True
 
 def send(msg, ser):
     ser.write(msg)
 
+def parse_signed(bytes):
+    return int.from_bytes(bytes, 'little', signed=True)
+
+def parse_unsigned(bytes):
+    return int.from_bytes(bytes, 'little', signed=False)
+
 def create_object(command, payload):
     #TODO: Revisit and remove hardcodes
     if command == REQUEST_ALL_SENSORS:
         i = 0
-        accel_x, accel_y, accel_z = int.from_bytes(payload[i:i+2], "little", signed=True), int.from_bytes(payload[i+2:i+4], "little", signed=True), int.from_bytes(payload[i+4:i+6], "little", signed=True)
-        accel_data = Accelerometer(accel_x, accel_y, accel_z)
-        log.debug("Accelerometer data: " + str(accel_data))
+        accel = Accelerometer()
+        accel.x = parse_signed(payload[i:i+2])
+        accel.y = parse_signed(payload[i+2:i+4])
+        accel.z = parse_signed(payload[i+4:i+6])
+        log.debug("Accelerometer data: " + str(accel))
         i += 6
 
-        gyro_pitch, gyro_yaw, gyro_roll = int.from_bytes(payload[i:i+2], "little", signed=True), int.from_bytes(payload[i+2:i+4], "little", signed=True), int.from_bytes(payload[i+4:i+6], "little", signed=True)
-        gyro_data = Gyro(gyro_pitch, gyro_yaw, gyro_roll)
-        log.debug("Gyro data: " + str(gyro_data))
+        gyro = Gyro()
+        gyro.pitch = parse_signed(payload[i:i+2])
+        gyro.roll = parse_signed(payload[i+2:i+4])
+        gyro.yaw = parse_signed(payload[i+4:i+6])
+        log.debug("Gyro data: " + str(gyro))
         i += 6
 
-        flex_thumb, flex_index, flex_middle, flex_ring, flex_pinky = int.from_bytes(payload[i:i+2], "little", signed=True), int.from_bytes(payload[i+2:i+4], "little", signed=True), int.from_bytes(payload[i+4:i+6], "little", signed=True), int.from_bytes(payload[i+6:i+8], "little", signed=True), int.from_bytes(payload[i+8:i+10], "little", signed=True)
-        flex_data = Flex(flex_thumb, flex_index, flex_middle, flex_ring, flex_pinky)
-        log.debug("Flex data: " + str(flex_data))
+        flex = Flex()
+        flex.thumb = parse_unsigned(payload[i:i+2])
+        flex.index = parse_unsigned(payload[i+2:i+4])
+        flex.middle = parse_unsigned(payload[i+4:i+6])
+        flex.ring = parse_unsigned(payload[i+6:i+8])
+        flex.pinky = parse_unsigned(payload[i+8:i+10])
+        log.debug("Flex data: " + str(flex))
 
-        sensor = Sensors(accel_data, gyro_data, flex_data)
-        log.info("sensor data: \n" + str(sensor))
+        sensors = Sensors(accel, gyro, flex)
+        log.info("sensor data: \n" + str(sensors))
 
-        return sensor
-    
+        return sensors
+
     else:
         # TODO: Add more commands here
         log.note("COMMAND NOT SUPPORTED ATM!")
@@ -95,7 +103,7 @@ def get_header_data(ser):
     # Get the response header, should be HEADER_SIZE bytes
     header_data = ser.read(HEADER_SIZE)
     log.debug("header_data: " + str(header_data))
-    
+
     status, length, checksum = header_data[0], header_data[1], header_data[2]
     log.debug("status: " + str(status))
     log.debug("length: " + str(length))
