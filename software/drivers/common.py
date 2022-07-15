@@ -19,7 +19,7 @@ class Accelerometer:
         self.z = z
 
     def __str__(self):
-        return "Accelerometer values: " + " (x, y, z): (" + str(self.x) + ", " + str(self.y) + ", " +  str(self.z) + ")\n"
+        return "| X: %6.0f | Y: %6.0f | Z: %6.0f |\n" % (self.x, self.y, self.z)
 
 class Gyro:
     def __init__(self, pitch=0, yaw=0, roll=0):
@@ -28,7 +28,7 @@ class Gyro:
         self.yaw = yaw
 
     def __str__(self):
-        return "Gyro values: " + " (roll, pitch, yaw): (" + str(self.roll) + ", " + str(self.pitch) + ", " +  str(self.yaw) + ")\n"
+        return "| PITCH: %6.0f | ROLL: %6.0f | YAW: %6.0f |\n" % (self.pitch, self.roll, self.yaw)
 
 
 class Flex:
@@ -40,4 +40,4 @@ class Flex:
         self.pinky = pinky
 
     def __str__(self):
-        return "Flex sensor values: " + " (thumb, index, middle, ring, pinky): (" + str(self.thumb) + ", " + str(self.index) + ", " +  str(self.middle) + ", " + str(self.ring) + ", " +  str(self.pinky) + ")\n"
+        return "| THUMB: %4.0f | INDEX: %4.0f | MIDDLE: %4.0f | RING: %4.0f | PINKY: %4.0f |\n" % (self.thumb, self.index, self.middle, self.ring, self.pinky)
