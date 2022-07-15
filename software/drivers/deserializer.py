@@ -27,17 +27,17 @@ def configure_and_open(port):
             bytesize=serial.EIGHTBITS
         )
     except Exception as e:
-        print("Error opening serial port: ", e)
-        exit(0)
+        log.error("Error opening serial port: ", e)
+        exit(-1)
 
     retries = 0
     # TODO (Shusil) : Maybe use exponential backoff
     while (True):
         if retries > MAX_RETRIES:
-            print("Tried more than: " + MAX_RETRIES + " times", "resetting the device")
+            log.error("Tried more than: " + MAX_RETRIES + " times", "resetting the device")
             # TODO: Send RESET command (not implemented on firmware yet)
         if not ping(ser):
-            print("Glove not responding!!! attempt:", retries)
+            log.warning("Glove not responding!!! attempt:", retries)
             retries += 1
         else:
             break
