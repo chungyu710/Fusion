@@ -64,42 +64,6 @@ void system_initialize(void)
 	}
 }
 
-void system_service_sensors_only(U8 request)
-{
-	Response response;
-	Sensors sensors;
-	void * payload;
-	Command command = request & MASK_COMMAND;
-	response.checksum = 3;
-
-	if (command == COMMAND_SENSORS)
-	{
-		accel_read(&sensors.accel);
-		gyro_read(&sensors.gyro);
-
-		// dummy data until flex is working
-		//flex_read(&sensors.flex);
-		sensors.flex.thumb = 6;
-		sensors.flex.index = 9;
-		sensors.flex.middle = 4;
-		sensors.flex.ring = 2;
-		sensors.flex.pinky = 0;
-
-		response.length = sizeof(sensors);
-		response.status = STATUS_SUCCESS;
-		payload = &sensors;
-	}
-	else
-	{
-		response.status = STATUS_ERROR;
-		response.length = 0;
-		payload = NULL;
-	}
-
-	uart_transmit(&response, sizeof(response));
-	uart_transmit(payload, response.length);
-}
-
 static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 {
 	Sensors sensors;

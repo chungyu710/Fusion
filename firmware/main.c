@@ -17,6 +17,6 @@ void main(void)
 		led_on();
 		uart_receive(&request, 1);
 		led_off();
-		system_service_sensors_only(request);
+		system_service(request);
 	}
 }

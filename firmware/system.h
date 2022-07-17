@@ -20,6 +20,5 @@ enum Status
 
 void system_initialize(void);
 void system_service(U8 request);
-void system_service_sensors_only(U8 request);
 
 #endif /* SYSTEM_H */
