@@ -4,8 +4,8 @@
 
 #include "system.h"
 
-#define LED        RC4
-#define TRIS_LED   TRISC4
+#define LED        RA5
+#define TRIS_LED   TRISA5
 
 #define LED_BLINK_DELAY_US   500000
 
