@@ -30,7 +30,7 @@ class Accelerometer:
         self.z = z
 
     def __str__(self):
-        return "| %sX%s: %6.0f | %sY%s: %6.0f | %sZ%s: %6.0f |" % (
+        return "| %sx%s: %6.0f | %sy%s: %6.0f | %sz%s: %6.0f |" % (
             colours.BLUE, colours.RESET, self.x,
             colours.BLUE, colours.RESET, self.y,
             colours.BLUE, colours.RESET, self.z
@@ -43,7 +43,7 @@ class Gyro:
         self.yaw = yaw
 
     def __str__(self):
-        return "| %sPITCH%s: %6.0f | %sROLL%s: %6.0f | %sYAW%s: %6.0f |" % (
+        return "| %spitch%s: %6.0f | %sroll%s: %6.0f | %syaw%s: %6.0f |" % (
             colours.RED, colours.RESET, self.pitch,
             colours.RED, colours.RESET, self.roll,
             colours.RED, colours.RESET, self.yaw
@@ -59,7 +59,7 @@ class Flex:
         self.pinky = pinky
 
     def __str__(self):
-        return "| %sTHUMB%s: %4.0f | %sINDEX%s: %4.0f | %sMIDDLE%s: %4.0f | %sRING%s: %4.0f | %sPINKY%s: %4.0f |" % (
+        return "| %sthumb%s: %4.0f | %sindex%s: %4.0f | %smiddle%s: %4.0f | %sring%s: %4.0f | %spinky%s: %4.0f |" % (
             colours.YELLOW, colours.RESET, self.thumb,
             colours.YELLOW, colours.RESET, self.index,
             colours.YELLOW, colours.RESET, self.middle,
