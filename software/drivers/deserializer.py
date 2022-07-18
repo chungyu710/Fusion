@@ -126,3 +126,21 @@ def get_all_sensor_data(ser):
 
     # print(payload)
     return create_object(command, payload)
+
+def get_all_sensor_data_multiple(ser, n):
+    responses = []
+    for i in range(n):
+        command = REQUEST_ALL_SENSORS
+        send(command, ser)
+
+        status, length, checksum = get_header_data(ser)
+
+        # TODO: Add logic for status and checksum
+        log.info(f"status: {status}")
+
+        # Get the payload of size "length"
+        payload = ser.read(length)
+
+        # print(payload)
+        responses.append(create_object(command, payload))
+    return responses

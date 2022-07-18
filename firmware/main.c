@@ -13,10 +13,14 @@ void main(void)
 
 	while (1)
 	{
-		U8 request;
 		led_on();
-		uart_receive(&request, 1);
+		while (fifo_is_empty(&rx_fifo));
 		led_off();
+		U8 request = fifo_read(&rx_fifo);
+
+		//uart_receive(&request, 1);
 		system_service(request);
+		//uart_vomit();
+		//_delay(100000);
 	}
 }

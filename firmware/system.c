@@ -70,7 +70,12 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 
 	accel_read(&sensors.accel);
 	gyro_read(&sensors.gyro);
-	flex_read(&sensors.flex);
+	//flex_read(&sensors.flex);
+	sensors.flex.thumb = 1;
+	sensors.flex.index = 2;
+	sensors.flex.middle = 3;
+	sensors.flex.ring = 4;
+	sensors.flex.pinky = 5;
 
 	Status status = STATUS_SUCCESS;
 
