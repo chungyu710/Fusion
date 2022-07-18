@@ -15,13 +15,14 @@ def deadzone(value, radius):
 	return value
 
 class Sensors:
-    def __init__(self, accel, gyro, flex):
+    def __init__(self, accel, gyro, flex, button):
         self.accel = accel
         self.gyro =  gyro
         self.flex = flex
+        self.button = button
 
     def __str__(self):
-        return f"{str(self.accel)}\n{str(self.gyro)}\n{str(self.flex)}\n"
+        return f"{str(self.accel)}\n{str(self.gyro)}\n{str(self.flex)}\n{str(self.button)}\n"
 
 class Accelerometer:
     def __init__(self, x=0, y=0, z=0):
@@ -66,3 +67,10 @@ class Flex:
             colours.YELLOW, colours.RESET, self.ring,
             colours.YELLOW, colours.RESET, self.pinky
         )
+
+class Button:
+    def __init__(self, pressed=0):
+        self.pressed = pressed
+
+    def __str__(self):
+        return "| %sbutton%s: %d |" % (colours.GREEN, colours.RESET, self.pressed)

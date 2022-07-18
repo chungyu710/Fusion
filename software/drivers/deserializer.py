@@ -89,8 +89,13 @@ def create_object(command, payload):
         flex.ring = parse_unsigned(payload[i+6:i+8])
         flex.pinky = parse_unsigned(payload[i+8:i+10])
         log.debug("Flex data: " + str(flex))
+        i += 10
 
-        sensors = Sensors(accel, gyro, flex)
+        button = Button()
+        button.pressed = payload[i]
+        log.debug("Button data: " + str(button))
+
+        sensors = Sensors(accel, gyro, flex, button)
         log.info("sensor data: \n" + str(sensors))
 
         return sensors
