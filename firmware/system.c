@@ -91,6 +91,7 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 	accel_read(&sensors.accel);
 	gyro_read(&sensors.gyro);
 	flex_read(&sensors.flex);
+	sensors.button = button_pressed();
 
 	Status status = STATUS_SUCCESS;
 
@@ -129,6 +130,13 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 		{
 			*data = &sensors.flex;
 			*length = sizeof(sensors.flex);
+			break;
+		}
+
+		case SENSOR_GROUP_BUTTON:
+		{
+			*data = &sensors.button;
+			*length = sizeof(sensors.button);
 			break;
 		}
 	}
