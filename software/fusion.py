@@ -46,9 +46,9 @@ if __name__ == '__main__':
 
         sensors.gyro.pitch = scale_sensors(50, sensors.gyro.pitch, 4000, -4000, 46)
         sensors.gyro.roll = scale_sensors(50, sensors.gyro.roll, 4000, -4000, 22)
-        sensors.gyro.yaw = scale_sensors(50, sensors.gyro.yaw, 4000, -4000, -42)
+        sensors.gyro.yaw = scale_sensors(100, sensors.gyro.yaw, 4000, -4000, -42)
 
-        #print(sensors)
+        print(sensors)
 
         pyautogui.move(sensors.gyro.yaw, sensors.gyro.pitch)
         #agent.perform_action(state.lower())

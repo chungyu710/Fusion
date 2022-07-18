@@ -21,5 +21,6 @@ enum Status
 void system_initialize(void);
 void system_abort(void);
 void system_service(U8 request);
+void system_reboot(void);
 
 #endif /* SYSTEM_H */
