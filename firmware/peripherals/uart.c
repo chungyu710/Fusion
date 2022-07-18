@@ -15,6 +15,8 @@ void uart_initialize(void) {
 	RCSTAbits.CREN    = 1;		// enables receiver circuitry
 	TXSTAbits.SYNC    = 0;		// configures to async operation
 	RCSTAbits.SPEN    = 1;		// enables EUSART and sets TX/CK pin as an output
+
+  PIE1bits.RCIE     = 1;    // enable interrupt on RX (triggers on each byte that is recieved)
 }
 
 void uart_transmit(void * data, U8 length) {
@@ -30,11 +32,10 @@ void uart_receive(void * data, U8 length) {
   char * ch = (char*)data;       // cast data element to char pointer
 
   for(int i = 0; i < length; ) {
-    // detect overrun errors
+    // detect and clear overrun errors
     if (RCSTAbits.OERR) {
       RCSTAbits.CREN = 0;
       RCSTAbits.CREN = 1;
-      system_abort();
     }
     if(PIR1bits.RCIF) {
       // if the RCIF is set, there is an unread character in the receive FIFO

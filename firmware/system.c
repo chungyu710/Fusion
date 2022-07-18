@@ -39,6 +39,17 @@ void system_initialize(void)
 	OSCCONbits.SCS = 1;           // use internal oscillator as system clock
 	OSCTUNEbits.TUN = 0b00000;    // use factory-calibrated frequency
 
+	// INTERRUPTS //
+
+	INTCONbits.GIE = 1;    // enable global interrupts
+	INTCONbits.PEIE = 1;   // enable peripherial interrupts
+
+	// WATCHDOG //
+
+	WDTCONbits.SWDTEN = 0;    // disable watchdog timer to prevent reset
+	OPTION_REGbits.PSA = 1;   // assign prescaler to watchdog timer instead of Timer 0
+	WDTCONbits.WDTPS = 0;     // set watchdog prescaler to fasest setting
+
 	// PERIPHERALS //
 
 	gpio_initialize();
@@ -172,8 +183,8 @@ void system_service(U8 request)
 
 		case COMMAND_RESET:
 		{
-			// reset here?  then send response?  or send response  first  then reset?
-			link_respond(STATUS_ERROR, NULL, 0);
+			link_respond(STATUS_SUCCESS, NULL, 0);
+			WDTCONbits.SWDTEN = 1;   // enable watchdog timer to force reset
 			break;
 		}
 	}

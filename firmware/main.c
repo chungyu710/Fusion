@@ -1,5 +1,6 @@
 #include <xc.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "system.h"
 
@@ -12,6 +13,14 @@ void main(void)
 	system_initialize();
 
 	while (1)
+	{
+
+	}
+}
+
+void __interrupt() isr()
+{
+	if (PIR1bits.RCIF)
 	{
 		U8 request;
 		uart_receive(&request, 1);
