@@ -81,7 +81,10 @@ void system_initialize(void)
 
 void system_abort(void)
 {
-	led_blink_forever();
+	while (button_released())
+	{
+		led_blink();
+	}
 }
 
 static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
@@ -196,8 +199,13 @@ void system_service(U8 request)
 		case COMMAND_RESET:
 		{
 			link_respond(STATUS_SUCCESS, NULL, 0);
-			WDTCONbits.SWDTEN = 1;   // enable watchdog timer to force reset
+			system_reboot();
 			break;
 		}
 	}
+}
+
+void system_reboot(void)
+{
+	WDTCONbits.SWDTEN = 1;   // enable watchdog timer to force reset
 }
