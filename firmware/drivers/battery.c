@@ -7,7 +7,7 @@
 #define TRIS_BATTERY    TRISA2
 #define ANSEL_BATTERY   ANS2
 
-#define LOW_BATTERY_mV   3300   // 3.3 V
+#define LOW_BATTERY_mV   3600   // 3.6 V (HC-05 LDO minimum input voltage)
 
 void battery_initialize(void)
 {
