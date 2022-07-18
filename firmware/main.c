@@ -1,12 +1,11 @@
 #include <xc.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 #include "system.h"
-
-#include "imu.h"
 #include "uart.h"
 #include "led.h"
+
+#include"tests/button.h"
 
 void main(void)
 {
@@ -14,7 +13,7 @@ void main(void)
 
 	while (1)
 	{
-
+		test_button();
 	}
 }
 
@@ -27,5 +26,9 @@ void __interrupt() isr()
 		led_on();
 		system_service(request);
 		led_off();
+	}
+	else
+	{
+		system_abort();
 	}
 }
