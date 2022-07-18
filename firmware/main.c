@@ -14,9 +14,9 @@ void main(void)
 	while (1)
 	{
 		U8 request;
-		led_on();
 		uart_receive(&request, 1);
-		led_off();
+		led_on();
 		system_service(request);
+		led_off();
 	}
 }

@@ -34,7 +34,7 @@ if __name__ == '__main__':
         start_time = time()
         sensors = get_all_sensor_data(serial_port)
         end_time = time()
-        print(f"latency: {end_time - start_time}")
+        #print(f"latency: {end_time - start_time}")
         #sensors.accel.x = scale_sensors(100, sensors.accel.x, SENSOR_MAX_OF_ACCEL_X, SENSOR_MIN_OF_ACCEL_X, NEUTRAL_OF_ACCEL_X)
         #sensors.accel.y = scale_sensors(100, sensors.accel.y, SENSOR_MAX_OF_ACCEL_Y, SENSOR_MIN_OF_ACCEL_Y, NEUTRAL_OF_ACCEL_Y)
         #sensors.accel.z = scale_sensors(100, sensors.accel.z, SENSOR_MAX_OF_ACCEL_Z, SENSOR_MIN_OF_ACCEL_Z, NEUTRAL_OF_ACCEL_Z)

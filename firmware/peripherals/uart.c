@@ -2,6 +2,8 @@
 
 #include <xc.h>
 
+#include "system.h"
+
 void uart_initialize(void) {
   // initilaize the SPBRGH, SPBRG register pair and the BRGH and BRG16 bits to achieve the desired baud rate of 9600 bits/sec
 	TXSTAbits.BRGH    = 1;
@@ -28,6 +30,12 @@ void uart_receive(void * data, U8 length) {
   char * ch = (char*)data;       // cast data element to char pointer
 
   for(int i = 0; i < length; ) {
+    // detect overrun errors
+    if (RCSTAbits.OERR) {
+      RCSTAbits.CREN = 0;
+      RCSTAbits.CREN = 1;
+      system_abort();
+    }
     if(PIR1bits.RCIF) {
       // if the RCIF is set, there is an unread character in the receive FIFO
       ch[i] = RCREG;
