@@ -53,7 +53,7 @@ void spi_transmit(void * data, U8 length)
 {
 	if (data == NULL)
 	{
-		return;
+		system_abort();
 	}
 
 	char * bytes = (char *)data;
@@ -72,7 +72,7 @@ void spi_receive(void * data, U8 length)
 {
 	if (data == NULL)
 	{
-		return;
+		system_abort();
 	}
 
 	char * bytes = (char *)data;

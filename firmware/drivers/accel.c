@@ -18,7 +18,7 @@ void accel_read(Accel * accel)
 {
 	if (accel == NULL)
 	{
-		return;
+		system_abort();
 	}
 
 	/*

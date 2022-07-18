@@ -16,8 +16,16 @@
 #define ANSEL_RING   // need to figure these out
 #define ANSEL_PINKY   // need to figure these out
 
-void flex_initialize(void);
-void flex_read(Flex * flex)
+void flex_initialize(void)
 {
 
+}
+
+void flex_read(Flex * flex)
+{
+	flex->thumb = 1;
+	flex->index = 2;
+	flex->middle = 3;
+	flex->ring = 4;
+	flex->pinky = 5;
 }

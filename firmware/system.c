@@ -64,6 +64,11 @@ void system_initialize(void)
 	}
 }
 
+void system_abort(void)
+{
+	led_blink_forever();
+}
+
 static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 {
 	Sensors sensors;

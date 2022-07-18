@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 #include "spi.h"
+#include "system.h"
 
 void imu_initialize(void)
 {
@@ -14,7 +15,7 @@ void imu_read(U8 address, void * data, U8 length)
 {
 	if (data == NULL)
 	{
-		return;
+		system_abort();
 	}
 
 	address |= 0x80;   // MSB of register address is 1
@@ -29,7 +30,7 @@ void imu_write(U8 address, void * data, U8 length)
 {
 	if (data == NULL)
 	{
-		return;
+		system_abort();
 	}
 
 	address &= 0x7F;   // MSB of address is 0
