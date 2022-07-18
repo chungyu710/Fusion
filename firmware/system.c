@@ -12,6 +12,7 @@
 #include "accel.h"
 #include "gyro.h"
 #include "link.h"
+#include "button.h"
 #include "battery.h"
 
 // ======= CONFIGURATION BITS ======= //
@@ -63,6 +64,9 @@ void system_initialize(void)
 	imu_initialize();
 	accel_initialize();
 	gyro_initialize();
+	flex_initialize();
+	button_initialize();
+	battery_initialize();
 
 	// STARTUP INDICATOR //
 
