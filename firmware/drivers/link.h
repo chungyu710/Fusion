@@ -20,14 +20,16 @@ struct Sensors
 	Accel accel;
 	Gyro gyro;
 	Flex flex;
+	U8 button;
 };
 
 enum Sensor_Group
 {
-	SENSOR_GROUP_ALL   = 0x0,
-	SENSOR_GROUP_ACCEL = 0x1,
-	SENSOR_GROUP_GYRO  = 0x2,
-	SENSOR_GROUP_FLEX  = 0x3,
+	SENSOR_GROUP_ALL     = 0x0,
+	SENSOR_GROUP_ACCEL   = 0x1,
+	SENSOR_GROUP_GYRO    = 0x2,
+	SENSOR_GROUP_FLEX    = 0x3,
+	SENSOR_GROUP_BUTTON  = 0x4
 };
 
 enum Command
