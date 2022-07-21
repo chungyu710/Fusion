@@ -22,7 +22,7 @@ class Sensors:
         self.button = button
 
     def __str__(self):
-        return f"{str(self.accel)}\n{str(self.gyro)}\n{str(self.flex)}\n{str(self.button)}\n"
+        return str(self.accel) + str(self.gyro) + str(self.flex) + str(self.button)
 
 class Accelerometer:
     def __init__(self, x=0, y=0, z=0):
@@ -31,10 +31,10 @@ class Accelerometer:
         self.z = z
 
     def __str__(self):
-        return "| %sx%s: %6.0f | %sy%s: %6.0f | %sz%s: %6.0f |" % (
-            colours.BLUE, colours.RESET, self.x,
-            colours.BLUE, colours.RESET, self.y,
-            colours.BLUE, colours.RESET, self.z
+        return "%s%6s%s: %6.0f\r\n%s%6s%s: %6.0f\r\n%s%6s%s: %6.0f\r\n" % (
+            colours.BLUE, "x", colours.RESET, self.x,
+            colours.BLUE, "y", colours.RESET, self.y,
+            colours.BLUE, "z", colours.RESET, self.z
         )
 
 class Gyro:
@@ -44,10 +44,10 @@ class Gyro:
         self.yaw = yaw
 
     def __str__(self):
-        return "| %spitch%s: %6.0f | %sroll%s: %6.0f | %syaw%s: %6.0f |" % (
-            colours.RED, colours.RESET, self.pitch,
-            colours.RED, colours.RESET, self.roll,
-            colours.RED, colours.RESET, self.yaw
+        return "%s%6s%s: %6.0f\r\n%s%6s%s: %6.0f\r\n%s%6s%s: %6.0f\r\n" % (
+            colours.RED, "pitch", colours.RESET, self.pitch,
+            colours.RED, "roll", colours.RESET, self.roll,
+            colours.RED, "yaw", colours.RESET, self.yaw
         )
 
 
@@ -60,12 +60,12 @@ class Flex:
         self.pinky = pinky
 
     def __str__(self):
-        return "| %sthumb%s: %4.0f | %sindex%s: %4.0f | %smiddle%s: %4.0f | %sring%s: %4.0f | %spinky%s: %4.0f |" % (
-            colours.YELLOW, colours.RESET, self.thumb,
-            colours.YELLOW, colours.RESET, self.index,
-            colours.YELLOW, colours.RESET, self.middle,
-            colours.YELLOW, colours.RESET, self.ring,
-            colours.YELLOW, colours.RESET, self.pinky
+        return "%s%6s%s: %6.0f\r\n%s%6s%s: %6.0f\r\n%s%6s%s: %6.0f\r\n%s%6s%s: %6.0f\r\n%s%6s%s: %6.0f\r\n" % (
+            colours.YELLOW, "thumb", colours.RESET, self.thumb,
+            colours.YELLOW, "index", colours.RESET, self.index,
+            colours.YELLOW, "middle", colours.RESET, self.middle,
+            colours.YELLOW, "ring", colours.RESET, self.ring,
+            colours.YELLOW, "pinky", colours.RESET, self.pinky
         )
 
 class Button:
@@ -73,4 +73,4 @@ class Button:
         self.pressed = pressed
 
     def __str__(self):
-        return "| %sbutton%s: %d |" % (colours.GREEN, colours.RESET, self.pressed)
+        return "%s%6s%s: %6d\r\n" % (colours.GREEN, "button", colours.RESET, self.pressed)
