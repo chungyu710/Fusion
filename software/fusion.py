@@ -1,7 +1,7 @@
 from drivers.state_lookup import *
 from drivers.deserializer import *
 from drivers.calibration_processor import *
-from time import time
+from time import time, sleep
 from agent import *
 import argparse
 
@@ -9,7 +9,7 @@ pyautogui.PAUSE = 0   # reduces pyautogui lag
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--log_level', default='INFO')
+    parser.add_argument('--log_level', default='DEBUG')
     parser.add_argument('--port', required=True)
 
     args = parser.parse_args()
@@ -27,51 +27,82 @@ if __name__ == '__main__':
     SENSOR_MAX_OF_ACCEL_Y = 8200
     SENSOR_MAX_OF_ACCEL_Z = 8200
 
+    SENSOR_MAX_OF_GYRO = 4000
+    SENSOR_MIN_OF_GYRO = -4000
+
+    SENSOR_MIN_OF_FLEX = 529
+    SENSOR_MAX_OF_FLEX = 816
+
+    NEUTRAL_OF_FLEX = 676
+    NEUTRAL_OF_PITCH = 46
+    NEUTRAL_OF_ROLL = 22
+    NEUTRAL_OF_YAW = -42
+
+    MOUSE_MODE = "00000"
+    CLICK_MODE = "01000"
+    RIGHT_CLICK_MODE = "01100"
+    DOUBLE_CLICK_MODE = "10000"
+    SWIPE_MODE = "01110"
+    SCROLL_MODE = "11000"
+    RECENTER = "11111"
+
     serial_port = configure_and_open(PORT)
     agent = Agent()
+    previousState = None
+    maxWidth, maxHeight = pyautogui.size()
 
     while True:
-        start_time = time()
         sensors = get_all_sensor_data(serial_port)
-        end_time = time()
-        #print(f"latency: {end_time - start_time}")
-        #sensors.accel.x = scale_sensors(100, sensors.accel.x, SENSOR_MAX_OF_ACCEL_X, SENSOR_MIN_OF_ACCEL_X, NEUTRAL_OF_ACCEL_X)
-        #sensors.accel.y = scale_sensors(100, sensors.accel.y, SENSOR_MAX_OF_ACCEL_Y, SENSOR_MIN_OF_ACCEL_Y, NEUTRAL_OF_ACCEL_Y)
-        #sensors.accel.z = scale_sensors(100, sensors.accel.z, SENSOR_MAX_OF_ACCEL_Z, SENSOR_MIN_OF_ACCEL_Z, NEUTRAL_OF_ACCEL_Z)
-        #print(sensors.accel)
 
-        #state = get_state_based_on_accel(sensors.accel)
-        #print(state)
-        log.disable()
+        sensors.gyro.pitch = scale_sensors(100, sensors.gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
+        sensors.gyro.roll = scale_sensors(100, sensors.gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
+        sensors.gyro.yaw = scale_sensors(100, sensors.gyro.yaw, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_YAW)
 
-        sensors.gyro.pitch = scale_sensors(50, sensors.gyro.pitch, 4000, -4000, 46)
-        sensors.gyro.roll = scale_sensors(50, sensors.gyro.roll, 4000, -4000, 22)
-        sensors.gyro.yaw = scale_sensors(100, sensors.gyro.yaw, 4000, -4000, -42)
+        if(sensors.gyro.yaw > -3 and sensors.gyro.yaw < 3):
+            sensors.gyro.yaw = 0
+        if(sensors.gyro.pitch > -3 and sensors.gyro.pitch < 3):
+            sensors.gyro.pitch = 0
+        
+        sensors.flex.thumb = scale_sensors(50, sensors.flex.thumb, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
+        sensors.flex.index = scale_sensors(50, sensors.flex.index, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
+        sensors.flex.middle = scale_sensors(50, sensors.flex.middle, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
+        sensors.flex.ring = scale_sensors(50, sensors.flex.ring, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
+        sensors.flex.pinky = scale_sensors(50, sensors.flex.pinky, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
 
+        state = get_stated_based_on_flex(sensors.flex)
+        state = state.lower()
+        log.debug("State: " + str(state))
+
+        if (state in [MOUSE_MODE, CLICK_MODE, RIGHT_CLICK_MODE]):  
+            if(state == CLICK_MODE):
+                if previousState != CLICK_MODE: 
+                    pyautogui.mouseDown()
+            elif (state == RIGHT_CLICK_MODE):
+                pyautogui.mouseDown(button='right')
+            else:
+                print("about to do mouse up hfiafiuhiduasfidhshfsdfuisdiufisudfhsiudfhsdfhsdi")
+                pyautogui.mouseUp()
+                pyautogui.mouseUp(button='right')
+                          
+            pyautogui.move(sensors.gyro.yaw, sensors.gyro.pitch)
+
+        elif state == DOUBLE_CLICK_MODE: 
+            if(not previousState == DOUBLE_CLICK_MODE):
+                # pyautogui.doubleClick()
+                pass
+
+        elif state == SCROLL_MODE:
+            if sensors.gyro.pitch > 0:
+                pyautogui.scroll(1)
+            elif sensors.gyro.pitch < 0:
+                pyautogui.scroll(-1)
+                
+        elif state == RECENTER:
+            pyautogui.moveTo(maxWidth // 2, maxHeight // 2)
+            
+        else:
+            log.debug("not in a recognizable state")
+
+        previousState = state
         print(sensors)
-
-        pyautogui.move(sensors.gyro.yaw, sensors.gyro.pitch)
         #agent.perform_action(state.lower())
-
-# code from agent
-# agent = Agent()
-# try:
-#     while True:
-#         # TODO: pass in acceleration array
-#         state = state_lookup.get_state_based_on_accel("pass in acceleration array here")
-#         agent.perform_action(state.lower())
-# except KeyboardInterrupt:
-#     print('\n')
-
-# neutral
-# x min: -80
-# x max: -30
-
-# y min: -540
-# y max: -520
-
-# z min: 8310
-# z max: 8330
-
-# up
-# x min:

@@ -1,97 +1,231 @@
 {
-    "START" : {
-        "accel": {
-            "x" :{"min": -2, "max": 2},
-            "y": {"min": -2, "max": 2},
-            "z":{"min": -2, "max": 2}
-        },
-        "gyro": {
-            "pitch": {"min": 10, "max": 20},
-            "yaw": {"min": 10, "max": 20},
-            "roll":{"min": 10, "max": 20}
-        },
-        "flex": {
-            "thumb": {"min": 20, "max": 30},
-            "index": {"min": 20, "max": 30},
-            "middle":{"min": 20, "max": 30},
-            "ring":{"min": 20, "max": 30},
-            "pinky":{"min": 20, "max": 30}
-        }
+  "START": {
+    "accel": {
+      "x": { "min": -2, "max": 2 },
+      "y": { "min": -2, "max": 2 },
+      "z": { "min": -2, "max": 2 }
     },
-    "MOVE_LEFT" : {
-        "accel": {
-            "x" :{"min": 3, "max": 50},
-            "y": {"min": -1000000, "max": 1000000},
-            "z":{"min": -1000000, "max": 1000000}
-        },
-        "gyro": {
-            "pitch": {"min": 10, "max": 20},
-            "yaw": {"min": 10, "max": 20},
-            "roll":{"min": 10, "max": 20}
-        },
-        "flex": {
-            "thumb": {"min": 20, "max": 30},
-            "index": {"min": 20, "max": 30},
-            "middle":{"min": 20, "max": 30},
-            "ring":{"min": 20, "max": 30},
-            "pinky":{"min": 20, "max": 30}
-        }
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
     },
-    "MOVE_RIGHT" : {
-        "accel": {
-            "x" :{"min": -50, "max": -3},
-            "y": {"min": -1000000, "max": 1000000},
-            "z":{"min": -1000000, "max": 1000000}
-        },
-        "gyro": {
-            "pitch": {"min": 10, "max": 20},
-            "yaw": {"min": 10, "max": 20},
-            "roll":{"min": 10, "max": 20}
-        },
-        "flex": {
-            "thumb": {"min": 20, "max": 30},
-            "index": {"min": 20, "max": 30},
-            "middle":{"min": 20, "max": 30},
-            "ring":{"min": 20, "max": 30},
-            "pinky":{"min": 20, "max": 30}
-        }
-    },
-    "MOVE_UP" : {
-        "accel": {
-            "x" :{"min": -1000000, "max": 1000000},
-            "y": {"min": -1000000, "max": 1000000},
-            "z":{"min": 3, "max": 50}
-        },
-        "gyro": {
-            "pitch": {"min": 10, "max": 20},
-            "yaw": {"min": 10, "max": 20},
-            "roll":{"min": 10, "max": 20}
-        },
-        "flex": {
-            "thumb": {"min": 20, "max": 30},
-            "index": {"min": 20, "max": 30},
-            "middle":{"min": 20, "max": 30},
-            "ring":{"min": 20, "max": 30},
-            "pinky":{"min": 20, "max": 30}
-        }
-    },
-    "MOVE_DOWN" : {
-        "accel": {
-            "x" :{"min": -1000000, "max": 1000000},
-            "y": {"min": -1000000, "max": 1000000},
-            "z":{"min": -50, "max": -3}
-        },
-        "gyro": {
-            "pitch": {"min": 10, "max": 20},
-            "yaw": {"min": 10, "max": 20},
-            "roll":{"min": 10, "max": 20}
-        },
-        "flex": {
-            "thumb": {"min": 20, "max": 30},
-            "index": {"min": 20, "max": 30},
-            "middle":{"min": 20, "max": 30},
-            "ring":{"min": 20, "max": 30},
-            "pinky":{"min": 20, "max": 30}
-        }
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
     }
+  },
+  "MOVE_LEFT": {
+    "accel": {
+      "x": { "min": 3, "max": 50 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -1000000, "max": 1000000 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  },
+  "MOVE_RIGHT": {
+    "accel": {
+      "x": { "min": -50, "max": -3 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -1000000, "max": 1000000 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  },
+  "MOVE_UP": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": 3, "max": 50 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  },
+  "MOVE_DOWN": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -50, "max": -3 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  },
+  "00000": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -50, "max": -3 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": -30, "max": 0 },
+      "index": { "min": -30, "max": 0 },
+      "middle": { "min": -30, "max": 0 },
+      "ring": { "min": -30, "max": 0 },
+      "pinky": { "min": -30, "max": 0 }
+    }
+  },
+
+  "01000": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -50, "max": -3 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": -30, "max": -0 },
+      "index": { "min": 10, "max": 30 },
+      "middle": { "min": -30, "max": -0 },
+      "ring": { "min": -30, "max": -0 },
+      "pinky": { "min": -30, "max": -0 }
+    }
+  },
+  "01100": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -50, "max": -3 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  },
+  "01110": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -50, "max": -3 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  },
+  "11000": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -50, "max": -3 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  },
+  "11111": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -50, "max": -3 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  },
+  "10000": {
+    "accel": {
+      "x": { "min": -1000000, "max": 1000000 },
+      "y": { "min": -1000000, "max": 1000000 },
+      "z": { "min": -50, "max": -3 }
+    },
+    "gyro": {
+      "pitch": { "min": 10, "max": 20 },
+      "yaw": { "min": 10, "max": 20 },
+      "roll": { "min": 10, "max": 20 }
+    },
+    "flex": {
+      "thumb": { "min": 20, "max": 30 },
+      "index": { "min": 20, "max": 30 },
+      "middle": { "min": 20, "max": 30 },
+      "ring": { "min": 20, "max": 30 },
+      "pinky": { "min": 20, "max": 30 }
+    }
+  }
 }
