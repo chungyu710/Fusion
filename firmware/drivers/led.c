@@ -7,7 +7,8 @@
 #define LED        RA5
 #define TRIS_LED   TRISA5
 
-#define LED_BLINK_DELAY_US   500000
+#define BLINK_DELAY_US   500000
+#define PULSE_DELAY_US   10
 
 void led_initialize(void)
 {
@@ -27,15 +28,37 @@ void led_off(void)
 void led_blink(void)
 {
 	led_on();
-	_delay(LED_BLINK_DELAY_US);
+	_delay(BLINK_DELAY_US);
 	led_off();
-	_delay(LED_BLINK_DELAY_US);
+	_delay(BLINK_DELAY_US);
 }
 
-void led_blink_forever(void)
+static void pulse(U8 brightness)
 {
-	while (1)
+	led_on();
+
+	for (U8 i = 0; i < brightness; i++)
 	{
-		led_blink();
+		_delay(PULSE_DELAY_US);
+	}
+
+	led_off();
+
+	for (U8 i = brightness; i < 255; i++)
+	{
+		_delay(PULSE_DELAY_US);
+	}
+}
+
+void led_pulse(void)
+{
+	for (U8 brightness = 0; brightness < 255; brightness++)
+	{
+		pulse(brightness);
+	}
+
+	for (U8 brightness = 255; brightness > 0; brightness--)
+	{
+		pulse(brightness);
 	}
 }

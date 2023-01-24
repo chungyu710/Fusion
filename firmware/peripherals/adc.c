@@ -18,7 +18,7 @@ void adc_initialize(void)
 	// disable all ADC channels
 	ANSEL  = 0b00000000;
 	ANSELH = 0b00000000;
-	
+
 	ADCON0bits.ADFM    = 1;   // right justify result
 	ADCON0bits.VCFG    = 0;	  // use power supply voltage as reference voltage
 	ADCON0bits.CHS     = 0;   // reset channel to AN0
@@ -29,8 +29,7 @@ void adc_initialize(void)
 U16 adc_read(ADC_Channel channel)
 {
 	ADCON0bits.CHS = channel;
-	ADCON0bits.GO_DONE = 1;										// set the GO/DONEn bit
-	while(ADCON0bits.GO_DONE == 1) {}					// monitor GO/DONEn bit until it clears
-	
-	return ((U16)ADRESH << 8) + (U16)ADRESL;	// read ADRESH bits
+	ADCON0bits.GO_DONE = 1;                    // set the GO/DONE bit
+	while(ADCON0bits.GO_DONE == 1) {}          // monitor GO/DONE bit until it clears
+	return ((U16)ADRESH << 8) | (U16)ADRESL;   // read ADRESH bits
 }

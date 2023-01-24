@@ -8,5 +8,8 @@
 
 void test_led(void)
 {
-	led_blink_forever();
+	while (1)
+	{
+		led_blink();
+	}
 }

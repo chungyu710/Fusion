@@ -4,6 +4,7 @@
 #include "system.h"
 #include "uart.h"
 #include "led.h"
+#include "battery.h"
 
 #include"tests/button.h"
 
@@ -13,7 +14,12 @@ void main(void)
 
 	while (1)
 	{
-		test_button();
+		// TODO: remove service from interrupt and use an RX buffer instead
+		// TODO: check battery on a periodic timer
+		if (battery_low())
+		{
+			led_pulse();
+		}
 	}
 }
 
