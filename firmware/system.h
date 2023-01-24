@@ -13,9 +13,9 @@ typedef enum Status Status;
 
 enum Status
 {
-	STATUS_SUCCESS         = 0x0,
-	STATUS_ERROR           = 0x1,
-	STATUS_LOW_BATTERY     = 0x2
+	STATUS_SUCCESS     = 0x0,
+	STATUS_ERROR       = 0x1,
+	STATUS_LOW_BATTERY = 0x2
 };
 
 void system_initialize(void);
