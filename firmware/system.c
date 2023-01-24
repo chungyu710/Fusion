@@ -29,8 +29,8 @@
 
 // ================================== //
 
-#define LED_DELAY    200000
-#define LED_BLINKS   3
+#define LED_DELAY_US   200000
+#define LED_BLINKS     3
 
 void system_initialize(void)
 {
@@ -73,9 +73,9 @@ void system_initialize(void)
 	for (int i = 0; i < LED_BLINKS; i++)
 	{
 		led_on();
-		_delay(LED_DELAY);
+		_delay(LED_DELAY_US);
 		led_off();
-		_delay(LED_DELAY);
+		_delay(LED_DELAY_US);
 	}
 }
 
@@ -85,6 +85,8 @@ void system_abort(void)
 	{
 		led_blink();
 	}
+
+	system_reboot();
 }
 
 static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
