@@ -11,7 +11,7 @@ void imu_initialize(void)
 {
 	imu_write_register(CTRL3_C, 0x01);   // reset the IMU and set all registers to their default value
 
-	if (imu_read_register(WHO_AM_I) != 0x6A)
+	if (imu_read_register(WHO_AM_I) != 0x6C)
 	{
 		system_abort();
 	}
