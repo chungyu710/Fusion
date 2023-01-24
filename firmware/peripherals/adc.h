@@ -25,18 +25,18 @@ typedef enum ADC_Channel ADC_Channel;
 
 enum ADC_Channel
 {
-	AN0,
-	AN1,
-	AN2,
-	AN3,
-	AN4,
-	AN5,
-	AN6,
-	AN7,
-	AN8,
-	AN9,
-	AN10,
-	AN11
+	AN0  = 0U,
+	AN1  = 1U,
+	AN2  = 2U,
+	AN3  = 3U,
+	AN4  = 4U,
+	AN5  = 5U,
+	AN6  = 6U,
+	AN7  = 7U,
+	AN8  = 8U,
+	AN9  = 9U,
+	AN10 = 10U,
+	AN11 = 11U
 };
 
 void adc_initialize(void);
