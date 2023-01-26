@@ -24,6 +24,7 @@ enum Abort
 	ABORT_RX_QUEUE_FULL,
 	ABORT_NULL_POINTER,
 	ABORT_IMU_OFFLINE,
+	ABORT_LOW_BATTERY,
 
 	ABORT_count
 };
@@ -32,6 +33,5 @@ void system_initialize(void);
 void system_abort(Abort reason);
 void system_service(U8 request);
 void system_reboot(void);
-void system_low_battery(void);
 
 #endif /* SYSTEM_H */

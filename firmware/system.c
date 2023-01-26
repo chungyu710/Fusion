@@ -34,9 +34,10 @@
 #define LED_BLINKS     3
 
 static char * system_abort_reasons [ABORT_count] = {
-	"RX QUEUE FULL\r\n",
-	"NULL POINTER\r\n",
-	"IMU OFFLINE\r\n"
+	"RX QUEUE FULL",
+	"NULL POINTER",
+	"IMU OFFLINE",
+	"LOW BATTERY"
 };
 
 void system_initialize(void)
@@ -93,12 +94,22 @@ void system_abort(Abort abort)
 {
 	while (button_released())
 	{
-		led_blink();
+		if (abort == ABORT_LOW_BATTERY)
+		{
+			led_pulse();   // Fade LED in and out during low battery.
+		}
+		else
+		{
+			led_blink();   // Blink LED during firmware errors.
+		}
 
 		if (abort < ABORT_count)
 		{
 			char * reason = system_abort_reasons[abort];
+			char * newline = "\r\n";
+
 			uart_transmit(reason, strlen(reason) + 1);
+			uart_transmit(newline, strlen(newline) + 1);
 		}
 	}
 
@@ -220,15 +231,4 @@ void system_service(U8 request)
 void system_reboot(void)
 {
 	WDTCONbits.SWDTEN = 1;   // enable watchdog timer to force reset
-}
-
-void system_low_battery(void)
-{
-	// Hang firmware due to low battery voltage.
-	led_on();
-
-	while (1)
-	{
-		led_pulse();
-	}
 }

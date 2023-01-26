@@ -7,11 +7,12 @@
 #include "battery.h"
 #include "queue.h"
 
-#define RX_BUFFER_SIZE       5
-#define BATTERY_POSTSCALER   100
+#define RX_BUFFER_SIZE          5
+#define BATTERY_POSTSCALER      100
+#define UNDERVOLT_MAX_COUNT   5
 
 static Queue queue;
-static volatile bool battery = false;
+static volatile bool check_battery = false;
 
 void main(void)
 {
@@ -32,14 +33,22 @@ void main(void)
 			led_off();
 		}
 
-		if (battery)
+		if (check_battery)
 		{
+			static U8 count = 0;
+
 			if (battery_low())
 			{
-				system_low_battery();
+				count++;
 			}
 
-			battery = false;
+			if (count == UNDERVOLT_MAX_COUNT)
+			{
+				count = 0;
+				system_abort(ABORT_LOW_BATTERY);
+			}
+
+			check_battery = false;
 		}
 	}
 }
@@ -63,7 +72,7 @@ void __interrupt() isr()
 		if (postscaler == BATTERY_POSTSCALER)
 		{
 			postscaler = 0;
-			battery = true;
+			check_battery = true;
 		}
 
 		PIR1bits.TMR2IF = 0;   // clear Timer2 interrupt flag
