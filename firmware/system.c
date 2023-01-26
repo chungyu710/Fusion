@@ -205,3 +205,13 @@ void system_reboot(void)
 {
 	WDTCONbits.SWDTEN = 1;   // enable watchdog timer to force reset
 }
+
+void system_low_battery(void)
+{
+	// Hang firmware due to low battery voltage.
+
+	while (1)
+	{
+		led_pulse();
+	}
+}

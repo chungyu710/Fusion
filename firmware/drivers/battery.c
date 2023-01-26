@@ -9,6 +9,12 @@
 #define ANSEL_BATTERY     ANS2
 #define CHANNEL_BATTERY   AN2
 
+/* The HC-05 bluetooth module is directly
+ * powered from the battery since it has
+ * its own LDO.  The minimim input voltage
+ * is 3.6 V, so if the battery drops below
+ * this voltage, Fusion cannot operate reliably. */
+
 #define LOW_BATTERY_mV   3600   // 3.6 V (HC-05 LDO minimum input voltage)
 #define MAX_VOLTAGE_mV   5000   // 5 V (ADRES = 1023)
 
@@ -16,6 +22,15 @@ void battery_initialize(void)
 {
 	TRIS_BATTERY = INPUT;
 	ANSEL_BATTERY = ANALOGUE;
+
+	adc_read(CHANNEL_BATTERY);   // garbage first read
+
+	if (battery_low())
+	{
+		system_low_battery();
+	}
+
+
 }
 
 U16 battery_voltage(void)
