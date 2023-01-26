@@ -10,6 +10,7 @@
 #include "types.h"
 
 typedef enum Status Status;
+typedef enum Abort Abort;
 
 enum Status
 {
@@ -18,8 +19,17 @@ enum Status
 	STATUS_LOW_BATTERY = 0x2
 };
 
+enum Abort
+{
+	ABORT_RX_QUEUE_FULL,
+	ABORT_NULL_POINTER,
+	ABORT_IMU_OFFLINE,
+
+	ABORT_count
+};
+
 void system_initialize(void);
-void system_abort(void);
+void system_abort(Abort reason);
 void system_service(U8 request);
 void system_reboot(void);
 void system_low_battery(void);

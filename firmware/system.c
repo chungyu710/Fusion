@@ -2,6 +2,7 @@
 
 #include <xc.h>
 #include <stddef.h>
+#include <string.h>
 
 #include "gpio.h"
 #include "adc.h"
@@ -32,6 +33,12 @@
 #define LED_DELAY_US   200000
 #define LED_BLINKS     3
 
+static char * system_abort_reasons [ABORT_count] = {
+	"RX QUEUE FULL\r\n",
+	"NULL POINTER\r\n",
+	"IMU OFFLINE\r\n"
+};
+
 void system_initialize(void)
 {
 	// OSCILLATOR //
@@ -42,7 +49,6 @@ void system_initialize(void)
 
 	// INTERRUPTS //
 
-	INTCONbits.GIE = 1;    // enable global interrupts
 	INTCONbits.PEIE = 1;   // enable peripherial interrupts
 
 	// WATCHDOG //
@@ -77,13 +83,23 @@ void system_initialize(void)
 		led_off();
 		_delay(LED_DELAY_US);
 	}
+
+	// ENABLE ALL INTERRUPTS //
+
+	INTCONbits.GIE = 1;
 }
 
-void system_abort(void)
+void system_abort(Abort abort)
 {
 	while (button_released())
 	{
 		led_blink();
+
+		if (abort < ABORT_count)
+		{
+			char * reason = system_abort_reasons[abort];
+			uart_transmit(reason, strlen(reason) + 1);
+		}
 	}
 
 	system_reboot();

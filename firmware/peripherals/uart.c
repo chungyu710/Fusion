@@ -19,7 +19,7 @@ void uart_initialize(void) {
   PIE1bits.RCIE     = 1;    // enable interrupt on RX (triggers on each byte that is recieved)
 }
 
-void uart_transmit(void * data, U8 length) {
+void uart_transmit(void * data, U16 length) {
   char * ch = (char*)data;      // cast data element to char pointer
 
   for(int i = 0; i < length; i++) {
@@ -28,7 +28,7 @@ void uart_transmit(void * data, U8 length) {
   }
 }
 
-void uart_receive(void * data, U8 length) {
+void uart_receive(void * data, U16 length) {
   char * ch = (char*)data;       // cast data element to char pointer
 
   for(int i = 0; i < length; ) {

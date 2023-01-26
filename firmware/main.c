@@ -10,13 +10,17 @@
 #define RX_BUFFER_SIZE   5
 
 static Queue queue;
+//static bool initialized = false;
 
 void main(void)
 {
-	system_initialize();
-
+	// Initialize queue before system_initialize() enables interrupts.
 	U8 rx_buffer [RX_BUFFER_SIZE];
 	queue_initialize(&queue, rx_buffer, RX_BUFFER_SIZE);
+
+	system_initialize();
+
+	//initialized = true;
 
 	while (1)
 	{
@@ -43,7 +47,7 @@ void __interrupt() isr()
 	{
 		if (!queue_enqueue(&queue, RCREG))
 		{
-			system_abort();
+			system_abort(ABORT_RX_QUEUE_FULL);
 		}
 	}
 }

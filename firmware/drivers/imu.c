@@ -8,16 +8,18 @@
 #include "led.h"
 
 #define BOOT_DELAY_US   10000
-
+#include <stdio.h>
 void imu_initialize(void)
 {
 	imu_write_register(CTRL3_C, 0x01);   // reset the IMU and set all registers to their default value
 	_delay(BOOT_DELAY_US);               // Allow IMU to boot before reading the WHO_AM_I register
 
+	//while (1) printf("%x\r\n", imu_read_register(WHO_AM_I));
+
 	// WHO_AM_I is hardcoded to 0x6C on the IMU
 	if (imu_read_register(WHO_AM_I) != 0x6C)
 	{
-		system_abort();
+		system_abort(ABORT_IMU_OFFLINE);
 	}
 }
 
@@ -25,7 +27,7 @@ void imu_read(U8 address, void * data, U8 length)
 {
 	if (data == NULL)
 	{
-		system_abort();
+		system_abort(ABORT_NULL_POINTER);
 	}
 
 	address |= 0x80;   // MSB of register address is 1
@@ -40,7 +42,7 @@ void imu_write(U8 address, void * data, U8 length)
 {
 	if (data == NULL)
 	{
-		system_abort();
+		system_abort(ABORT_NULL_POINTER);
 	}
 
 	address &= 0x7F;   // MSB of address is 0
