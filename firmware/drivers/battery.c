@@ -18,17 +18,12 @@
 #define LOW_BATTERY_mV   3600   // 3.6 V (HC-05 LDO minimum input voltage)
 #define MAX_VOLTAGE_mV   5000   // 5 V (ADRES = 1023)
 
+#define BOOT_DELAY_US   10000   // 10 ms
+
 void battery_initialize(void)
 {
 	TRIS_BATTERY = INPUT;
 	ANSEL_BATTERY = ANALOGUE;
-
-	adc_read(CHANNEL_BATTERY);   // garbage first read
-
-	if (battery_low())
-	{
-		system_low_battery();
-	}
 
 	//// TIMER 2 //
 
