@@ -225,6 +225,7 @@ void system_reboot(void)
 void system_low_battery(void)
 {
 	// Hang firmware due to low battery voltage.
+	led_on();
 
 	while (1)
 	{

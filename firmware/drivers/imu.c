@@ -8,13 +8,11 @@
 #include "led.h"
 
 #define BOOT_DELAY_US   10000
-#include <stdio.h>
+
 void imu_initialize(void)
 {
 	imu_write_register(CTRL3_C, 0x01);   // reset the IMU and set all registers to their default value
 	_delay(BOOT_DELAY_US);               // Allow IMU to boot before reading the WHO_AM_I register
-
-	//while (1) printf("%x\r\n", imu_read_register(WHO_AM_I));
 
 	// WHO_AM_I is hardcoded to 0x6C on the IMU
 	if (imu_read_register(WHO_AM_I) != 0x6C)

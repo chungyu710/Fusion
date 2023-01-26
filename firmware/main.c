@@ -7,10 +7,11 @@
 #include "battery.h"
 #include "queue.h"
 
-#define RX_BUFFER_SIZE   5
+#define RX_BUFFER_SIZE       5
+#define BATTERY_POSTSCALER   100
 
 static Queue queue;
-//static bool initialized = false;
+static volatile bool battery = false;
 
 void main(void)
 {
@@ -19,8 +20,6 @@ void main(void)
 	queue_initialize(&queue, rx_buffer, RX_BUFFER_SIZE);
 
 	system_initialize();
-
-	//initialized = true;
 
 	while (1)
 	{
@@ -33,11 +32,15 @@ void main(void)
 			led_off();
 		}
 
-		// TODO: check battery on a periodic timer
-		//if (battery_low())
-		//{
-		//	led_pulse();
-		//}
+		if (battery)
+		{
+			if (battery_low())
+			{
+				system_low_battery();
+			}
+
+			battery = false;
+		}
 	}
 }
 
@@ -49,5 +52,20 @@ void __interrupt() isr()
 		{
 			system_abort(ABORT_RX_QUEUE_FULL);
 		}
+	}
+	else if (PIR1bits.TMR2IF)
+	{
+		// Check battery on first interrupt after boot.
+		static volatile U8 postscaler = 0;
+
+		postscaler++;    // increment prescaler
+
+		if (postscaler == BATTERY_POSTSCALER)
+		{
+			postscaler = 0;
+			battery = true;
+		}
+
+		PIR1bits.TMR2IF = 0;   // clear Timer2 interrupt flag
 	}
 }
