@@ -22,10 +22,10 @@ U16 battery_voltage(void)
 {
 	/*
 	The PCB contains a resistor divider that scales a 5 V
-	suppy voltage down to a 3.3V range.  The lithium-ion
+	suppy voltage down to a 3.3 V range.  The lithium-ion
 	battery has a maximum voltage of 4.2 V and a typical
 	voltage of 3.7 V.  However, the wired connection can
-	be 5V.  This means that an ADC reading of 1023
+	be 5 V.  This means that an ADC reading of 1023
 	corresponds to 5 V, so some post processing is required
 	to convert this to a voltage in mV.
 	*/

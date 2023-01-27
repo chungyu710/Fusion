@@ -156,32 +156,23 @@ void system_service(U8 request)
 
 	switch (command)
 	{
-		default:
-		{
-			link_respond(STATUS_ERROR, NULL, 0);
-			break;
-		}
-
 		case COMMAND_PING:
 		{
 			link_respond(STATUS_SUCCESS, NULL, 0);
 			break;
 		}
-
 		case COMMAND_ACCEL_RANGE:
 		{
 			Status status = accel_set_range(metadata);
 			link_respond(status, NULL, 0);
 			break;
 		}
-
 		case COMMAND_GYRO_RANGE:
 		{
 			Status status = gyro_set_range(metadata);
 			link_respond(status, NULL, 0);
 			break;
 		}
-
 		case COMMAND_SENSORS:
 		{
 			void * data;
@@ -190,18 +181,21 @@ void system_service(U8 request)
 			link_respond(status, data, length);
 			break;
 		}
-
 		case COMMAND_BATTERY:
 		{
 			U16 voltage = battery_voltage();
 			link_respond(STATUS_SUCCESS, &voltage, sizeof(voltage));
 			break;
 		}
-
 		case COMMAND_RESET:
 		{
 			link_respond(STATUS_SUCCESS, NULL, 0);
 			system_reboot();
+			break;
+		}
+		default:
+		{
+			link_respond(STATUS_ERROR, NULL, 0);
 			break;
 		}
 	}
