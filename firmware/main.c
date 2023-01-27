@@ -6,8 +6,6 @@
 #include "led.h"
 #include "battery.h"
 
-#include"tests/button.h"
-
 void main(void)
 {
 	system_initialize();

@@ -21,7 +21,7 @@ struct Sensors
 	Gyro gyro;
 	Flex flex;
 	U8 button;
-};
+} __attribute((packed)) ;
 
 enum Sensor_Group
 {
@@ -47,7 +47,7 @@ struct Response
 	U8 status;
 	U8 length;
 	U8 checksum;
-};
+} __attribute((packed));
 
 void link_respond(Status status, void * data, U8 length);
 

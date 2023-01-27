@@ -12,7 +12,7 @@ struct Gyro
 	S16 pitch;
 	S16 roll;
 	S16 yaw;
-};
+} __attribute((packed));
 
 enum Gyro_Range
 {

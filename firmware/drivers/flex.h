@@ -12,7 +12,7 @@ struct Flex
 	U16 middle;
 	U16 ring;
 	U16 pinky;
-};
+} __attribute((packed));
 
 void flex_initialize(void);
 void flex_read(Flex * flex);

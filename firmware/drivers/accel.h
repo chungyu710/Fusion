@@ -12,7 +12,7 @@ struct Accel
 	S16 x;
 	S16 y;
 	S16 z;
-};
+} __attribute((packed));
 
 enum Accel_Range
 {
