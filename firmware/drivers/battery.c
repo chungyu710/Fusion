@@ -9,11 +9,13 @@
 #define ANSEL_BATTERY     ANS2
 #define CHANNEL_BATTERY   AN2
 
-/* The HC-05 bluetooth module is directly
- * powered from the battery since it has
- * its own LDO.  The minimim input voltage
- * is 3.6 V, so if the battery drops below
- * this voltage, Fusion cannot operate reliably. */
+/*
+The HC-05 bluetooth module is directly
+powered from the battery since it has
+its own LDO.  The minimim input voltage
+is 3.6 V, so if the battery drops below
+this voltage, Fusion cannot operate reliably.
+*/
 
 #define LOW_BATTERY_mV   3600   // 3.6 V (HC-05 LDO minimum input voltage)
 #define MAX_VOLTAGE_mV   5000   // 5 V (ADRES = 1023)
@@ -27,15 +29,17 @@ void battery_initialize(void)
 
 	// TIMER 2 //
 
-	/* The Timer2 value is saved in TMR2.  It takes
-	 * (Fosc / 4) / prescaler as input and compares
-	 * TMR2 to PR2.  TMR2 always resets to 0 and
-	 * increments until it matches PR2.  After every
-	 * match the postscaler counter is incremented.
-	 * When the postscaler overflows the PIR1.TMR2IF
-	 * interrupt flag is set and must be cleared manually.
-	 * The prescaler and postscaler effectively slow down
-	 * reduce the frequency of the timer. */
+	/*
+	The Timer2 value is saved in TMR2.  It takes
+	(Fosc / 4) / prescaler as input and compares
+	TMR2 to PR2.  TMR2 always resets to 0 and
+	increments until it matches PR2.  After every
+	match the postscaler counter is incremented.
+	When the postscaler overflows the PIR1.TMR2IF
+	interrupt flag is set and must be cleared manually.
+	The prescaler and postscaler effectively slow down
+	reduce the frequency of the timer.
+	*/
 
 	// Use maximum prescaler settings for slowest interval.
 	T2CONbits.TMR2ON = 1;        // turn on timer

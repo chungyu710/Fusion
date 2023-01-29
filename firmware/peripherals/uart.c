@@ -1,6 +1,7 @@
 #include "uart.h"
 
 #include <xc.h>
+#include <stddef.h>
 
 #include "system.h"
 
@@ -20,6 +21,11 @@ void uart_initialize(void) {
 }
 
 void uart_transmit(void * data, U16 length) {
+  if (data == NULL)
+  {
+    system_fatal();
+  }
+
   char * ch = (char*)data;      // cast data element to char pointer
 
   for(int i = 0; i < length; i++) {
@@ -29,6 +35,11 @@ void uart_transmit(void * data, U16 length) {
 }
 
 void uart_receive(void * data, U16 length) {
+  if (data == NULL)
+  {
+    system_fatal();
+  }
+
   char * ch = (char*)data;       // cast data element to char pointer
 
   for(int i = 0; i < length; ) {

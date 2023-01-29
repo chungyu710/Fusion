@@ -29,7 +29,7 @@ void accel_read(Accel * accel)
 	struct follows the correct order of the registers.
 	*/
 
-	imu_read(OUTX_L_A, accel, sizeof(*accel));
+	imu_read(OUTX_L_A, accel, sizeof(Accel));
 }
 
 Status accel_set_range(Accel_Range range)

@@ -116,6 +116,14 @@ void system_abort(Abort abort)
 	system_reboot();
 }
 
+void system_fatal(void)
+{
+	while (1)
+	{
+		led_blink_slow();
+	}
+}
+
 static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 {
 	Sensors sensors;

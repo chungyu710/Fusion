@@ -1,11 +1,17 @@
 #include "link.h"
 
 #include <xc.h>
+#include <stddef.h>
 
 #include "uart.h"
 
 void link_respond(Status status, void * data, U8 length)
 {
+	if (data == NULL)
+	{
+		system_abort(ABORT_NULL_POINTER);
+	}
+
 	Response response;
 	response.status = status;
 	response.length = length;

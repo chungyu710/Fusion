@@ -1,6 +1,7 @@
 #include "flex.h"
 
 #include <xc.h>
+#include <stddef.h>
 
 #include "adc.h"
 #include "system.h"
@@ -34,7 +35,7 @@ void flex_initialize(void)
 	TRIS_MIDDLE = INPUT;
 	TRIS_RING = INPUT;
 	TRIS_PINKY = INPUT;
-	
+
 	// Enable analogue channels
 	ANSEL_THUMB = ANALOGUE;
 	ANSEL_INDEX = ANALOGUE;
@@ -45,6 +46,11 @@ void flex_initialize(void)
 
 void flex_read(Flex * flex)
 {
+	if (flex == NULL)
+	{
+		system_abort(ABORT_NULL_POINTER);
+	}
+
 	flex->thumb = adc_read(CHANNEL_THUMB);
 	flex->index = adc_read(CHANNEL_INDEX);
 	flex->middle = adc_read(CHANNEL_MIDDLE);

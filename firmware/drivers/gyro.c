@@ -25,7 +25,7 @@ void gyro_read(Gyro * gyro)
 
 	// See notes in accel.c about reading all axes at once.
 
-	imu_read(OUTX_L_G, gyro, sizeof(*gyro));
+	imu_read(OUTX_L_G, gyro, sizeof(Gyro));
 }
 
 Status gyro_set_range(Gyro_Range range)

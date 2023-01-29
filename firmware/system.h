@@ -31,6 +31,7 @@ enum Abort
 
 void system_initialize(void);
 void system_abort(Abort reason);
+void system_fatal(void);
 void system_service(U8 request);
 void system_reboot(void);
 
