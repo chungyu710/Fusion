@@ -20,7 +20,7 @@ void gyro_read(Gyro * gyro)
 {
 	if (gyro == NULL)
 	{
-		system_abort(ABORT_NULL_POINTER);
+		system_abort(ABORT_NULL_POINTER, __func__);
 	}
 
 	// See notes in accel.c about reading all axes at once.

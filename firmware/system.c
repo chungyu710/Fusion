@@ -34,7 +34,6 @@
 #define LED_BLINKS     3
 
 static char * system_abort_reasons [ABORT_count] = {
-	"RX QUEUE FULL",
 	"NULL POINTER",
 	"IMU OFFLINE",
 	"LOW BATTERY"
@@ -90,7 +89,7 @@ void system_initialize(void)
 	INTCONbits.GIE = 1;
 }
 
-void system_abort(Abort abort)
+void system_abort(Abort abort, char const * message)
 {
 	while (button_released())
 	{
@@ -108,8 +107,16 @@ void system_abort(Abort abort)
 			char * reason = system_abort_reasons[abort];
 			char * newline = "\r\n";
 
-			uart_transmit(reason, strlen(reason) + 1);
-			uart_transmit(newline, strlen(newline) + 1);
+			uart_transmit(reason, strlen(reason));
+
+			if (message != NULL)
+			{
+				char * colon = " : ";
+				uart_transmit(colon, strlen(colon));
+				uart_transmit(message, strlen(message));
+			}
+
+			uart_transmit(newline, strlen(newline));
 		}
 	}
 

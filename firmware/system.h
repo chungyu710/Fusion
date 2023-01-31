@@ -21,7 +21,6 @@ enum Status
 
 enum Abort
 {
-	ABORT_RX_QUEUE_FULL,
 	ABORT_NULL_POINTER,
 	ABORT_IMU_OFFLINE,
 	ABORT_LOW_BATTERY,
@@ -30,7 +29,7 @@ enum Abort
 };
 
 void system_initialize(void);
-void system_abort(Abort reason);
+void system_abort(Abort reason, char const * message);
 void system_fatal(void);
 void system_service(U8 request);
 void system_reboot(void);
