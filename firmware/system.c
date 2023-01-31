@@ -33,6 +33,8 @@
 #define LED_DELAY_US   200000
 #define LED_BLINKS     3
 
+static bool system_streaming = false;
+
 static char * system_abort_reasons [ABORT_count] = {
 	"NULL POINTER",
 	"IMU OFFLINE",
@@ -144,6 +146,36 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 
 	switch (group)
 	{
+		case SENSOR_GROUP_ALL:
+		{
+			*data = &sensors;
+			*length = sizeof(sensors);
+			break;
+		}
+		case SENSOR_GROUP_ACCEL:
+		{
+			*data = &sensors.accel;
+			*length = sizeof(sensors.accel);
+			break;
+		}
+		case SENSOR_GROUP_GYRO:
+		{
+			*data = &sensors.gyro;
+			*length = sizeof(sensors.gyro);
+			break;
+		}
+		case SENSOR_GROUP_FLEX:
+		{
+			*data = &sensors.flex;
+			*length = sizeof(sensors.flex);
+			break;
+		}
+		case SENSOR_GROUP_BUTTON:
+		{
+			*data = &sensors.button;
+			*length = sizeof(sensors.button);
+			break;
+		}
 		default:
 		{
 			status = STATUS_ERROR;
@@ -151,39 +183,30 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 			*length = 0;
 			break;
 		}
+	}
 
-		case SENSOR_GROUP_ALL:
+	return status;
+}
+
+static Status stream_update(Stream_Command command)
+{
+	Status status = STATUS_SUCCESS;
+
+	switch (command)
+	{
+		case STREAM_START:
 		{
-			*data = &sensors;
-			*length = sizeof(sensors);
+			system_streaming = true;
 			break;
 		}
-
-		case SENSOR_GROUP_ACCEL:
+		case STREAM_STOP:
 		{
-			*data = &sensors.accel;
-			*length = sizeof(sensors.accel);
+			system_streaming = false;
 			break;
 		}
-
-		case SENSOR_GROUP_GYRO:
+		default:
 		{
-			*data = &sensors.gyro;
-			*length = sizeof(sensors.gyro);
-			break;
-		}
-
-		case SENSOR_GROUP_FLEX:
-		{
-			*data = &sensors.flex;
-			*length = sizeof(sensors.flex);
-			break;
-		}
-
-		case SENSOR_GROUP_BUTTON:
-		{
-			*data = &sensors.button;
-			*length = sizeof(sensors.button);
+			status = STATUS_ERROR;
 			break;
 		}
 	}
@@ -194,7 +217,7 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 void system_service(U8 request)
 {
 	Command command = request & MASK_COMMAND;
-	U8 metadata = request & MASK_METADATA;
+	U8 meta = request & MASK_METADATA;
 
 	switch (command)
 	{
@@ -205,13 +228,13 @@ void system_service(U8 request)
 		}
 		case COMMAND_ACCEL_RANGE:
 		{
-			Status status = accel_set_range(metadata);
+			Status status = accel_set_range(meta);
 			link_respond(status, NULL, 0);
 			break;
 		}
 		case COMMAND_GYRO_RANGE:
 		{
-			Status status = gyro_set_range(metadata);
+			Status status = gyro_set_range(meta);
 			link_respond(status, NULL, 0);
 			break;
 		}
@@ -219,7 +242,7 @@ void system_service(U8 request)
 		{
 			void * data;
 			U8 length;
-			Status status = read_sensors(metadata, &data, &length);
+			Status status = read_sensors(meta, &data, &length);
 			link_respond(status, data, length);
 			break;
 		}
@@ -235,6 +258,13 @@ void system_service(U8 request)
 			system_reboot();
 			break;
 		}
+		case COMMAND_STREAM:
+		{
+
+			Status status = stream_update(meta);
+			link_respond(status, NULL, 0);
+			break;
+		}
 		default:
 		{
 			link_respond(STATUS_ERROR, NULL, 0);
@@ -246,4 +276,17 @@ void system_service(U8 request)
 void system_reboot(void)
 {
 	WDTCONbits.SWDTEN = 1;   // enable watchdog timer to force reset
+}
+
+#include <stdio.h>
+void system_streaming_service(void)
+{
+	if (system_streaming)
+	{
+		//printf("STREAM\r\n");
+	}
+	else
+	{
+		//printf("STOP\r\n");
+	}
 }

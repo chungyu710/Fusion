@@ -1,5 +1,4 @@
 #include <xc.h>
-#include <stdio.h>
 
 #include "system.h"
 #include "uart.h"
@@ -13,7 +12,7 @@
 static volatile U8 command;
 static volatile bool pending_command = false;
 static volatile bool check_battery = false;
-
+#include <stdio.h>
 void main(void)
 {
 	system_initialize();
@@ -45,6 +44,8 @@ void main(void)
 
 			check_battery = false;
 		}
+
+		system_streaming_service();
 	}
 }
 

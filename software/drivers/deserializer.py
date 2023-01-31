@@ -13,7 +13,9 @@ STATUS_LOW_BATTERY     = 3
 REQUEST_ALL_SENSORS = b"\x30"
 REQUEST_ACCEL = b"\x31"
 REQUEST_GYRO = b"\x32"
-REQUEST_FLEX = b"x33"
+REQUEST_FLEX = b"\x33"
+STREAM_START = b"\x60"
+STREAM_STOP = b"\x61"
 
 # This indicates how many times we want to retry before resetting the device
 MAX_RETRIES = 5
@@ -131,3 +133,17 @@ def get_all_sensor_data(ser):
 
     # print(payload)
     return create_object(command, payload)
+
+def start_streaming(ser):
+    command = STREAM_START
+    send(command, ser)
+    status, length, checksum = get_header_data(ser)
+    # TODO: Add logic for status and checksum
+    log.info(f"status: {status}")
+
+def stop_streaming(ser):
+    command = STREAM_STOP
+    send(command, ser)
+    status, length, checksum = get_header_data(ser)
+    # TODO: Add logic for status and checksum
+    log.info(f"status: {status}")

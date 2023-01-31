@@ -33,5 +33,6 @@ void system_abort(Abort reason, char const * message);
 void system_fatal(void);
 void system_service(U8 request);
 void system_reboot(void);
+void system_streaming_service(void);
 
 #endif /* SYSTEM_H */
