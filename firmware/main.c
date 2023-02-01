@@ -23,10 +23,8 @@ void main(void)
 
 		if (pending_command)
 		{
-			led_on();
 			system_service(command);
 			pending_command = false;
-			led_off();
 		}
 
 		if (check_battery)

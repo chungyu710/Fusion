@@ -216,6 +216,8 @@ static Status stream_update(Stream_Command command)
 
 void system_service(U8 request)
 {
+	led_on();
+
 	Command command = request & MASK_COMMAND;
 	U8 meta = request & MASK_METADATA;
 
@@ -271,6 +273,8 @@ void system_service(U8 request)
 			break;
 		}
 	}
+
+	led_off();
 }
 
 void system_reboot(void)
@@ -283,6 +287,7 @@ void system_streaming_service(void)
 {
 	if (system_streaming)
 	{
+		system_service(COMMAND_SENSORS);
 		//printf("STREAM\r\n");
 	}
 	else

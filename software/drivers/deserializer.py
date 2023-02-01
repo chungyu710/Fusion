@@ -4,6 +4,7 @@ from drivers.protocol import *
 import serial
 import log
 import struct
+import time
 
 BAUDRATE = 115200
 
@@ -23,14 +24,17 @@ def configure_and_open(port):
         log.error("Error opening serial port: ", e)
         exit(ERROR)
 
+    ser.reset_input_buffer()
+    ser.reset_output_buffer()
+
     retries = 0
     # TODO (Shusil) : Maybe use exponential backoff
     while (True):
         if retries > MAX_RETRIES:
-            log.error("Tried more than: " + MAX_RETRIES + " times", "resetting the device")
-            # TODO: Send RESET command (not implemented on firmware yet)
+            log.info(f"Tried more than: {MAX_RETRIES} times, resetting the device")
+            reset(ser)
         if not ping(ser):
-            log.warning("Glove not responding!!! attempt:", retries)
+            log.warning(f"Glove not responding!!! attempt: {retries}")
             retries += 1
         else:
             break
@@ -67,6 +71,12 @@ def ping(ser):
 
     return True
 
+def reset(ser):
+    log.info("RESET")
+    send_command(ser, COMMAND_RESET)
+    ser.reset_input_buffer()
+    ser.reset_output_buffer()
+
 def parse_sensor_data(payload):
     sensors = Sensors()
     sensors.unpack(payload)
@@ -93,6 +103,7 @@ def get_all_sensor_data(ser):
     payload = ser.read(header.size)   # Get the payload "size" bytes
 
     if not verify_checksum(header, payload):
+        reset(ser)
         exit(ERROR)
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
@@ -105,19 +116,23 @@ def stream_start(ser):
     send_command(ser, command)
     header = get_header_data(ser)
 
-    if not verify_checksum(header, []):
-        exit(ERROR)
-    if header.status != STATUS_SUCCESS:
-        log.error(f"Status: {header.status}")
-        exit(ERROR)
+    #if not verify_checksum(header, []):
+    #    exit(ERROR)
+    #if header.status != STATUS_SUCCESS:
+    #    log.error(f"Status: {header.status}")
+    #    exit(ERROR)
 
 def stream_stop(ser):
     command = COMMAND_STREAM | STREAM_STOP
     send_command(ser, command)
-    header = get_header_data(ser)
+    ser.reset_input_buffer()
+    ser.reset_output_buffer()
 
-    if not verify_checksum(header, []):
-        exit(ERROR)
-    if header.status != STATUS_SUCCESS:
-        log.error(f"Status: {header.status}")
-        exit(ERROR)
+    #send_command(ser, COMMAND_PING)
+    #header = get_header_data(ser)
+
+    #if not verify_checksum(header, []):
+    #    exit(ERROR)
+    #if header.status != STATUS_SUCCESS:
+    #    log.error(f"Status: {header.status}")
+    #    exit(ERROR)
