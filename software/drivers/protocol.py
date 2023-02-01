@@ -139,7 +139,7 @@ class Button:
 class Sensors:
     SIZE = Accel.SIZE + Gyro.SIZE + Flex.SIZE + Button.SIZE
 
-    def __init__(self, accel = Accel(), gyro = Gyro(), flex = Flex(), button = Button()):
+    def __init__(self, accel = None, gyro = None, flex = None, button = None):
         self.accel = accel
         self.gyro =  gyro
         self.flex = flex
@@ -149,11 +149,18 @@ class Sensors:
         return str(self.accel) + str(self.gyro) + str(self.flex) + str(self.button)
 
     def unpack(self, data, offset = 0):
+        self.accel = Accel()
         self.accel.unpack(data, offset)
         offset += Accel.SIZE
+
+        self.gyro = Gyro()
         self.gyro.unpack(data, offset)
         offset += Gyro.SIZE
+
+        self.flex = Flex()
         self.flex.unpack(data, offset)
         offset += Flex.SIZE
+
+        self.button = Button()
         self.button.unpack(data, offset)
         offset += Button.SIZE
