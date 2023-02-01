@@ -14,7 +14,7 @@ typedef enum Command Command;
 typedef enum Sensor_Group Sensor_Group;
 typedef enum Stream_Command Stream_Command;
 
-typedef struct Response Response;
+typedef struct Header Header;
 typedef struct Sensors Sensors;
 
 enum Sensor_Group
@@ -51,13 +51,13 @@ struct Sensors
 	U8 button;
 } __attribute((packed));
 
-struct Response
+struct Header
 {
 	U8 status;
-	U8 length;
+	U8 size;
 	U8 checksum;
 } __attribute((packed));
 
-void link_respond(Status status, void * data, U8 length);
+void link_respond(Status status, void * data, U8 size);
 
 #endif /* LINK_H */

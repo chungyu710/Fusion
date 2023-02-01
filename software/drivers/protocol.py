@@ -23,20 +23,28 @@ STATUS_SUCCESS     = 0x0
 STATUS_ERROR       = 0x1
 STATUS_LOW_BATTERY = 0x2
 
-class Response:
-    SIZE = 3
+class Header:
+    FORMAT = "BBB"
+    SIZE = struct.calcsize(FORMAT)
 
-    def __init__(self, status = 0, length = 0, checksum = 0):
+    def __init__(self, status = 0, size = 0, checksum = 0):
         self.status = status
-        self.length = length
+        self.size = size
         self.checksum = checksum
 
     def __str__(self):
         string = ""
         string += "%s%8s%s: %u\r\n" % (colours.MAGENTA, "status", colours.RESET, self.status)
-        string += "%s%8s%s: %u\r\n" % (colours.MAGENTA, "length", colours.RESET, self.length)
+        string += "%s%8s%s: %u\r\n" % (colours.MAGENTA, "size", colours.RESET, self.size)
         string += "%s%8s%s: 0x%X\r\n" % (colours.MAGENTA, "checksum", colours.RESET, self.checksum)
         return string
+
+    def unpack(self, data, offset = 0):
+        # little endian
+        fields = struct.unpack_from(f"<{Header.FORMAT}", data, offset)
+        self.status = fields[0]
+        self.size = fields[1]
+        self.checksum = fields[2]
 
 class Accel:
     FORMAT = "hhh"

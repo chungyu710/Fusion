@@ -62,17 +62,17 @@ def parse_sensor_data(payload):
     return sensors
 
 def get_header_data(ser):
-    # Get the response header, should be RESPONSE_HEADER_SIZE bytes
-    data = ser.read(Response.SIZE)
+    # Get the response header, should be Header.SIZE bytes
+    data = ser.read(Header.SIZE)
     fields = struct.unpack("<BBB", data)   # little endian
 
-    response = Response()
-    response.status = fields[0]
-    response.length = fields[1]
-    response.checksum = fields[2]
+    header = Header()
+    header.status = fields[0]
+    header.size = fields[1]
+    header.checksum = fields[2]
 
-    log.debug("------- HEADER -------\r\n" + str(response))
-    return response
+    log.debug("------- HEADER -------\r\n" + str(header))
+    return header
 
 def get_all_sensor_data(ser):
     log.debug("SENSORS")
@@ -84,7 +84,7 @@ def get_all_sensor_data(ser):
 
     # TODO: Add logic for status and checksum
 
-    payload = ser.read(header.length)   # Get the payload of size "length"
+    payload = ser.read(header.size)   # Get the payload "size" bytes
     return parse_sensor_data(payload)
 
 def start_streaming(ser):

@@ -5,28 +5,28 @@
 
 #include "uart.h"
 
-void link_respond(Status status, void * data, U8 length)
+void link_respond(Status status, void * payload, U8 size)
 {
-	Response response;
-	response.status = status;
-	response.length = length;
+	Header header;
+	header.status = status;
+	header.size = size;
 
-	response.checksum = response.status ^ response.length;
+	header.checksum = header.status ^ header.size;
 
-	if (data != NULL)
+	if (payload != NULL)
 	{
-		char * bytes = (char *)data;
+		char * bytes = (char *)payload;
 
-		for (U8 i = 0; i < length; i++)
+		for (U8 i = 0; i < size; i++)
 		{
-			response.checksum ^= bytes[i];
+			header.checksum ^= bytes[i];
 		}
 	}
 
-	uart_transmit(&response, sizeof(Response));
+	uart_transmit(&header, sizeof(Header));
 
-	if (data != NULL)
+	if (payload != NULL)
 	{
-		uart_transmit(data, length);
+		uart_transmit(payload, size);
 	}
 }
