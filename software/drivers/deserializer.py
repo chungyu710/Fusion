@@ -56,7 +56,7 @@ def verify_checksum(header, payload):
     return True
 
 def ping(ser):
-    log.debug("PING")
+    log.info("PING")
     send_command(ser, COMMAND_PING)
     header = get_header_data(ser)
 
@@ -100,7 +100,7 @@ def get_all_sensor_data(ser):
 
     return parse_sensor_data(payload)
 
-def start_streaming(ser):
+def stream_start(ser):
     command = COMMAND_STREAM | STREAM_START
     send_command(ser, command)
     header = get_header_data(ser)
@@ -111,7 +111,7 @@ def start_streaming(ser):
         log.error(f"Status: {header.status}")
         exit(ERROR)
 
-def stop_streaming(ser):
+def stream_stop(ser):
     command = COMMAND_STREAM | STREAM_STOP
     send_command(ser, command)
     header = get_header_data(ser)
