@@ -1,3 +1,6 @@
+ERROR = -1
+SUCCESS = 0
+
 def deadzone(value, radius):
 	if abs(value) < 10:
 		value = 0

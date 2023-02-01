@@ -7,9 +7,6 @@ import struct
 
 BAUDRATE = 115200
 
-STREAM_START = b"\x60"
-STREAM_STOP = b"\x61"
-
 # This indicates how many times we want to retry before resetting the device
 MAX_RETRIES = 5
 
@@ -24,7 +21,7 @@ def configure_and_open(port):
         )
     except Exception as e:
         log.error("Error opening serial port: ", e)
-        exit(-1)
+        exit(ERROR)
 
     retries = 0
     # TODO (Shusil) : Maybe use exponential backoff
@@ -44,14 +41,29 @@ def send_command(ser, command):
     # Little endian byte
     ser.write(struct.pack("<B", command))
 
+def verify_checksum(header, payload):
+    checksum = header.status ^ header.size
+    payload = bytes(payload)
+
+    for i in range(header.size):
+        checksum ^= payload[i]
+
+    if checksum != header.checksum:
+        log.error("Checksum mismatch")
+        print(str(header))
+        return False
+
+    return True
+
 def ping(ser):
     log.debug("PING")
     send_command(ser, COMMAND_PING)
     header = get_header_data(ser)
 
     # TODO: Uncomment it after ping command functionality uploaded to the device
-    # if status != STATUS_SUCCESS:
-    #     return False
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
+        return False
 
     return True
 
@@ -78,25 +90,34 @@ def get_all_sensor_data(ser):
     log.debug("SENSORS")
     send_command(ser, COMMAND_SENSORS)
     header = get_header_data(ser)
+    payload = ser.read(header.size)   # Get the payload "size" bytes
 
+    if not verify_checksum(header, payload):
+        exit(ERROR)
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
+        exit(ERROR)
 
-    # TODO: Add logic for status and checksum
-
-    payload = ser.read(header.size)   # Get the payload "size" bytes
     return parse_sensor_data(payload)
 
 def start_streaming(ser):
     command = COMMAND_STREAM | STREAM_START
     send_command(ser, command)
     header = get_header_data(ser)
-    # TODO: Add logic for status and checksum
-    log.info(f"status: {header.status}")
+
+    if not verify_checksum(header, []):
+        exit(ERROR)
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
+        exit(ERROR)
 
 def stop_streaming(ser):
     command = COMMAND_STREAM | STREAM_STOP
     send_command(ser, command)
     header = get_header_data(ser)
-    # TODO: Add logic for status and checksum
-    log.info(f"status: {header.status}")
+
+    if not verify_checksum(header, []):
+        exit(ERROR)
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
+        exit(ERROR)
