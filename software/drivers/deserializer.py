@@ -4,12 +4,13 @@ from drivers.protocol import *
 import serial
 import log
 import struct
+import time
 
 BAUDRATE = 115200
 TIMEOUT_S = 1
 
 # This indicates how many times we want to retry before resetting the device
-MAX_RETRIES = 5
+MAX_TRIES = 5
 
 def open(port):
     try:
@@ -27,40 +28,33 @@ def open(port):
     purge(ser)
     return ser
 
-    #retries = 0
-    ## TODO (Shusil) : Maybe use exponential backoff
-    #while (True):
-    #    if retries > MAX_RETRIES:
-    #        log.info(f"Tried more than: {MAX_RETRIES} times, resetting the device")
-    #        reset(ser)
-    #    if not ping(ser):
-    #        log.warning(f"Glove not responding!!! attempt: {retries}")
-    #        retries += 1
-    #    else:
-    #        break
-
 def close(ser):
     purge(ser)
     ser.close()
 
 def purge(ser):
+    log.info("Purge serial port")
     ser.reset_input_buffer()
     ser.reset_output_buffer()
 
 def configure(ser):
-    retries = 0
+    pings = 0
+    resets = 0
     while not ping(ser):
-        retries += 1
-        if retries > MAX_RETRIES:
-            log.warning(f"Fusion did not respond after {MAX_RETRIES} pings")
+        log.info("Pinging Fusion...")
+        pings += 1
+        purge(ser)
+        if pings > MAX_TRIES:
+            log.warning(f"Fusion did not respond after {MAX_TRIES} pings")
             log.info(f"Resetting MCU")
-
-            retries = 0
-            while not reset(ser):
-                retries += 1
-                if retries > MAX_RETRIES:
-                    log.error(f"Attempted to reset glove {MAX_RETRIES} times")
-                    exit(ERROR)
+            send_command(ser, COMMAND_RESET)
+            resets += 1
+            purge(ser)
+            time.sleep(2)   # give the MCU time to restart the firmware
+            if resets > MAX_TRIES:
+                log.error(f"Failed to reset glove after {MAX_TRIES} tries")
+                exit(ERROR)
+            pings = 0   # go back to pinging
 
 def send_command(ser, command):
     # Little endian byte
@@ -70,6 +64,10 @@ def send_command(ser, command):
 def verify_checksum(header, payload):
     checksum = header.status ^ header.size
     payload = bytes(payload)
+
+    if payload is None or len(payload) != header.size:
+        log.error("Incorrect payload size")
+        return False
 
     for i in range(header.size):
         checksum ^= payload[i]
@@ -86,6 +84,8 @@ def ping(ser):
     send_command(ser, COMMAND_PING)
     header = get_header_data(ser)
 
+    if not verify_checksum(header, []):
+        return False
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
         return False
@@ -95,8 +95,11 @@ def ping(ser):
 def reset(ser):
     log.info("RESET")
     send_command(ser, COMMAND_RESET)
+    purge(ser)
     header = get_header_data(ser)
 
+    if not verify_checksum(header, []):
+        return False
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
         return False
@@ -126,10 +129,9 @@ def get_all_sensor_data(ser):
     log.debug("SENSORS")
     send_command(ser, COMMAND_SENSORS)
     header = get_header_data(ser)
-    payload = ser.read(header.size)   # Get the payload "size" bytes
+    payload = ser.read(header.size)
 
     if not verify_checksum(header, payload):
-        reset(ser)
         exit(ERROR)
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
@@ -140,15 +142,13 @@ def get_all_sensor_data(ser):
 def stream_start(ser):
     command = COMMAND_STREAM | STREAM_START
     send_command(ser, command)
-    #ser.reset_input_buffer()
-    #ser.reset_output_buffer()
-    #header = get_header_data(ser)
+    header = get_header_data(ser)
 
-    #if not verify_checksum(header, []):
-    #    exit(ERROR)
-    #if header.status != STATUS_SUCCESS:
-    #    log.error(f"Status: {header.status}")
-    #    exit(ERROR)
+    if not verify_checksum(header, []):
+        exit(ERROR)
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
+        exit(ERROR)
 
 def stream_stop(ser):
     command = COMMAND_STREAM | STREAM_STOP
