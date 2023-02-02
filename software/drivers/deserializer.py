@@ -24,8 +24,7 @@ def open(port):
         log.error(f"Error opening serial port: {e}")
         exit(ERROR)
 
-    ser.reset_input_buffer()
-    ser.reset_output_buffer()
+    purge(ser)
     return ser
 
     #retries = 0
@@ -41,9 +40,12 @@ def open(port):
     #        break
 
 def close(ser):
+    purge(ser)
+    ser.close()
+
+def purge(ser):
     ser.reset_input_buffer()
     ser.reset_output_buffer()
-    ser.close()
 
 def configure(ser):
     retries = 0
@@ -84,7 +86,6 @@ def ping(ser):
     send_command(ser, COMMAND_PING)
     header = get_header_data(ser)
 
-    # TODO: Uncomment it after ping command functionality uploaded to the device
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
         return False
