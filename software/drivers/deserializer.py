@@ -4,46 +4,66 @@ from drivers.protocol import *
 import serial
 import log
 import struct
-import time
 
 BAUDRATE = 115200
+TIMEOUT_S = 1
 
 # This indicates how many times we want to retry before resetting the device
 MAX_RETRIES = 5
 
-def configure_and_open(port):
+def open(port):
     try:
         ser = serial.Serial(
             port=port,
             baudrate=BAUDRATE,
             stopbits=serial.STOPBITS_ONE,
-            timeout=1,
+            timeout=TIMEOUT_S,
             bytesize=serial.EIGHTBITS
         )
     except Exception as e:
-        log.error("Error opening serial port: ", e)
+        log.error(f"Error opening serial port: {e}")
         exit(ERROR)
 
     ser.reset_input_buffer()
     ser.reset_output_buffer()
-
-    retries = 0
-    # TODO (Shusil) : Maybe use exponential backoff
-    while (True):
-        if retries > MAX_RETRIES:
-            log.info(f"Tried more than: {MAX_RETRIES} times, resetting the device")
-            reset(ser)
-        if not ping(ser):
-            log.warning(f"Glove not responding!!! attempt: {retries}")
-            retries += 1
-        else:
-            break
-
     return ser
+
+    #retries = 0
+    ## TODO (Shusil) : Maybe use exponential backoff
+    #while (True):
+    #    if retries > MAX_RETRIES:
+    #        log.info(f"Tried more than: {MAX_RETRIES} times, resetting the device")
+    #        reset(ser)
+    #    if not ping(ser):
+    #        log.warning(f"Glove not responding!!! attempt: {retries}")
+    #        retries += 1
+    #    else:
+    #        break
+
+def close(ser):
+    ser.reset_input_buffer()
+    ser.reset_output_buffer()
+    ser.close()
+
+def configure(ser):
+    retries = 0
+    while not ping(ser):
+        retries += 1
+        if retries > MAX_RETRIES:
+            log.warning(f"Fusion did not respond after {MAX_RETRIES} pings")
+            log.info(f"Resetting MCU")
+
+            retries = 0
+            while not reset(ser):
+                retries += 1
+                if retries > MAX_RETRIES:
+                    log.error(f"Attempted to reset glove {MAX_RETRIES} times")
+                    exit(ERROR)
 
 def send_command(ser, command):
     # Little endian byte
     ser.write(struct.pack("<B", command))
+    ser.flush()
 
 def verify_checksum(header, payload):
     checksum = header.status ^ header.size
@@ -74,8 +94,13 @@ def ping(ser):
 def reset(ser):
     log.info("RESET")
     send_command(ser, COMMAND_RESET)
-    ser.reset_input_buffer()
-    ser.reset_output_buffer()
+    header = get_header_data(ser)
+
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
+        return False
+
+    return True
 
 def parse_sensor_data(payload):
     sensors = Sensors()
@@ -114,7 +139,9 @@ def get_all_sensor_data(ser):
 def stream_start(ser):
     command = COMMAND_STREAM | STREAM_START
     send_command(ser, command)
-    header = get_header_data(ser)
+    #ser.reset_input_buffer()
+    #ser.reset_output_buffer()
+    #header = get_header_data(ser)
 
     #if not verify_checksum(header, []):
     #    exit(ERROR)
@@ -125,8 +152,8 @@ def stream_start(ser):
 def stream_stop(ser):
     command = COMMAND_STREAM | STREAM_STOP
     send_command(ser, command)
-    ser.reset_input_buffer()
-    ser.reset_output_buffer()
+    #ser.reset_input_buffer()
+    #ser.reset_output_buffer()
 
     #send_command(ser, COMMAND_PING)
     #header = get_header_data(ser)
