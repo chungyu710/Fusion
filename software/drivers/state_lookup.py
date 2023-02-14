@@ -2,7 +2,11 @@ import json
 import log
 
 def get_states_from_json():
-    with open("software/drivers/states.json", "r") as f:
+    with open("software/drivers/calibartion.json", "r") as f:
+        return json.load(f)
+
+def get_states_from_calibration():
+    with open("software/drivers/calibration.json", "r") as f:
         return json.load(f)
     
 # accel: {"x": V, "y": V, "z": V}
@@ -43,10 +47,10 @@ def get_stated_based_on_flex(flex):
     # each number represents finger from thumb to index
     # 00000 - enable 'mouse' mode
     # 01000 - hold down left click 
-    # 01100 - hold down right click
+    # 11000 - hold down right click
     # 10000 - double click (on release of thumb? as long as thumb is held out?)
     # 01110 - enable 'swipe' mode
-    # 11000 - enable 'scroll' mode
+    # 01100 - enable 'scroll' mode
 
     states=["00000", "01000", "01100", "10000", "01110", "11000"]
 
@@ -69,10 +73,48 @@ def check_flex_values(expected, flex):
     pinky_min = expected['pinky']['min']
     pinky_max = expected['pinky']['max']
 
-    # return ((flex.thumb >= thumb_min and flex.thumb <= thumb_max) and 
-    #         (flex.index >= index_min and flex.index <= index_max) and 
-    #         (flex.middle >= middle_min and flex.middle <= middle_max) and 
-    #         (flex.ring >= ring_min and flex.ring <= ring_max) and
-    #         (flex.pinky >= pinky_min and flex.pinky <= pinky_max))
-    return flex.index >= index_min and flex.index <= index_max
+    return ((flex.thumb >= thumb_min and flex.thumb <= thumb_max) and 
+            (flex.index >= index_min and flex.index <= index_max) and 
+            (flex.middle >= middle_min and flex.middle <= middle_max) and 
+            (flex.ring >= ring_min and flex.ring <= ring_max) and
+            (flex.pinky >= pinky_min and flex.pinky <= pinky_max))
+    # return flex.index >= index_min and flex.index <= index_max
+    
+def get_flex_state(flex, prev_state = "00000"):
+    # state_values = get_states_from_json()
+    state_values = get_states_from_calibration()
+    states = ["thumb_closed","index_closed","middle_closed","ring_closed","pinky_closed","thumb_open","index_open","middle_open","ring_open","pinky_open"]
+
+    thumb = prev_state[0]
+    index = prev_state[1]
+    middle = prev_state[2]
+    ring = prev_state[3]
+    pinky = prev_state[4]
+
+    if(flex.thumb >= state_values['thumb_closed']['min'] and flex.thumb <= state_values['thumb_closed']['max']):
+        thumb = "0"
+    elif(flex.thumb >= state_values['thumb_open']['min'] and flex.thumb <= state_values['thumb_open']['max']):
+        thumb = "1"
+
+    if(flex.index >= state_values['index_closed']['min'] and flex.index <= state_values['index_closed']['max']):
+        index = "0"
+    elif(flex.index >= state_values['index_open']['min'] and flex.index <= state_values['index_open']['max']):
+        index = "1"
+
+    if(flex.middle >= state_values['middle_closed']['min'] and flex.middle <= state_values['middle_closed']['max']):
+        middle = "0"
+    elif(flex.middle >= state_values['middle_open']['min'] and flex.middle <= state_values['middle_open']['max']):
+        middle = "1"
+
+    if(flex.ring >= state_values['ring_closed']['min'] and flex.ring <= state_values['ring_closed']['max']):
+        ring = "0"
+    elif(flex.ring >= state_values['ring_open']['min'] and flex.ring <= state_values['ring_open']['max']):
+        ring = "1"
+
+    if(flex.pinky >= state_values['pinky_closed']['min'] and flex.pinky <= state_values['pinky_closed']['max']):
+        pinky = "0"
+    elif(flex.pinky >= state_values['pinky_open']['min'] and flex.pinky <= state_values['pinky_open']['max']):
+        pinky = "1"
+
+    return thumb + index + middle + ring + pinky
     

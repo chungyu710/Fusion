@@ -1,0 +1,41 @@
+{"thumb_closed": {
+	"max": 720,
+	"min": 653
+},
+"index_closed": {
+	"max": 780,
+	"min": 719
+},
+"middle_closed": {
+	"max": 780,
+	"min": 722
+},
+"ring_closed": {
+	"max": 1043,
+	"min": 1003
+},
+"pinky_closed": {
+	"max": 832,
+	"min": 700
+},
+"thumb_open": {
+	"max": 594,
+	"min": 532
+},
+"index_open": {
+	"max": 571,
+	"min": 516
+},
+"middle_open": {
+	"max": 580,
+	"min": 516
+},
+"ring_open": {
+	"max": 780,
+	"min": 525
+},
+"pinky_open": {
+	"max": 624,
+	"min": 555
+}
+}

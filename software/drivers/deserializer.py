@@ -93,6 +93,7 @@ def create_object(command, payload):
         log.debug("Flex data: " + str(flex))
         i += 10
 
+        print("payload", payload)
         button = Button()
         button.pressed = payload[i]
         log.debug("Button data: " + str(button))
@@ -110,6 +111,11 @@ def create_object(command, payload):
 def get_header_data(ser):
     # Get the response header, should be HEADER_SIZE bytes
     header_data = ser.read(HEADER_SIZE)
+    
+    # if not header_data:
+    #     log.error("No data received from the device")
+    #     return
+    
     log.debug("header_data: " + str(header_data))
 
     status, length, checksum = header_data[0], header_data[1], header_data[2]

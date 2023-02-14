@@ -18,16 +18,16 @@ class Agent:
         self.velocity_y = 0
         return None
     def state_move_left(self):
-        self.velocity_x = max(-100, self.velocity_x - 2)
+        self.velocity_x = max(100, self.velocity_x + 2)
         return True
     def state_move_right(self):
-        self.velocity_x = min(100, self.velocity_x + 2)
+        self.velocity_x = min(-100, self.velocity_x - 2)
         return True
     def state_move_up(self):
-        self.velocity_y = min(100, self.velocity_y + 2)
+        self.velocity_y = min(-100, self.velocity_y - 2)
         return True
     def state_move_down(self):
-        self.velocity_y =  max(-100, self.velocity_y - 2)
+        self.velocity_y =  max(100, self.velocity_y + 2)
         return True
 
 

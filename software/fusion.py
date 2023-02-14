@@ -6,6 +6,7 @@ from agent import *
 import argparse
 
 pyautogui.PAUSE = 0   # reduces pyautogui lag
+pyautogui.FAILSAFE = False # take out pyautogui failsafe
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -30,8 +31,18 @@ if __name__ == '__main__':
     SENSOR_MAX_OF_GYRO = 4000
     SENSOR_MIN_OF_GYRO = -4000
 
-    SENSOR_MIN_OF_FLEX = 529
-    SENSOR_MAX_OF_FLEX = 816
+    SENSOR_MIN_OF_FLEX_THUMB = 529
+    SENSOR_MIN_OF_FLEX_INDEX = 529
+    SENSOR_MIN_OF_FLEX_MIDDLE = 529
+    SENSOR_MIN_OF_FLEX_RING = 816
+    SENSOR_MIN_OF_FLEX_PINKY = 816
+
+    SENSOR_MAX_OF_FLEX_THUMB = 529
+    SENSOR_MAX_OF_FLEX_INDEX = 529
+    SENSOR_MAX_OF_FLEX_MIDDLE = 529
+    SENSOR_MAX_OF_FLEX_RING = 816
+    SENSOR_MAX_OF_FLEX_PINKY = 816
+    
 
     NEUTRAL_OF_FLEX = 676
     NEUTRAL_OF_PITCH = 46
@@ -39,16 +50,16 @@ if __name__ == '__main__':
     NEUTRAL_OF_YAW = -42
 
     MOUSE_MODE = "00000"
-    CLICK_MODE = "01000"
-    RIGHT_CLICK_MODE = "01100"
-    DOUBLE_CLICK_MODE = "10000"
-    SWIPE_MODE = "01110"
-    SCROLL_MODE = "11000"
-    RECENTER = "11111"
+    CLICK_MODE = "01000" #holding mouse down
+    RIGHT_CLICK_MODE = "11000"
+    SINGLE_CLICK_MODE = "00001" # single click
+    SWIPE_MODE = "01110" #not implemented 
+    SCROLL_MODE = "01100"
+    RECENTER = "11111" # not used for now
 
     serial_port = configure_and_open(PORT)
     agent = Agent()
-    previousState = None
+    prev_state = "00000"
     maxWidth, maxHeight = pyautogui.size()
 
     while True:
@@ -63,46 +74,49 @@ if __name__ == '__main__':
         if(sensors.gyro.pitch > -3 and sensors.gyro.pitch < 3):
             sensors.gyro.pitch = 0
         
-        sensors.flex.thumb = scale_sensors(50, sensors.flex.thumb, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
-        sensors.flex.index = scale_sensors(50, sensors.flex.index, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
-        sensors.flex.middle = scale_sensors(50, sensors.flex.middle, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
-        sensors.flex.ring = scale_sensors(50, sensors.flex.ring, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
-        sensors.flex.pinky = scale_sensors(50, sensors.flex.pinky, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
+        #sensors.flex.thumb = scale_sensors(50, sensors.flex.thumb, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
+        #sensors.flex.index = scale_sensors(50, sensors.flex.index, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
+        #sensors.flex.middle = scale_sensors(50, sensors.flex.middle, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
+        #sensors.flex.ring = scale_sensors(50, sensors.flex.ring, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)        
+        #sensors.flex.pinky = scale_sensors(50, sensors.flex.pinky, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
 
-        state = get_stated_based_on_flex(sensors.flex)
-        state = state.lower()
+        # state = get_stated_based_on_flex(sensors.flex)
+        state = get_flex_state(sensors.flex, prev_state)
+
+        if sensors.button.pressed:
+            state = RECENTER
+
         log.debug("State: " + str(state))
+        # log.debug("sensors: " + str(sensors))
 
         if (state in [MOUSE_MODE, CLICK_MODE, RIGHT_CLICK_MODE]):  
             if(state == CLICK_MODE):
-                if previousState != CLICK_MODE: 
+                if prev_state != CLICK_MODE: 
                     pyautogui.mouseDown()
             elif (state == RIGHT_CLICK_MODE):
                 pyautogui.mouseDown(button='right')
             else:
-                print("about to do mouse up hfiafiuhiduasfidhshfsdfuisdiufisudfhsiudfhsdfhsdi")
                 pyautogui.mouseUp()
                 pyautogui.mouseUp(button='right')
                           
-            pyautogui.move(sensors.gyro.yaw, sensors.gyro.pitch)
+            pyautogui.move(-sensors.gyro.yaw, -sensors.gyro.pitch)
 
-        elif state == DOUBLE_CLICK_MODE: 
-            if(not previousState == DOUBLE_CLICK_MODE):
-                # pyautogui.doubleClick()
-                pass
+        elif state == SINGLE_CLICK_MODE: 
+            if(prev_state != SINGLE_CLICK_MODE):
+                pyautogui.click()
 
         elif state == SCROLL_MODE:
             if sensors.gyro.pitch > 0:
                 pyautogui.scroll(1)
             elif sensors.gyro.pitch < 0:
                 pyautogui.scroll(-1)
-                
+
         elif state == RECENTER:
             pyautogui.moveTo(maxWidth // 2, maxHeight // 2)
-            
+
         else:
             log.debug("not in a recognizable state")
 
-        previousState = state
+        prev_state = state
         print(sensors)
         #agent.perform_action(state.lower())
