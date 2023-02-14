@@ -283,10 +283,10 @@ void system_streaming_service(void)
 {
 	if (system_streaming)
 	{
-		printf("STREAM\r\n");
+		//printf("STREAM\r\n");
 	}
 	else
 	{
-		printf("STOP\r\n");
+		//printf("STOP\r\n");
 	}
 }

@@ -20,7 +20,7 @@ void uart_initialize(void) {
   PIE1bits.RCIE     = 1;    // enable interrupt on RX (triggers on each byte that is recieved)
 }
 
-void uart_transmit(void * data, U16 length) {
+void uart_transmit(void const * data, U16 length) {
   if (data == NULL)
   {
     system_fatal();
