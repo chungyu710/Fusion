@@ -240,7 +240,7 @@ void system_service(U8 request)
 			link_respond(status, NULL, 0);
 			break;
 		}
-		case COMMAND_SENSORS:
+		case COMMAND_SAMPLE:
 		{
 			void * data;
 			U8 length;
@@ -287,7 +287,7 @@ void system_streaming_service(void)
 {
 	if (system_streaming)
 	{
-		system_service(COMMAND_SENSORS);
+		system_service(COMMAND_SAMPLE);
 		//printf("STREAM\r\n");
 	}
 	else

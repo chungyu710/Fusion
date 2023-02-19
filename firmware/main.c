@@ -19,8 +19,6 @@ void main(void)
 
 	while (1)
 	{
-		system_streaming_service();
-
 		if (pending_command)
 		{
 			system_service(command);
@@ -45,7 +43,7 @@ void main(void)
 			check_battery = false;
 		}
 
-		system_streaming_service();
+		//system_streaming_service();
 	}
 }
 

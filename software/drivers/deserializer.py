@@ -127,7 +127,7 @@ def get_header_data(ser):
 
 def get_all_sensor_data(ser):
     log.debug("SENSORS")
-    send_command(ser, COMMAND_SENSORS)
+    send_command(ser, COMMAND_SAMPLE)
     header = get_header_data(ser)
     payload = ser.read(header.size)
 
