@@ -6,18 +6,9 @@ import log
 import struct
 
 BAUDRATE = 115200
-STATUS_SUCCESS         = 0,
-STATUS_ERROR           = 1,
-STATUS_UNKNOWN_REQUEST = 2,
-STATUS_LOW_BATTERY     = 3
 
-REQUEST_ALL_SENSORS = b"\x30"
-REQUEST_ACCEL = b"\x31"
-REQUEST_GYRO = b"\x32"
-REQUEST_FLEX = b"\x33"
 STREAM_START = b"\x60"
 STREAM_STOP = b"\x61"
-PING = b"\x00"
 
 # This indicates how many times we want to retry before resetting the device
 MAX_RETRIES = 5
@@ -49,8 +40,13 @@ def configure_and_open(port):
 
     return ser
 
+def send_command(ser, command):
+    # Little endian byte
+    ser.write(struct.pack("<B", command))
+
 def ping(ser):
-    send(PING, ser)
+    log.debug("PING")
+    send_command(ser, COMMAND_PING)
     header = get_header_data(ser)
 
     # TODO: Uncomment it after ping command functionality uploaded to the device
@@ -59,57 +55,16 @@ def ping(ser):
 
     return True
 
-def send(msg, ser):
-    ser.write(msg)
-
-def parse_signed(bytes):
-    return int.from_bytes(bytes, 'little', signed=True)
-
-def parse_unsigned(bytes):
-    return int.from_bytes(bytes, 'little', signed=False)
-
-def create_object(command, payload):
-    #TODO: Revisit and remove hardcodes
-    if command == REQUEST_ALL_SENSORS:
-        i = 0
-        accel = Accelerometer()
-        accel.x = parse_signed(payload[i:i+2])
-        accel.y = parse_signed(payload[i+2:i+4])
-        accel.z = parse_signed(payload[i+4:i+6])
-        i += 6
-
-        gyro = Gyro()
-        gyro.pitch = parse_signed(payload[i:i+2])
-        gyro.roll = parse_signed(payload[i+2:i+4])
-        gyro.yaw = parse_signed(payload[i+4:i+6])
-        i += 6
-
-        flex = Flex()
-        flex.thumb = parse_unsigned(payload[i:i+2])
-        flex.index = parse_unsigned(payload[i+2:i+4])
-        flex.middle = parse_unsigned(payload[i+4:i+6])
-        flex.ring = parse_unsigned(payload[i+6:i+8])
-        flex.pinky = parse_unsigned(payload[i+8:i+10])
-        i += 10
-
-        print("payload", payload)
-        button = Button()
-        button.pressed = payload[i]
-
-        sensors = Sensors(accel, gyro, flex, button)
-        log.debug("------- SENSORS -------\r\n" + str(sensors))
-
-        return sensors
-
-    else:
-        # TODO: Add more commands here
-        log.note("COMMAND NOT SUPPORTED ATM!")
-
+def parse_sensor_data(payload):
+    sensors = Sensors()
+    sensors.unpack(payload)
+    log.debug("------- SENSORS -------\r\n" + str(sensors))
+    return sensors
 
 def get_header_data(ser):
     # Get the response header, should be RESPONSE_HEADER_SIZE bytes
-    header = ser.read(RESPONSE_HEADER_SIZE)
-    fields = struct.unpack("BBB", header)
+    data = ser.read(Response.SIZE)
+    fields = struct.unpack("<BBB", data)   # little endian
 
     response = Response()
     response.status = fields[0]
@@ -120,28 +75,28 @@ def get_header_data(ser):
     return response
 
 def get_all_sensor_data(ser):
-    command = REQUEST_ALL_SENSORS
-    send(command, ser)
+    log.debug("SENSORS")
+    send_command(ser, COMMAND_SENSORS)
     header = get_header_data(ser)
+
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
 
     # TODO: Add logic for status and checksum
 
-    # Get the payload of size "length"
-    payload = ser.read(header.length)
-
-    # print(payload)
-    return create_object(command, payload)
+    payload = ser.read(header.length)   # Get the payload of size "length"
+    return parse_sensor_data(payload)
 
 def start_streaming(ser):
-    command = STREAM_START
-    send(command, ser)
+    command = COMMAND_STREAM | STREAM_START
+    send_command(ser, command)
     header = get_header_data(ser)
     # TODO: Add logic for status and checksum
     log.info(f"status: {header.status}")
 
 def stop_streaming(ser):
-    command = STREAM_STOP
-    send(command, ser)
+    command = COMMAND_STREAM | STREAM_STOP
+    send_command(ser, command)
     header = get_header_data(ser)
     # TODO: Add logic for status and checksum
     log.info(f"status: {header.status}")
