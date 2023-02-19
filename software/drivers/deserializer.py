@@ -47,7 +47,7 @@ def configure(ser):
         if pings > MAX_TRIES:
             log.warning(f"Fusion did not respond after {MAX_TRIES} pings")
             log.info(f"Resetting MCU")
-            send_command(ser, COMMAND_RESET)
+            send(ser, COMMAND_RESET)
             resets += 1
             purge(ser)
             time.sleep(2)   # give the MCU time to restart the firmware
@@ -56,7 +56,7 @@ def configure(ser):
                 exit(ERROR)
             pings = 0   # go back to pinging
 
-def send_command(ser, command):
+def send(ser, command):
     # Little endian byte
     ser.write(struct.pack("<B", command))
     ser.flush()
@@ -81,7 +81,7 @@ def verify_checksum(header, payload):
 
 def ping(ser):
     log.info("PING")
-    send_command(ser, COMMAND_PING)
+    send(ser, COMMAND_PING)
     header = get_header_data(ser)
 
     if not verify_checksum(header, []):
@@ -94,7 +94,7 @@ def ping(ser):
 
 def reset(ser):
     log.info("RESET")
-    send_command(ser, COMMAND_RESET)
+    send(ser, COMMAND_RESET)
     purge(ser)
     header = get_header_data(ser)
 
@@ -127,7 +127,7 @@ def get_header_data(ser):
 
 def get_all_sensor_data(ser):
     log.debug("SENSORS")
-    send_command(ser, COMMAND_SAMPLE)
+    send(ser, COMMAND_SAMPLE)
     header = get_header_data(ser)
     payload = ser.read(header.size)
 
@@ -141,7 +141,7 @@ def get_all_sensor_data(ser):
 
 def stream_start(ser):
     command = COMMAND_STREAM | STREAM_START
-    send_command(ser, command)
+    send(ser, command)
     header = get_header_data(ser)
 
     if not verify_checksum(header, []):
@@ -152,11 +152,11 @@ def stream_start(ser):
 
 def stream_stop(ser):
     command = COMMAND_STREAM | STREAM_STOP
-    send_command(ser, command)
+    send(ser, command)
     #ser.reset_input_buffer()
     #ser.reset_output_buffer()
 
-    #send_command(ser, COMMAND_PING)
+    #send(ser, COMMAND_PING)
     #header = get_header_data(ser)
 
     #if not verify_checksum(header, []):

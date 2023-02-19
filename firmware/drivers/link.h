@@ -7,8 +7,8 @@
 #include "flex.h"
 #include "system.h"
 
-#define MASK_COMMAND    0xF0
-#define MASK_METADATA   0x0F
+#define COMMAND_MASK    0xF0
+#define METADATA_MASK   0x0F
 
 typedef enum Command Command;
 typedef enum Sensor_Group Sensor_Group;

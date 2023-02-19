@@ -218,8 +218,8 @@ void system_service(U8 request)
 {
 	led_on();
 
-	Command command = request & MASK_COMMAND;
-	U8 meta = request & MASK_METADATA;
+	Command command = request & COMMAND_MASK;
+	U8 meta = request & METADATA_MASK;
 
 	switch (command)
 	{
@@ -262,7 +262,6 @@ void system_service(U8 request)
 		}
 		case COMMAND_STREAM:
 		{
-
 			Status status = stream_update(meta);
 			link_respond(status, NULL, 0);
 			break;

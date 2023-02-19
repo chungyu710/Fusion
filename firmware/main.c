@@ -9,8 +9,8 @@
 #define BATTERY_POSTSCALER    100
 #define UNDERVOLT_MAX_COUNT   5
 
-static volatile U8 command;
-static volatile bool pending_command = false;
+static volatile U8 request;
+static volatile bool pending_request = false;
 static volatile bool check_battery = false;
 
 void main(void)
@@ -19,10 +19,10 @@ void main(void)
 
 	while (1)
 	{
-		if (pending_command)
+		if (pending_request)
 		{
-			system_service(command);
-			pending_command = false;
+			system_service(request);
+			pending_request = false;
 		}
 
 		if (check_battery)
@@ -51,8 +51,8 @@ void __interrupt() isr()
 {
 	if (PIR1bits.RCIF)
 	{
-		command = RCREG;   // Clears RCIF flag.
-		pending_command = true;
+		request = RCREG;   // Clears RCIF flag.
+		pending_request = true;
 	}
 	else if (PIR1bits.TMR2IF)
 	{
