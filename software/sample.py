@@ -27,7 +27,6 @@ if __name__ == '__main__':
 
     while True:
         start_time = time()
-        sensors = get_all_sensor_data(serial_port)
+        get_all_sensor_data(serial_port)
         end_time = time()
         print(f"latency: {end_time - start_time}")
-        print(sensors)

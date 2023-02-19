@@ -1,10 +1,11 @@
 from drivers.common import *
+from drivers.protocol import *
 
 import serial
 import log
+import struct
 
 BAUDRATE = 115200
-HEADER_SIZE = 3 # bytes
 STATUS_SUCCESS         = 0,
 STATUS_ERROR           = 1,
 STATUS_UNKNOWN_REQUEST = 2,
@@ -16,6 +17,7 @@ REQUEST_GYRO = b"\x32"
 REQUEST_FLEX = b"\x33"
 STREAM_START = b"\x60"
 STREAM_STOP = b"\x61"
+PING = b"\x00"
 
 # This indicates how many times we want to retry before resetting the device
 MAX_RETRIES = 5
@@ -49,7 +51,7 @@ def configure_and_open(port):
 
 def ping(ser):
     send(PING, ser)
-    status, length, checksum = get_header_data(ser)
+    header = get_header_data(ser)
 
     # TODO: Uncomment it after ping command functionality uploaded to the device
     # if status != STATUS_SUCCESS:
@@ -74,14 +76,12 @@ def create_object(command, payload):
         accel.x = parse_signed(payload[i:i+2])
         accel.y = parse_signed(payload[i+2:i+4])
         accel.z = parse_signed(payload[i+4:i+6])
-        log.debug("Accelerometer data: " + str(accel))
         i += 6
 
         gyro = Gyro()
         gyro.pitch = parse_signed(payload[i:i+2])
         gyro.roll = parse_signed(payload[i+2:i+4])
         gyro.yaw = parse_signed(payload[i+4:i+6])
-        log.debug("Gyro data: " + str(gyro))
         i += 6
 
         flex = Flex()
@@ -90,16 +90,14 @@ def create_object(command, payload):
         flex.middle = parse_unsigned(payload[i+4:i+6])
         flex.ring = parse_unsigned(payload[i+6:i+8])
         flex.pinky = parse_unsigned(payload[i+8:i+10])
-        log.debug("Flex data: " + str(flex))
         i += 10
 
         print("payload", payload)
         button = Button()
         button.pressed = payload[i]
-        log.debug("Button data: " + str(button))
 
         sensors = Sensors(accel, gyro, flex, button)
-        log.info("sensor data: \n" + str(sensors))
+        log.debug("------- SENSORS -------\r\n" + str(sensors))
 
         return sensors
 
@@ -109,33 +107,27 @@ def create_object(command, payload):
 
 
 def get_header_data(ser):
-    # Get the response header, should be HEADER_SIZE bytes
-    header_data = ser.read(HEADER_SIZE)
-    
-    # if not header_data:
-    #     log.error("No data received from the device")
-    #     return
-    
-    log.debug("header_data: " + str(header_data))
+    # Get the response header, should be RESPONSE_HEADER_SIZE bytes
+    header = ser.read(RESPONSE_HEADER_SIZE)
+    fields = struct.unpack("BBB", header)
 
-    status, length, checksum = header_data[0], header_data[1], header_data[2]
-    log.debug("status: " + str(status))
-    log.debug("length: " + str(length))
-    log.debug("checksum: " + str(checksum))
+    response = Response()
+    response.status = fields[0]
+    response.length = fields[1]
+    response.checksum = fields[2]
 
-    return status, length, checksum
+    log.debug("------- HEADER -------\r\n" + str(response))
+    return response
 
 def get_all_sensor_data(ser):
     command = REQUEST_ALL_SENSORS
     send(command, ser)
-
-    status, length, checksum = get_header_data(ser)
+    header = get_header_data(ser)
 
     # TODO: Add logic for status and checksum
-    log.info(f"status: {status}")
 
     # Get the payload of size "length"
-    payload = ser.read(length)
+    payload = ser.read(header.length)
 
     # print(payload)
     return create_object(command, payload)
@@ -143,13 +135,13 @@ def get_all_sensor_data(ser):
 def start_streaming(ser):
     command = STREAM_START
     send(command, ser)
-    status, length, checksum = get_header_data(ser)
+    header = get_header_data(ser)
     # TODO: Add logic for status and checksum
-    log.info(f"status: {status}")
+    log.info(f"status: {header.status}")
 
 def stop_streaming(ser):
     command = STREAM_STOP
     send(command, ser)
-    status, length, checksum = get_header_data(ser)
+    header = get_header_data(ser)
     # TODO: Add logic for status and checksum
-    log.info(f"status: {status}")
+    log.info(f"status: {header.status}")
