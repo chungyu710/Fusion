@@ -109,7 +109,7 @@ def reset(ser):
 def parse_sensor_data(payload):
     sensors = Sensors()
     sensors.unpack(payload)
-    log.debug("------- SENSORS -------\r\n" + str(sensors))
+    #log.debug("------- SENSORS -------\r\n" + str(sensors))
     return sensors
 
 def get_header_data(ser):
@@ -122,11 +122,11 @@ def get_header_data(ser):
     header.size = fields[1]
     header.checksum = fields[2]
 
-    log.debug("------- HEADER -------\r\n" + str(header))
+    #log.debug("------- HEADER -------\r\n" + str(header))
     return header
 
 def get_all_sensor_data(ser):
-    log.debug("SENSORS")
+    log.debug("SAMPLE")
     send(ser, COMMAND_SAMPLE)
     header = get_header_data(ser)
     payload = ser.read(header.size)
@@ -138,6 +138,30 @@ def get_all_sensor_data(ser):
         exit(ERROR)
 
     return parse_sensor_data(payload)
+
+def burst(ser):
+    log.debug("BURST")
+    send(ser, COMMAND_BURST)
+
+    for i in range(10):
+        log.info(f"PACKET {i}")
+
+        start_time = time.time()
+
+        header = get_header_data(ser)
+        payload = ser.read(header.size)
+
+        end_time = time.time()
+        latency = (end_time - start_time) * 1000
+        print("latency: %.2f ms" % (latency))
+
+        if not verify_checksum(header, payload):
+            exit(ERROR)
+        if header.status != STATUS_SUCCESS:
+            log.error(f"Status: {header.status}")
+            exit(ERROR)
+
+        parse_sensor_data(payload)
 
 def stream_start(ser):
     command = COMMAND_STREAM | STREAM_START

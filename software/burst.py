@@ -13,7 +13,7 @@ if __name__ == '__main__':
     deserializer.configure(ser)
 
     while True:
-        start_time = time()
-        deserializer.get_all_sensor_data(ser)
-        end_time = time()
-        print(f"latency: {end_time - start_time}")
+        #start_time = time()
+        deserializer.burst(ser)
+        #end_time = time()
+        #print(f"latency: {end_time - start_time}")

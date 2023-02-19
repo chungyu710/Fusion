@@ -249,6 +249,17 @@ void system_service(U8 request)
 			link_respond(status, data, length);
 			break;
 		}
+		case COMMAND_BURST:
+		{
+			for (U8 i = 0; i < 10; i++)
+			{
+				void * data;
+				U8 length;
+				Status status = read_sensors(meta, &data, &length);
+				link_respond(status, data, length);
+			}
+			break;
+		}
 		case COMMAND_BATTERY:
 		{
 			U16 voltage = battery_voltage();

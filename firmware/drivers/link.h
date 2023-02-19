@@ -41,6 +41,7 @@ enum Command
 	COMMAND_BATTERY     = 0x40,
 	COMMAND_RESET       = 0x50,
 	COMMAND_STREAM      = 0x60,
+	COMMAND_BURST       = 0x70,
 };
 
 struct Sensors
