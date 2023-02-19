@@ -38,7 +38,8 @@ static bool system_streaming = false;
 static char * system_abort_reasons [ABORT_count] = {
 	"NULL POINTER",
 	"IMU OFFLINE",
-	"LOW BATTERY"
+	"LOW BATTERY",
+	"QUEUE FULL",
 };
 
 void system_initialize(void)

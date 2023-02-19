@@ -9,7 +9,21 @@
 #define BATTERY_POSTSCALER    100
 #define UNDERVOLT_MAX_COUNT   5
 
-static volatile U8 request;
+// RX QUEUE //
+
+struct Queue
+{
+	U8 read;
+	U8 write;
+	U8 length;
+	U8 size;
+	U8 data [10];
+};
+
+typedef struct Queue Queue;
+
+static volatile Queue queue;
+static volatile bool queue_full = false;
 static volatile bool pending_request = false;
 static volatile bool check_battery = false;
 
@@ -17,12 +31,25 @@ void main(void)
 {
 	system_initialize();
 
+	queue.read = 0;
+	queue.write = 0;
+	queue.length = 0;
+	queue.size = sizeof(queue.data);
+
 	while (1)
 	{
 		if (pending_request)
 		{
+			U8 request = queue.data[queue.read];
+			queue.read = (queue.read + 1) % queue.size;
+			queue.length--;
 			system_service(request);
 			pending_request = false;
+		}
+
+		if (queue_full)
+		{
+			system_abort(ABORT_QUEUE_FULL, __func__);
 		}
 
 		if (check_battery)
@@ -51,8 +78,17 @@ void __interrupt() isr()
 {
 	if (PIR1bits.RCIF)
 	{
-		request = RCREG;   // Clears RCIF flag.
-		pending_request = true;
+		if (queue.length == queue.size)
+		{
+			queue_full = true;
+		}
+		else
+		{
+			queue.data[queue.write] = RCREG;   // Clears RCIF flag.
+			queue.write = (queue.write + 1) % queue.size;
+			queue.length++;
+			pending_request = true;
+		}
 	}
 	else if (PIR1bits.TMR2IF)
 	{
