@@ -2,11 +2,11 @@ import json
 import log
 
 def get_states_from_json():
-    with open("software/drivers/calibartion.json", "r") as f:
+    with open("calibartion.json", "r") as f:
         return json.load(f)
 
 def get_states_from_calibration():
-    with open("software/drivers/calibration.json", "r") as f:
+    with open("calibration.json", "r") as f:
         return json.load(f)
 
 # accel: {"x": V, "y": V, "z": V}

@@ -58,9 +58,7 @@ def handshake():
         if tries > MAX_TRIES:
             log.error(f"Glove did not respond after {MAX_TRIES} tries")
             abort(ERROR)
-
         reset()
-
     log.success(f"Established communication with glove")
 
 def send(command):
