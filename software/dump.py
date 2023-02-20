@@ -2,6 +2,7 @@ import argparse
 import log
 
 from drivers import deserializer
+from time import time
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -9,8 +10,7 @@ if __name__ == '__main__':
     parser.add_argument('--port', required=True)
     args = parser.parse_args()
 
-    deserializer.open(args.port)
+    deserializer.open(args.port, sync = False)
 
     while True:
-        battery = deserializer.battery()
-        print(battery)
+        deserializer.dump()

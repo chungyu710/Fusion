@@ -19,7 +19,7 @@ def ctrl_c_handler(signum, frame):
     print()
     abort(SUCCESS)
 
-def open(port):
+def open(port, sync = True):
     global ser
     try:
         ser = serial.Serial(
@@ -36,7 +36,9 @@ def open(port):
     signal.signal(signal.SIGINT, ctrl_c_handler)
     purge()
     log.success(f"Opened serial port '{port}'")
-    handshake()
+
+    if sync:
+        handshake()
 
 def close():
     purge()
@@ -178,3 +180,8 @@ def battery():
     battery = Battery()
     battery.unpack(payload)
     return battery
+
+def dump():
+    data = ser.read(128)
+    if len(data) != 0:
+        print(data.decode("ascii"), end = "")
