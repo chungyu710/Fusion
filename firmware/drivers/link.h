@@ -14,7 +14,6 @@
 
 typedef enum Command Command;
 typedef enum Sensor_Group Sensor_Group;
-typedef enum Stream_Command Stream_Command;
 
 typedef struct Header Header;
 typedef struct Sensors Sensors;
@@ -28,12 +27,6 @@ enum Sensor_Group
 	SENSOR_GROUP_BUTTON  = 0x4
 };
 
-enum Stream_Command
-{
-	STREAM_START  = 0x0,
-	STREAM_STOP   = 0x1
-};
-
 enum Command
 {
 	COMMAND_PING        = 0x00,
@@ -42,8 +35,7 @@ enum Command
 	COMMAND_SAMPLE      = 0x30,
 	COMMAND_BATTERY     = 0x40,
 	COMMAND_RESET       = 0x50,
-	COMMAND_STREAM      = 0x60,
-	COMMAND_BURST       = 0x70,
+	COMMAND_BURST       = 0x60,
 };
 
 struct Sensors

@@ -1,6 +1,5 @@
 from drivers.common import *
 from drivers.protocol import *
-from multiprocessing import Process
 
 import serial
 import log
@@ -11,7 +10,6 @@ import signal
 BAUDRATE = 115200
 TIMEOUT_S = 1
 
-queue = []   # RX queue of Sensor objects
 ser = None
 pending = 0
 
@@ -167,18 +165,6 @@ def get_all_sensor_data():
 
     return parse_sensor_data(payload)
 
-def rx_stream():
-    header = get_header_data()
-    payload = ser.read(header.size)
-
-    if not verify_checksum(header, payload):
-        abort()
-    if header.status != STATUS_SUCCESS:
-        log.error(f"Status: {header.status}")
-        abort()
-
-    return parse_sensor_data(payload)
-
 def burst():
     global pending
     log.info("BURST")
@@ -216,9 +202,3 @@ def abort():
 
 def ctrl_c_handler(signum, frame):
     abort()
-
-def stream_start():
-    send(COMMAND_STREAM | STREAM_START)
-
-def stream_stop():
-    send(COMMAND_STREAM | STREAM_STOP)

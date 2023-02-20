@@ -33,8 +33,6 @@
 #define LED_DELAY_US   200000
 #define LED_BLINKS     3
 
-static bool system_streaming = false;
-
 static char * system_abort_reasons [ABORT_count] = {
 	"NULL POINTER",
 	"IMU OFFLINE",
@@ -187,32 +185,6 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 	return status;
 }
 
-static Status stream_update(Stream_Command command)
-{
-	Status status = STATUS_SUCCESS;
-
-	switch (command)
-	{
-		case STREAM_START:
-		{
-			system_streaming = true;
-			break;
-		}
-		case STREAM_STOP:
-		{
-			system_streaming = false;
-			break;
-		}
-		default:
-		{
-			status = STATUS_ERROR;
-			break;
-		}
-	}
-
-	return status;
-}
-
 void system_service(U8 request)
 {
 	led_on();
@@ -271,12 +243,6 @@ void system_service(U8 request)
 			system_reboot();
 			break;
 		}
-		case COMMAND_STREAM:
-		{
-			Status status = stream_update(meta);
-			link_respond(status, NULL, 0);
-			break;
-		}
 		default:
 		{
 			link_respond(STATUS_ERROR, NULL, 0);
@@ -290,18 +256,4 @@ void system_service(U8 request)
 void system_reboot(void)
 {
 	WDTCONbits.SWDTEN = 1;   // enable watchdog timer to force reset
-}
-
-#include <stdio.h>
-void system_streaming_service(void)
-{
-	if (system_streaming)
-	{
-		system_service(COMMAND_SAMPLE);
-		//printf("STREAM\r\n");
-	}
-	else
-	{
-		//printf("STOP\r\n");
-	}
 }
