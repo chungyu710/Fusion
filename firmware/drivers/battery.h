@@ -8,5 +8,6 @@
 void battery_initialize(void);
 U16 battery_voltage(void);   // reported in mV
 bool battery_low(void);
+void battery_check(void);
 
 #endif /* BATTERY_H */

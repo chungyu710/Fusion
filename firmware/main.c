@@ -6,12 +6,11 @@
 #include "battery.h"
 #include "link.h"
 
-#define BATTERY_POSTSCALER    100
-#define UNDERVOLT_MAX_COUNT   5
+#define BATTERY_CHECK_POSTSCALER    100
 
-static volatile bool pending_request = false;
-static volatile bool check_battery = false;
-static volatile U8 request = 0;
+static volatile U8 data = 0;
+static volatile bool request = false;
+static volatile bool battery = false;
 
 void main(void)
 {
@@ -19,28 +18,16 @@ void main(void)
 
 	while (1)
 	{
-		if (pending_request)
+		if (request)
 		{
-			system_service(request);
-			pending_request = false;
+			system_service(data);
+			request = false;
 		}
 
-		if (check_battery)
+		if (battery)
 		{
-			static U8 count = 0;
-
-			if (battery_low())
-			{
-				count++;
-			}
-
-			if (count == UNDERVOLT_MAX_COUNT)
-			{
-				count = 0;
-				ABORT(ABORT_LOW_BATTERY);
-			}
-
-			check_battery = false;
+			battery_check();
+			battery = false;
 		}
 	}
 }
@@ -49,8 +36,8 @@ void __interrupt() isr()
 {
 	if (PIR1bits.RCIF)
 	{
-		request = RCREG;   // Clears RCIF flag.
-		pending_request = true;
+		data = RCREG;   // Clears RCIF flag.
+		request = true;
 	}
 	else if (PIR1bits.TMR2IF)
 	{
@@ -59,10 +46,10 @@ void __interrupt() isr()
 
 		postscaler++;    // increment prescaler
 
-		if (postscaler == BATTERY_POSTSCALER)
+		if (postscaler == BATTERY_CHECK_POSTSCALER)
 		{
 			postscaler = 0;
-			check_battery = true;
+			battery = true;
 		}
 
 		PIR1bits.TMR2IF = 0;   // clear Timer2 interrupt flag

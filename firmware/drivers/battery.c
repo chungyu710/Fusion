@@ -22,6 +22,8 @@ this voltage, Fusion cannot operate reliably.
 
 #define BOOT_DELAY_US   10000   // 10 ms
 
+#define UNDERVOLT_MAX_COUNT   5   // maximum low battery readings before aborting
+
 void battery_initialize(void)
 {
 	TRIS_BATTERY = INPUT;
@@ -70,4 +72,19 @@ U16 battery_voltage(void)
 bool battery_low(void)
 {
 	return battery_voltage() <= LOW_BATTERY_mV;
+}
+
+void battery_check(void)
+{
+	static U8 count = 0;
+
+	if (battery_low())
+	{
+		count++;
+	}
+
+	if (count == UNDERVOLT_MAX_COUNT)
+	{
+		ABORT(ABORT_LOW_BATTERY);
+	}
 }
