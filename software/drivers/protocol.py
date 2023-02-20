@@ -163,3 +163,20 @@ class Sensors:
         self.button = Button()
         self.button.unpack(data, offset)
         offset += Button.SIZE
+
+class Battery:
+    FORMAT = "H"
+    SIZE = struct.calcsize(FORMAT)
+
+    def __init__(self, voltage = 0):
+        self.voltage = voltage
+
+    def __str__(self):
+        string = ""
+        string += "%s%8s%s: %.2f V\r\n" % (colours.RED, "voltage", colours.RESET, self.voltage)
+        return string
+
+    def unpack(self, data, offset = 0):
+        # little endian
+        fields = struct.unpack_from(f"<{Battery.FORMAT}", data, offset)
+        self.voltage = fields[0] / 1000.0

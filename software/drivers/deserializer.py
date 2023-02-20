@@ -162,3 +162,19 @@ def burst():
     pending -= 1
     log.success("Received sensor data")
     return parse_sensor_data(payload)
+
+def battery():
+    send(COMMAND_BATTERY)
+    header = get_header_data()
+    payload = ser.read(header.size)
+
+    if not verify_checksum(header, payload):
+        abort(ERROR)
+
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
+        abort(ERROR)
+
+    battery = Battery()
+    battery.unpack(payload)
+    return battery
