@@ -45,29 +45,44 @@ def purge():
     ser.reset_output_buffer()
 
 def configure():
-    pings = 0
-    resets = 0
-    while not ping():
-        log.info("Pinging Fusion...")
-        pings += 1
-        purge()
-        if pings > MAX_TRIES:
-            log.warning(f"Fusion did not respond after {MAX_TRIES} pings")
-            log.info(f"Resetting MCU")
-            send(COMMAND_RESET)
-            resets += 1
-            purge()
-            time.sleep(2)   # give the MCU time to restart the firmware
-            if resets > MAX_TRIES:
-                log.error(f"Failed to reset glove after {MAX_TRIES} tries")
-                abort()
+    #pings = 0
+    #resets = 0
 
-            pings = 0   # go back to pinging
+    #while not ping():
+    #    log.info("Pinging glove")
+    #    pings += 1
+    #    purge()
+
+    #    if pings > MAX_TRIES:
+    #        log.warning(f"Glove did not respond after {MAX_TRIES} pings")
+    #        log.info(f"Resetting MCU")
+    #        send(COMMAND_RESET)
+    #        resets += 1
+
+    #        if resets > MAX_TRIES:
+    #            log.error(f"Failed to reset glove after {MAX_TRIES} tries")
+    #            abort()
+
+    #        purge()
+    #        time.sleep(2)   # give the MCU time to restart the firmware
+    #        pings = 0   # go back to pinging
+
+    tries = 0
+    while not ping():
+        tries += 1
+        if tries > MAX_TRIES:
+            log.warning(f"Glove did not respond after {MAX_TRIES} tries")
+            abort()
+
+        log.debug("RESET")
+        send(COMMAND_RESET)
+        purge()
+        time.sleep(2)   # give the MCU time to restart the firmware
 
 def send(command):
     # Little endian byte
     ser.write(struct.pack("<B", command))
-    #ser.flush()
+    ser.flush()
 
 def verify_checksum(header, payload):
     checksum = header.status ^ header.size
@@ -121,7 +136,7 @@ def reset():
 def parse_sensor_data(payload):
     sensors = Sensors()
     sensors.unpack(payload)
-    log.debug("------- SENSORS -------\r\n" + str(sensors))
+    #log.debug("------- SENSORS -------\r\n" + str(sensors))
     return sensors
 
 def get_header_data():
@@ -152,6 +167,18 @@ def get_all_sensor_data():
 
     return parse_sensor_data(payload)
 
+def rx_stream():
+    header = get_header_data()
+    payload = ser.read(header.size)
+
+    if not verify_checksum(header, payload):
+        abort()
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
+        abort()
+
+    return parse_sensor_data(payload)
+
 def burst():
     global pending
     log.info("BURST")
@@ -160,7 +187,7 @@ def burst():
 
 def service():
     global pending
-    if pending < 5:
+    if pending < BURST_SIZE:
         log.info(f"Requesting {BURST_SIZE} sensor samples")
         burst()
 
@@ -220,7 +247,7 @@ def service():
 
 #    log.success("Ended RX thread")
 
-rx_thread_enable = False
+#rx_thread_enable = False
 process = Process(target = service)
 #signal.signal(signal.SIGINT, ctrl_c_handler)
 
@@ -239,3 +266,9 @@ def start():
     #global rx_thread_enable
     #rx_thread_enable = True
     process.start()
+
+def stream_start():
+    send(COMMAND_STREAM | STREAM_START)
+
+def stream_stop():
+    send(COMMAND_STREAM | STREAM_STOP)

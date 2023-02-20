@@ -43,7 +43,7 @@ void main(void)
 			check_battery = false;
 		}
 
-		//system_streaming_service();
+		system_streaming_service();
 	}
 }
 

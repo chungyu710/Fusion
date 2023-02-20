@@ -249,7 +249,7 @@ void system_service(U8 request)
 		}
 		case COMMAND_BURST:
 		{
-			for (U8 i = 0; i < 10; i++)
+			for (U8 i = 0; i < 5; i++)
 			{
 				void * data;
 				U8 length;

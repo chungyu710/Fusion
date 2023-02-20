@@ -6,7 +6,7 @@ from agent import *
 
 import argparse
 
-pyautogui.PAUSE = 0   # reduces pyautogui lag
+pyautogui.PAUSE = 1e-6   # reduces pyautogui lag
 pyautogui.FAILSAFE = False # take out pyautogui failsafe
 
 if __name__ == '__main__':
@@ -62,10 +62,24 @@ if __name__ == '__main__':
     agent = Agent()
     prev_state = "00000"
     maxWidth, maxHeight = pyautogui.size()
-    #log.suppress(log.Level.DEBUG)
+
+    samples = [0 for i in range(10)]
 
     while True:
+        begin = time()
         sensors = deserializer.service()
+        end = time()
+
+        latency = (end - begin) * 1000
+        samples.append(latency)
+        samples.pop(0)
+
+        average = 0
+        for s in samples:
+            average += s
+        average /= len(samples)
+
+        log.debug("latency: %.2f ms (average: %.2f ms)" % (latency, average))
 
         sensors.gyro.pitch = scale_sensors(100, sensors.gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
         sensors.gyro.roll = scale_sensors(100, sensors.gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
@@ -97,9 +111,10 @@ if __name__ == '__main__':
                     pyautogui.mouseDown()
             elif (state == RIGHT_CLICK_MODE):
                 pyautogui.mouseDown(button='right')
-            else:
-                pyautogui.mouseUp()
-                pyautogui.mouseUp(button='right')
+            else:   # MOUSE_MODE
+                if prev_state != MOUSE_MODE:
+                    pyautogui.mouseUp()
+                    pyautogui.mouseUp(button='right')
 
             pyautogui.move(-sensors.gyro.yaw, -sensors.gyro.pitch)
 
@@ -120,5 +135,5 @@ if __name__ == '__main__':
             log.debug("not in a recognizable state")
 
         prev_state = state
-        #print(sensors)
+        print(sensors)
         #agent.perform_action(state.lower())

@@ -16,5 +16,5 @@ if __name__ == '__main__':
     #log.suppress(log.Level.DEBUG)
 
     while True:
-        #sensors = deserializer.sensors()
         sensors = deserializer.service()
+        pass

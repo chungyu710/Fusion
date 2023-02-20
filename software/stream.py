@@ -15,19 +15,19 @@ if __name__ == '__main__':
     args = parser.parse_args()
     start = int(args.start)
 
-    ser = deserializer.open(args.port)
-    deserializer.configure(ser)
+    deserializer.open(args.port)
+    deserializer.configure()
 
     if (start == 1):
         log.info("START STREAM")
-        deserializer.stream_start(ser)
+        deserializer.stream_start()
         #min = 1923834
         #max = 0
         #total = 0
         #count = 0
         while True:
             begin = time()
-            sensors = deserializer.get_all_sensor_data(ser)
+            sensors = deserializer.rx_stream()
             end = time()
 
             latency = end - begin
@@ -46,6 +46,6 @@ if __name__ == '__main__':
             #pyautogui.move(sensors.gyro.pitch, 0)
     else:
         log.info("STOP STREAM")
-        deserializer.stream_stop(ser)
+        deserializer.stream_stop()
 
-    deserializer.close(ser)
+    deserializer.close()
