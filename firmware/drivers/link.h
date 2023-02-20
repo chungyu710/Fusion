@@ -54,5 +54,6 @@ struct Header
 } __attribute((packed));
 
 void link_respond(Status status, void * data, U8 size);
+void link_service(U8 request);
 
 #endif /* LINK_H */

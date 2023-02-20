@@ -1,8 +1,6 @@
 #include <xc.h>
 
 #include "system.h"
-#include "uart.h"
-#include "led.h"
 #include "battery.h"
 #include "link.h"
 
@@ -20,7 +18,7 @@ void main(void)
 	{
 		if (request)
 		{
-			system_service(data);
+			link_service(data);
 			request = false;
 		}
 
