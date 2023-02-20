@@ -13,16 +13,18 @@
 The HC-05 bluetooth module is directly
 powered from the battery since it has
 its own LDO.  The minimim input voltage
-is 3.6 V, so if the battery drops below
-this voltage, Fusion cannot operate reliably.
+is 3.6 V, but the module can still operate
+below this voltage.  The battery is fully
+discharged at 3.0 V.  3.3 V will be used
+as the undervolt threshold.
 */
 
-#define LOW_BATTERY_mV   3600   // 3.6 V (HC-05 LDO minimum input voltage)
+#define LOW_BATTERY_mV   3300   // 3.3 V
 #define MAX_VOLTAGE_mV   5000   // 5 V (ADRES = 1023)
 
 #define BOOT_DELAY_US   10000   // 10 ms
 
-#define UNDERVOLT_MAX_COUNT   5   // maximum low battery readings before aborting
+#define LOW_BATTERY_MAX_COUNT   5   // maximum low battery readings before aborting
 
 void battery_initialize(void)
 {
@@ -83,7 +85,7 @@ void battery_check(void)
 		count++;
 	}
 
-	if (count == UNDERVOLT_MAX_COUNT)
+	if (count == LOW_BATTERY_MAX_COUNT)
 	{
 		ABORT(ABORT_LOW_BATTERY);
 	}
