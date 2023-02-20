@@ -1,8 +1,8 @@
 import argparse
-import time
 import log
 
 from drivers import deserializer
+from time import time
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -11,10 +11,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     deserializer.open(args.port)
-    deserializer.configure()
-    #deserializer.start()
-    #log.suppress(log.Level.DEBUG)
 
     while True:
-        sensors = deserializer.service()
-        pass
+        begin = time()
+        sensors = deserializer.burst()
+        end = time()
+        latency = (end - begin) * 1000
+        log.info("Latency: %.3f ms" % (latency))

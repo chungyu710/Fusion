@@ -7,14 +7,17 @@ import struct
 import time
 import signal
 
-BAUDRATE = 115200
-TIMEOUT_S = 1
+BAUDRATE = 115200   # UART baud rate
+TIMEOUT_S = 1       # serial port timeout in seconds
+RESET_DELAY_S = 2   # time to wait after issuing a reset so that MCU firmware can reboot
+MAX_TRIES = 5       # maximum times the glove is reset before giving up on the handshake
 
-ser = None
-pending = 0
+ser = None    # serial port
+pending = 0   # number of pending sensor packets (burst mode only)
 
-# This indicates how many times we want to retry before resetting the device
-MAX_TRIES = 5
+def ctrl_c_handler(signum, frame):
+    print()
+    abort(SUCCESS)
 
 def open(port):
     global ser
@@ -28,10 +31,12 @@ def open(port):
         )
     except Exception as e:
         log.error(f"Error opening serial port: {e}")
-        abort()
+        abort(ERROR)
 
-    log.success(f"Opened serial port '{port}'")
+    signal.signal(signal.SIGINT, ctrl_c_handler)
     purge()
+    log.success(f"Opened serial port '{port}'")
+    handshake()
 
 def close():
     purge()
@@ -42,43 +47,24 @@ def purge():
     ser.reset_input_buffer()
     ser.reset_output_buffer()
 
-def configure():
-    #pings = 0
-    #resets = 0
+def abort(result):
+    close()
+    exit(result)
 
-    #while not ping():
-    #    log.info("Pinging glove")
-    #    pings += 1
-    #    purge()
-
-    #    if pings > MAX_TRIES:
-    #        log.warning(f"Glove did not respond after {MAX_TRIES} pings")
-    #        log.info(f"Resetting MCU")
-    #        send(COMMAND_RESET)
-    #        resets += 1
-
-    #        if resets > MAX_TRIES:
-    #            log.error(f"Failed to reset glove after {MAX_TRIES} tries")
-    #            abort()
-
-    #        purge()
-    #        time.sleep(2)   # give the MCU time to restart the firmware
-    #        pings = 0   # go back to pinging
-
+def handshake():
     tries = 0
     while not ping():
         tries += 1
         if tries > MAX_TRIES:
-            log.warning(f"Glove did not respond after {MAX_TRIES} tries")
-            abort()
+            log.error(f"Glove did not respond after {MAX_TRIES} tries")
+            abort(ERROR)
 
-        log.info("RESET")
-        send(COMMAND_RESET)
-        purge()
-        time.sleep(2)   # give the MCU time to restart the firmware
+        reset()
+
+    log.success(f"Established communication with glove")
 
 def send(command):
-    # Little endian byte
+    # little endian (<)
     ser.write(struct.pack("<B", command))
     ser.flush()
 
@@ -106,8 +92,10 @@ def ping():
 
     if header is None:
         return False
+
     if not verify_checksum(header, []):
         return False
+
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
         return False
@@ -118,18 +106,8 @@ def ping():
 def reset():
     log.info("RESET")
     send(COMMAND_RESET)
-    #purge()
-    header = get_header_data()
-
-    if header is None:
-        return False
-    if not verify_checksum(header, []):
-        return False
-    if header.status != STATUS_SUCCESS:
-        log.error(f"Status: {header.status}")
-        return False
-
-    return True
+    purge()
+    time.sleep(RESET_DELAY_S)   # give the MCU time to restart the firmware
 
 def parse_sensor_data(payload):
     sensors = Sensors()
@@ -144,61 +122,45 @@ def get_header_data():
 
     if len(data) != Header.SIZE:
         log.error("Failed to read header data bytes")
-        abort()
+        abort(ERROR)
 
     header.unpack(data)
-
     log.debug("------- HEADER -------\r\n" + str(header))
     return header
 
-def get_all_sensor_data():
+def sample():
     log.info("SAMPLE")
     send(COMMAND_SAMPLE)
     header = get_header_data()
     payload = ser.read(header.size)
 
     if not verify_checksum(header, payload):
-        abort()
+        abort(ERROR)
+
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
-        abort()
+        abort(ERROR)
 
     return parse_sensor_data(payload)
 
 def burst():
     global pending
-    log.info("BURST")
-    send(COMMAND_BURST)
-    pending += BURST_SIZE
-
-def service():
-    global pending
     if pending < BURST_SIZE:
         log.info(f"Requesting {BURST_SIZE} sensor samples")
-        burst()
+        log.info("BURST")
+        send(COMMAND_BURST)
+        pending += BURST_SIZE
 
     header = get_header_data()
     payload = ser.read(header.size)
 
     if not verify_checksum(header, payload):
-        abort()
+        abort(ERROR)
+
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
-        abort()
+        abort(ERROR)
 
     pending -= 1
     log.success("Received sensor data")
     return parse_sensor_data(payload)
-
-#signal.signal(signal.SIGINT, ctrl_c_handler)
-
-def abort():
-    #global rx_thread_enable
-    #rx_thread_enable = False
-    #thread.join()
-    #process.kill()
-    close()
-    exit(ERROR)
-
-def ctrl_c_handler(signum, frame):
-    abort()

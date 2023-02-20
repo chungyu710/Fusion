@@ -57,49 +57,72 @@ if __name__ == '__main__':
     SCROLL_MODE = "01100"
     RECENTER = "11111" # not used for now
 
-    deserializer.open(PORT)
-    deserializer.configure()
+    DEADZONE = 2
+    CALCULATE_LATENCY = False
+
     agent = Agent()
     prev_state = "00000"
     maxWidth, maxHeight = pyautogui.size()
 
+    deserializer.open(PORT)
     samples = [0 for i in range(10)]
+    log.suppress(log.Level.DEBUG)
 
     while True:
-        begin = time()
-        sensors = deserializer.service()
-        end = time()
+        if CALCULATE_LATENCY:
+            begin = time()
 
-        latency = (end - begin) * 1000
-        samples.append(latency)
-        samples.pop(0)
+        sensors = deserializer.burst()
 
-        average = 0
-        for s in samples:
-            average += s
-        average /= len(samples)
+        if CALCULATE_LATENCY:
+            end = time()
+            latency = (end - begin) * 1000
+            samples.append(latency)
+            samples.pop(0)
 
-        log.info("latency: %.2f ms (average: %.2f ms)" % (latency, average))
+            average = 0
+            for s in samples:
+                average += s
+            average /= len(samples)
 
-        sensors.gyro.pitch = scale_sensors(100, sensors.gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
-        sensors.gyro.roll = scale_sensors(100, sensors.gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
-        sensors.gyro.yaw = scale_sensors(100, sensors.gyro.yaw, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_YAW)
+            log.info("Current Latency: %.3f ms" % (latency))
+            log.info("Average Latency: %.3f ms" % (average))
 
-        if(sensors.gyro.yaw > -3 and sensors.gyro.yaw < 3):
-            sensors.gyro.yaw = 0
-        if(sensors.gyro.pitch > -3 and sensors.gyro.pitch < 3):
-            sensors.gyro.pitch = 0
+        gyro = sensors.gyro
+        accel = sensors.accel
+        flex = sensors.flex
+        button = sensors.button
 
-        #sensors.flex.thumb = scale_sensors(50, sensors.flex.thumb, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
-        #sensors.flex.index = scale_sensors(50, sensors.flex.index, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
-        #sensors.flex.middle = scale_sensors(50, sensors.flex.middle, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
-        #sensors.flex.ring = scale_sensors(50, sensors.flex.ring, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
-        #sensors.flex.pinky = scale_sensors(50, sensors.flex.pinky, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
+        gyro.pitch = scale_sensors(100, gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
+        gyro.roll = scale_sensors(100, gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
+        gyro.yaw = scale_sensors(100, gyro.yaw, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_YAW)
 
-        # state = get_stated_based_on_flex(sensors.flex)
-        state = get_flex_state(sensors.flex, prev_state)
+        # apply deadzone or scale linearly if no deadzone
 
-        if sensors.button.pressed:
+        if abs(gyro.yaw) < DEADZONE:
+            gyro.yaw = 0
+        #elif gyro.yaw > 0:
+        #    gyro.yaw -= DEADZONE
+        #elif gyro.yaw < 0:
+        #    gyro.yaw += DEADZONE
+
+        if abs(gyro.pitch) < DEADZONE:
+            gyro.pitch = 0
+        #elif gyro.pitch > 0:
+        #    gyro.pitch -= DEADZONE
+        #elif gyro.pitch < 0:
+        #    gyro.pitch += DEADZONE
+
+        #flex.thumb = scale_sensors(50, flex.thumb, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
+        #flex.index = scale_sensors(50, flex.index, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
+        #flex.middle = scale_sensors(50, flex.middle, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
+        #flex.ring = scale_sensors(50, flex.ring, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
+        #flex.pinky = scale_sensors(50, flex.pinky, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
+
+        # state = get_stated_based_on_flex(flex)
+        state = get_flex_state(flex, prev_state)
+
+        if button.pressed:
             state = RECENTER
 
         log.debug("State: " + str(state))
@@ -115,16 +138,31 @@ if __name__ == '__main__':
                     pyautogui.mouseUp()
                     pyautogui.mouseUp(button='right')
 
-            pyautogui.move(-sensors.gyro.yaw, -sensors.gyro.pitch)
+            # don't move cursor beyond screen limit
+            cursor = pyautogui.position()
+            dx = -gyro.yaw
+            dy = -gyro.pitch
+
+            if cursor.x + dx > maxWidth:
+                dx = maxWidth - cursor.x
+            elif cursor.x + dx < 0:
+                dx = -cursor.x
+
+            if cursor.y + dy > maxHeight:
+                dy = maxHeight - cursor.y
+            elif cursor.y + dy < 0:
+                dy = -cursor.y
+
+            pyautogui.move(dx, dy)
 
         elif state == SINGLE_CLICK_MODE:
             if(prev_state != SINGLE_CLICK_MODE):
                 pyautogui.click()
 
         elif state == SCROLL_MODE:
-            if sensors.gyro.pitch > 0:
+            if gyro.pitch > 0:
                 pyautogui.scroll(1)
-            elif sensors.gyro.pitch < 0:
+            elif gyro.pitch < 0:
                 pyautogui.scroll(-1)
 
         elif state == RECENTER:
