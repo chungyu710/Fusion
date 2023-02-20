@@ -7,6 +7,8 @@
 #define DIGITAL    0
 #define ANALOGUE   1
 
+#define ABORT(reason)   system_abort(reason, __func__)
+
 #include "types.h"
 
 typedef enum Status Status;

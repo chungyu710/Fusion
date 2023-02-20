@@ -49,7 +49,7 @@ void main(void)
 
 		if (queue_full)
 		{
-			system_abort(ABORT_QUEUE_FULL, __func__);
+			ABORT(ABORT_QUEUE_FULL);
 		}
 
 		if (check_battery)
@@ -64,7 +64,7 @@ void main(void)
 			if (count == UNDERVOLT_MAX_COUNT)
 			{
 				count = 0;
-				system_abort(ABORT_LOW_BATTERY, __func__);
+				ABORT(ABORT_LOW_BATTERY);
 			}
 
 			check_battery = false;

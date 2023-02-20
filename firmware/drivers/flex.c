@@ -48,7 +48,7 @@ void flex_read(Flex * flex)
 {
 	if (flex == NULL)
 	{
-		system_abort(ABORT_NULL_POINTER, __func__);
+		ABORT(ABORT_NULL_POINTER);
 	}
 
 	flex->thumb = adc_read(CHANNEL_THUMB);

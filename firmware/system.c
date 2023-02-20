@@ -92,7 +92,7 @@ void system_initialize(void)
 	INTCONbits.GIE = 1;
 }
 
-void system_abort(Abort abort, char const * message)
+void system_abort(Abort abort, char const * caller)
 {
 	while (button_released())
 	{
@@ -109,16 +109,15 @@ void system_abort(Abort abort, char const * message)
 		{
 			char * reason = system_abort_reasons[abort];
 			char * newline = "\r\n";
+			char * colon = ": ";
 
-			uart_transmit(reason, strlen(reason));
-
-			if (message != NULL)
+			if (caller != NULL)
 			{
-				char * colon = " : ";
+				uart_transmit(caller, strlen(caller));
 				uart_transmit(colon, strlen(colon));
-				uart_transmit(message, strlen(message));
 			}
 
+			uart_transmit(reason, strlen(reason));
 			uart_transmit(newline, strlen(newline));
 		}
 	}

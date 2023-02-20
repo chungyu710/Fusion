@@ -17,7 +17,7 @@ void imu_initialize(void)
 	// WHO_AM_I is hardcoded to 0x6C on the IMU
 	if (imu_read_register(WHO_AM_I) != 0x6C)
 	{
-		system_abort(ABORT_IMU_OFFLINE, __func__);
+		ABORT(ABORT_IMU_OFFLINE);
 	}
 }
 
@@ -25,7 +25,7 @@ void imu_read(U8 address, void * data, U8 length)
 {
 	if (data == NULL)
 	{
-		system_abort(ABORT_NULL_POINTER, __func__);
+		ABORT(ABORT_NULL_POINTER);
 	}
 
 	address |= 0x80;   // MSB of register address is 1
@@ -40,7 +40,7 @@ void imu_write(U8 address, void * data, U8 length)
 {
 	if (data == NULL)
 	{
-		system_abort(ABORT_NULL_POINTER, __func__);
+		ABORT(ABORT_NULL_POINTER);
 	}
 
 	address &= 0x7F;   // MSB of address is 0
