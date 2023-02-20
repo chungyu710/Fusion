@@ -10,6 +10,8 @@
 #define COMMAND_MASK    0xF0
 #define METADATA_MASK   0x0F
 
+#define BURST_SIZE   5
+
 typedef enum Command Command;
 typedef enum Sensor_Group Sensor_Group;
 typedef enum Stream_Command Stream_Command;

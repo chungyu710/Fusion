@@ -240,22 +240,23 @@ void system_service(U8 request)
 			break;
 		}
 		case COMMAND_SAMPLE:
-		{
-			void * data;
-			U8 length;
-			Status status = read_sensors(meta, &data, &length);
-			link_respond(status, data, length);
-			break;
-		}
 		case COMMAND_BURST:
 		{
-			for (U8 i = 0; i < 5; i++)
+			U8 burst = BURST_SIZE;
+
+			if (command == COMMAND_SAMPLE)
+			{
+				burst = 1;
+			}
+
+			for (U8 i = 0; i < burst; i++)
 			{
 				void * data;
 				U8 length;
 				Status status = read_sensors(meta, &data, &length);
 				link_respond(status, data, length);
 			}
+
 			break;
 		}
 		case COMMAND_BATTERY:
