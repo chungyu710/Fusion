@@ -29,13 +29,15 @@ def open(port):
         )
     except Exception as e:
         log.error(f"Error opening serial port: {e}")
-        exit(ERROR)
+        abort()
 
     purge()
+    log.success(f"Opened serial port '{port}'")
 
 def close():
     purge()
     ser.close()
+    log.success("Closed serial port")
 
 def purge():
     log.info("Purge serial port")
@@ -58,7 +60,7 @@ def configure():
             time.sleep(2)   # give the MCU time to restart the firmware
             if resets > MAX_TRIES:
                 log.error(f"Failed to reset glove after {MAX_TRIES} tries")
-                exit(ERROR)
+                abort()
 
             pings = 0   # go back to pinging
 
@@ -120,7 +122,7 @@ def reset():
 def parse_sensor_data(payload):
     sensors = Sensors()
     sensors.unpack(payload)
-    #log.debug("------- SENSORS -------\r\n" + str(sensors))
+    log.debug("------- SENSORS -------\r\n" + str(sensors))
     return sensors
 
 def get_header_data():
@@ -130,7 +132,7 @@ def get_header_data():
 
     if len(data) != Header.SIZE:
         log.error("Failed to read header data bytes")
-        exit(ERROR)
+        abort()
 
     header.unpack(data)
 
@@ -144,10 +146,10 @@ def get_all_sensor_data():
     payload = ser.read(header.size)
 
     if not verify_checksum(header, payload):
-        exit(ERROR)
+        abort()
     if header.status != STATUS_SUCCESS:
         log.error(f"Status: {header.status}")
-        exit(ERROR)
+        abort()
 
     return parse_sensor_data(payload)
 
@@ -155,7 +157,7 @@ def burst():
     log.debug("BURST")
     send(COMMAND_BURST)
 
-    for i in range(3):
+    for i in range(10):
         start_time = time.time()
 
         header = get_header_data()
@@ -166,10 +168,10 @@ def burst():
         print("latency: %.2f ms" % (latency))
 
         if not verify_checksum(header, payload):
-            exit(ERROR)
+            abort()
         if header.status != STATUS_SUCCESS:
             log.error(f"Status: {header.status}")
-            exit(ERROR)
+            abort()
 
         parse_sensor_data(payload)
 
@@ -179,12 +181,12 @@ def burst():
 #    header = get_header_data(ser)
 
 #    if header is None:
-#        exit(ERROR)
+#        abort()
 #    if not verify_checksum(header, []):
-#        exit(ERROR)
+#        abort()
 #    if header.status != STATUS_SUCCESS:
 #        log.error(f"Status: {header.status}")
-#        exit(ERROR)
+#        abort()
 
 #def stream_stop(ser):
 #    command = COMMAND_STREAM | STREAM_STOP
@@ -196,32 +198,51 @@ def burst():
 #    #header = get_header_data(ser)
 
 #    #if not verify_checksum(header, []):
-#    #    exit(ERROR)
+#    #    abort()
 #    #if header.status != STATUS_SUCCESS:
 #    #    log.error(f"Status: {header.status}")
-#    #    exit(ERROR)
+#    #    abort()
 
-def rx_thread(ser):
-    while True:
-        print("hello")
-        #start_time = time.time()
-        #end_time = time.time()
-        #latency = (end_time - start_time) * 1000
-        #print("latency: %.2f ms" % (latency))
+def pop():
+    if len(queue) > 0:
+        return queue.pop(0)
+    else:
+        log.debug("SAMPLE")
+        send(COMMAND_SAMPLE)
+        #log.warning("No sensor data available")
+        return None
 
-        #header = get_header_data(ser)
-        #payload = ser.read(header.size)
+def rx_thread():
+    while rx_thread_enable:
+        header = get_header_data()
+        payload = ser.read(header.size)
 
-        #if not verify_checksum(header, payload):
-        #    exit(ERROR)
+        if not verify_checksum(header, payload):
+            abort()
 
-        #if header.status != STATUS_SUCCESS:
-        #    log.error(f"Status: {header.status}")
-        #    exit(ERROR)
+        if header.status != STATUS_SUCCESS:
+            log.error(f"Status: {header.status}")
+            abort()
 
-        #sensors = parse_sensor_data(payload)
+        sensors = parse_sensor_data(payload)
+        queue.append(sensors)
 
-#thread = Thread(target = rx_thread, args = (ser))
+    log.success("Ended RX thread")
 
-#def start(ser):
-#    thread.start()
+def abort():
+    global rx_thread_enable
+    rx_thread_enable = False
+    thread.join()
+    close()
+
+def ctrl_c_handler(signum, frame):
+    abort()
+
+def start():
+    global rx_thread_enable
+    rx_thread_enable = True
+    thread.start()
+
+rx_thread_enable = False
+thread = Thread(target = rx_thread)
+signal.signal(signal.SIGINT, ctrl_c_handler)
