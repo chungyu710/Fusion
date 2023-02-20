@@ -3,6 +3,7 @@ from drivers import deserializer
 from drivers.calibration_processor import *
 from time import time, sleep
 from agent import *
+from drivers.common import *
 
 import argparse
 
@@ -99,15 +100,18 @@ if __name__ == '__main__':
 
         # apply deadzone or scale linearly if no deadzone
 
-        if abs(gyro.yaw) < DEADZONE:
-            gyro.yaw = 0
+        gyro.yaw = deadzone(gyro.yaw, DEADZONE)
+        gyro.pitch = deadzone(gyro.pitch, DEADZONE)
+
+        #if abs(gyro.yaw) < DEADZONE:
+        #    gyro.yaw = 0
         #elif gyro.yaw > 0:
         #    gyro.yaw -= DEADZONE
         #elif gyro.yaw < 0:
         #    gyro.yaw += DEADZONE
 
-        if abs(gyro.pitch) < DEADZONE:
-            gyro.pitch = 0
+        #if abs(gyro.pitch) < DEADZONE:
+        #    gyro.pitch = 0
         #elif gyro.pitch > 0:
         #    gyro.pitch -= DEADZONE
         #elif gyro.pitch < 0:
