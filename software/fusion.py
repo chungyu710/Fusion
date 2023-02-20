@@ -79,7 +79,7 @@ if __name__ == '__main__':
             average += s
         average /= len(samples)
 
-        log.debug("latency: %.2f ms (average: %.2f ms)" % (latency, average))
+        log.info("latency: %.2f ms (average: %.2f ms)" % (latency, average))
 
         sensors.gyro.pitch = scale_sensors(100, sensors.gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
         sensors.gyro.roll = scale_sensors(100, sensors.gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
@@ -103,7 +103,6 @@ if __name__ == '__main__':
             state = RECENTER
 
         log.debug("State: " + str(state))
-        # log.debug("sensors: " + str(sensors))
 
         if (state in [MOUSE_MODE, CLICK_MODE, RIGHT_CLICK_MODE]):
             if(state == CLICK_MODE):
@@ -132,8 +131,8 @@ if __name__ == '__main__':
             pyautogui.moveTo(maxWidth // 2, maxHeight // 2)
 
         else:
-            log.debug("not in a recognizable state")
+            log.warning("not in a recognizable state")
 
         prev_state = state
-        print(sensors)
+        #print(sensors)
         #agent.perform_action(state.lower())

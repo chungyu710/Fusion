@@ -74,7 +74,7 @@ def configure():
             log.warning(f"Glove did not respond after {MAX_TRIES} tries")
             abort()
 
-        log.debug("RESET")
+        log.info("RESET")
         send(COMMAND_RESET)
         purge()
         time.sleep(2)   # give the MCU time to restart the firmware
@@ -136,7 +136,7 @@ def reset():
 def parse_sensor_data(payload):
     sensors = Sensors()
     sensors.unpack(payload)
-    #log.debug("------- SENSORS -------\r\n" + str(sensors))
+    log.debug("------- SENSORS -------\r\n" + str(sensors))
     return sensors
 
 def get_header_data():
@@ -150,11 +150,11 @@ def get_header_data():
 
     header.unpack(data)
 
-    #log.debug("------- HEADER -------\r\n" + str(header))
+    log.debug("------- HEADER -------\r\n" + str(header))
     return header
 
 def get_all_sensor_data():
-    log.debug("SAMPLE")
+    log.info("SAMPLE")
     send(COMMAND_SAMPLE)
     header = get_header_data()
     payload = ser.read(header.size)
@@ -191,12 +191,8 @@ def service():
         log.info(f"Requesting {BURST_SIZE} sensor samples")
         burst()
 
-    start = time.time()
     header = get_header_data()
     payload = ser.read(header.size)
-    end = time.time()
-    latency = (end - start) * 1000
-    log.note("latency: %.2f ms" % (latency))
 
     if not verify_checksum(header, payload):
         abort()
@@ -208,47 +204,6 @@ def service():
     log.success("Received sensor data")
     return parse_sensor_data(payload)
 
-#def sensors():
-#    global pending
-#    mutex.acquire()
-#    if len(queue) > 0:
-#        log.debug("Receive sensor data")
-#        sensors = queue.pop(0)
-#    else:
-#        #log.debug("Receive sensor data")
-#        sensors = None
-
-#    if len(queue) < 5:
-#        log.info("SAMPLE")
-#        send(COMMAND_SAMPLE)
-#        pending += BURST_SIZE
-
-#    mutex.release()
-#    return sensors
-
-#def rx_thread():
-#    global pending
-#    while rx_thread_enable:
-#        mutex.acquire()
-#        if pending > 0:
-#            header = get_header_data()
-#            payload = ser.read(header.size)
-
-#            if not verify_checksum(header, payload):
-#                abort()
-#            if header.status != STATUS_SUCCESS:
-#                log.error(f"Status: {header.status}")
-#                abort()
-
-#            sensors = parse_sensor_data(payload)
-#            queue.append(sensors)
-#            pending -= 1
-#        mutex.release()
-
-#    log.success("Ended RX thread")
-
-#rx_thread_enable = False
-process = Process(target = service)
 #signal.signal(signal.SIGINT, ctrl_c_handler)
 
 def abort():
@@ -261,11 +216,6 @@ def abort():
 
 def ctrl_c_handler(signum, frame):
     abort()
-
-def start():
-    #global rx_thread_enable
-    #rx_thread_enable = True
-    process.start()
 
 def stream_start():
     send(COMMAND_STREAM | STREAM_START)

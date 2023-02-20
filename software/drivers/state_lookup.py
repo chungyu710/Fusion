@@ -8,7 +8,7 @@ def get_states_from_json():
 def get_states_from_calibration():
     with open("software/drivers/calibration.json", "r") as f:
         return json.load(f)
-    
+
 # accel: {"x": V, "y": V, "z": V}
 # accel is expected to be a json object
 def get_state_based_on_accel(accel):
@@ -17,7 +17,7 @@ def get_state_based_on_accel(accel):
     states=["START", "MOVE_LEFT", "MOVE_RIGHT", "MOVE_UP", "MOVE_DOWN"]
 
     for state in states:
-        # if (check_accel_values(state_values[state]['accel'], accel) and 
+        # if (check_accel_values(state_values[state]['accel'], accel) and
         #     check_gyro_values(...) and
         #     check_flex_values(...)):
         if check_accel_values(state_values[state]['accel'], accel):
@@ -37,8 +37,8 @@ def check_accel_values(expected, accel):
     z_min = expected['z']['min']
     z_max = expected['z']['max']
 
-    return ((accel.x >= x_min and accel.x <= x_max) and 
-            (accel.y >= y_min and accel.y <= y_max) and 
+    return ((accel.x >= x_min and accel.x <= x_max) and
+            (accel.y >= y_min and accel.y <= y_max) and
             (accel.z >= z_min and accel.z <= z_max))
 
 def get_stated_based_on_flex(flex):
@@ -46,7 +46,7 @@ def get_stated_based_on_flex(flex):
     # States
     # each number represents finger from thumb to index
     # 00000 - enable 'mouse' mode
-    # 01000 - hold down left click 
+    # 01000 - hold down left click
     # 11000 - hold down right click
     # 10000 - double click (on release of thumb? as long as thumb is held out?)
     # 01110 - enable 'swipe' mode
@@ -73,13 +73,13 @@ def check_flex_values(expected, flex):
     pinky_min = expected['pinky']['min']
     pinky_max = expected['pinky']['max']
 
-    return ((flex.thumb >= thumb_min and flex.thumb <= thumb_max) and 
-            (flex.index >= index_min and flex.index <= index_max) and 
-            (flex.middle >= middle_min and flex.middle <= middle_max) and 
+    return ((flex.thumb >= thumb_min and flex.thumb <= thumb_max) and
+            (flex.index >= index_min and flex.index <= index_max) and
+            (flex.middle >= middle_min and flex.middle <= middle_max) and
             (flex.ring >= ring_min and flex.ring <= ring_max) and
             (flex.pinky >= pinky_min and flex.pinky <= pinky_max))
     # return flex.index >= index_min and flex.index <= index_max
-    
+
 def get_flex_state(flex, prev_state = "00000"):
     # state_values = get_states_from_json()
     state_values = get_states_from_calibration()
@@ -117,4 +117,3 @@ def get_flex_state(flex, prev_state = "00000"):
         pinky = "1"
 
     return thumb + index + middle + ring + pinky
-    
