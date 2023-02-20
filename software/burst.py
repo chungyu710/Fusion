@@ -12,14 +12,9 @@ if __name__ == '__main__':
 
     deserializer.open(args.port)
     deserializer.configure()
-    deserializer.start()
-    log.suppress(log.Level.DEBUG)
+    #deserializer.start()
+    #log.suppress(log.Level.DEBUG)
 
     while True:
-        start_time = time.time()
-
-        deserializer.pop()
-
-        end_time = time.time()
-        latency = (end_time - start_time) * 1000
-        print("latency: %.2f ms" % (latency))
+        #sensors = deserializer.sensors()
+        sensors = deserializer.service()

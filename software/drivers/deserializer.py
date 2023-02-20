@@ -1,6 +1,6 @@
 from drivers.common import *
 from drivers.protocol import *
-from threading import Thread
+from multiprocessing import Process
 
 import serial
 import log
@@ -13,6 +13,7 @@ TIMEOUT_S = 1
 
 queue = []   # RX queue of Sensor objects
 ser = None
+pending = 0
 
 # This indicates how many times we want to retry before resetting the device
 MAX_TRIES = 5
@@ -67,8 +68,7 @@ def configure():
 def send(command):
     # Little endian byte
     ser.write(struct.pack("<B", command))
-    ser.flush()
-    ser.flushOutput()
+    #ser.flush()
 
 def verify_checksum(header, payload):
     checksum = header.status ^ header.size
@@ -83,7 +83,6 @@ def verify_checksum(header, payload):
 
     if checksum != header.checksum:
         log.error("Checksum mismatch")
-        print(str(header))
         return False
 
     return True
@@ -175,74 +174,89 @@ def burst():
 
         parse_sensor_data(payload)
 
-#def stream_start(ser):
-#    command = COMMAND_STREAM | STREAM_START
-#    send(ser, command)
-#    header = get_header_data(ser)
+def burst2():
+    global pending
+    log.debug("BURST")
+    send(COMMAND_BURST)
+    pending += BURST_SIZE
 
-#    if header is None:
-#        abort()
-#    if not verify_checksum(header, []):
-#        abort()
-#    if header.status != STATUS_SUCCESS:
-#        log.error(f"Status: {header.status}")
-#        abort()
+def service():
+    global pending
+    log.info("Requesting more data")
+    burst2()
 
-#def stream_stop(ser):
-#    command = COMMAND_STREAM | STREAM_STOP
-#    send(ser, command)
-#    #ser.reset_input_buffer()
-#    #ser.reset_output_buffer()
+    start = time.time()
+    header = get_header_data()
+    payload = ser.read(header.size)
+    end = time.time()
+    latency = (end - start) * 1000
+    log.note("latency: %.2f ms" % (latency))
 
-#    #send(ser, COMMAND_PING)
-#    #header = get_header_data(ser)
+    if not verify_checksum(header, payload):
+        abort()
+    if header.status != STATUS_SUCCESS:
+        log.error(f"Status: {header.status}")
+        abort()
 
-#    #if not verify_checksum(header, []):
-#    #    abort()
-#    #if header.status != STATUS_SUCCESS:
-#    #    log.error(f"Status: {header.status}")
-#    #    abort()
+    pending -= 1
+    log.debug("Received sensor data")
+    return parse_sensor_data(payload)
 
-def pop():
-    if len(queue) > 0:
-        return queue.pop(0)
-    else:
-        log.debug("SAMPLE")
-        send(COMMAND_SAMPLE)
-        #log.warning("No sensor data available")
-        return None
+#def sensors():
+#    global pending
+#    mutex.acquire()
+#    if len(queue) > 0:
+#        log.debug("Receive sensor data")
+#        sensors = queue.pop(0)
+#    else:
+#        #log.debug("Receive sensor data")
+#        sensors = None
 
-def rx_thread():
-    while rx_thread_enable:
-        header = get_header_data()
-        payload = ser.read(header.size)
+#    if len(queue) < 5:
+#        log.info("SAMPLE")
+#        send(COMMAND_SAMPLE)
+#        pending += BURST_SIZE
 
-        if not verify_checksum(header, payload):
-            abort()
+#    mutex.release()
+#    return sensors
 
-        if header.status != STATUS_SUCCESS:
-            log.error(f"Status: {header.status}")
-            abort()
+#def rx_thread():
+#    global pending
+#    while rx_thread_enable:
+#        mutex.acquire()
+#        if pending > 0:
+#            header = get_header_data()
+#            payload = ser.read(header.size)
 
-        sensors = parse_sensor_data(payload)
-        queue.append(sensors)
+#            if not verify_checksum(header, payload):
+#                abort()
+#            if header.status != STATUS_SUCCESS:
+#                log.error(f"Status: {header.status}")
+#                abort()
 
-    log.success("Ended RX thread")
+#            sensors = parse_sensor_data(payload)
+#            queue.append(sensors)
+#            pending -= 1
+#        mutex.release()
+
+#    log.success("Ended RX thread")
+
+rx_thread_enable = False
+process = Process(target = service)
+#signal.signal(signal.SIGINT, ctrl_c_handler)
 
 def abort():
-    global rx_thread_enable
-    rx_thread_enable = False
-    thread.join()
+    #global rx_thread_enable
+    #rx_thread_enable = False
+    #thread.join()
+    process.kill()
     close()
+    exit(ERROR)
 
 def ctrl_c_handler(signum, frame):
     abort()
 
 def start():
-    global rx_thread_enable
-    rx_thread_enable = True
-    thread.start()
-
-rx_thread_enable = False
-thread = Thread(target = rx_thread)
-signal.signal(signal.SIGINT, ctrl_c_handler)
+    #global rx_thread_enable
+    #rx_thread_enable = True
+    process.start()

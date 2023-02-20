@@ -24,6 +24,8 @@ STATUS_SUCCESS     = 0x0
 STATUS_ERROR       = 0x1
 STATUS_LOW_BATTERY = 0x2
 
+BURST_SIZE = 10
+
 class Header:
     FORMAT = "BBB"
     SIZE = struct.calcsize(FORMAT)
