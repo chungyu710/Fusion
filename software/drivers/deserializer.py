@@ -32,8 +32,8 @@ def open(port):
         log.error(f"Error opening serial port: {e}")
         abort()
 
-    purge()
     log.success(f"Opened serial port '{port}'")
+    purge()
 
 def close():
     purge()
@@ -41,7 +41,6 @@ def close():
     log.success("Closed serial port")
 
 def purge():
-    log.info("Purge serial port")
     ser.reset_input_buffer()
     ser.reset_output_buffer()
 
@@ -100,6 +99,7 @@ def ping():
         log.error(f"Status: {header.status}")
         return False
 
+    log.success("Ping response received")
     return True
 
 def reset():
@@ -153,37 +153,16 @@ def get_all_sensor_data():
     return parse_sensor_data(payload)
 
 def burst():
-    log.debug("BURST")
-    send(COMMAND_BURST)
-
-    for i in range(10):
-        start_time = time.time()
-
-        header = get_header_data()
-        payload = ser.read(header.size)
-
-        end_time = time.time()
-        latency = (end_time - start_time) * 1000
-        print("latency: %.2f ms" % (latency))
-
-        if not verify_checksum(header, payload):
-            abort()
-        if header.status != STATUS_SUCCESS:
-            log.error(f"Status: {header.status}")
-            abort()
-
-        parse_sensor_data(payload)
-
-def burst2():
     global pending
-    log.debug("BURST")
+    log.info("BURST")
     send(COMMAND_BURST)
     pending += BURST_SIZE
 
 def service():
     global pending
-    log.info("Requesting more data")
-    burst2()
+    if pending < 5:
+        log.info(f"Requesting {BURST_SIZE} sensor samples")
+        burst()
 
     start = time.time()
     header = get_header_data()
@@ -199,7 +178,7 @@ def service():
         abort()
 
     pending -= 1
-    log.debug("Received sensor data")
+    log.success("Received sensor data")
     return parse_sensor_data(payload)
 
 #def sensors():
@@ -249,7 +228,7 @@ def abort():
     #global rx_thread_enable
     #rx_thread_enable = False
     #thread.join()
-    process.kill()
+    #process.kill()
     close()
     exit(ERROR)
 
