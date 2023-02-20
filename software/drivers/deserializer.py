@@ -1,18 +1,24 @@
 from drivers.common import *
 from drivers.protocol import *
+from threading import Thread
 
 import serial
 import log
 import struct
 import time
+import signal
 
 BAUDRATE = 115200
 TIMEOUT_S = 1
+
+queue = []   # RX queue of Sensor objects
+ser = None
 
 # This indicates how many times we want to retry before resetting the device
 MAX_TRIES = 5
 
 def open(port):
+    global ser
     try:
         ser = serial.Serial(
             port=port,
@@ -25,41 +31,42 @@ def open(port):
         log.error(f"Error opening serial port: {e}")
         exit(ERROR)
 
-    purge(ser)
-    return ser
+    purge()
 
-def close(ser):
-    purge(ser)
+def close():
+    purge()
     ser.close()
 
-def purge(ser):
+def purge():
     log.info("Purge serial port")
     ser.reset_input_buffer()
     ser.reset_output_buffer()
 
-def configure(ser):
+def configure():
     pings = 0
     resets = 0
-    while not ping(ser):
+    while not ping():
         log.info("Pinging Fusion...")
         pings += 1
-        purge(ser)
+        purge()
         if pings > MAX_TRIES:
             log.warning(f"Fusion did not respond after {MAX_TRIES} pings")
             log.info(f"Resetting MCU")
-            send(ser, COMMAND_RESET)
+            send(COMMAND_RESET)
             resets += 1
-            purge(ser)
+            purge()
             time.sleep(2)   # give the MCU time to restart the firmware
             if resets > MAX_TRIES:
                 log.error(f"Failed to reset glove after {MAX_TRIES} tries")
                 exit(ERROR)
+
             pings = 0   # go back to pinging
 
-def send(ser, command):
+def send(command):
     # Little endian byte
     ser.write(struct.pack("<B", command))
     ser.flush()
+    ser.flushOutput()
 
 def verify_checksum(header, payload):
     checksum = header.status ^ header.size
@@ -79,11 +86,13 @@ def verify_checksum(header, payload):
 
     return True
 
-def ping(ser):
+def ping():
     log.info("PING")
-    send(ser, COMMAND_PING)
-    header = get_header_data(ser)
+    send(COMMAND_PING)
+    header = get_header_data()
 
+    if header is None:
+        return False
     if not verify_checksum(header, []):
         return False
     if header.status != STATUS_SUCCESS:
@@ -92,12 +101,14 @@ def ping(ser):
 
     return True
 
-def reset(ser):
+def reset():
     log.info("RESET")
-    send(ser, COMMAND_RESET)
-    purge(ser)
-    header = get_header_data(ser)
+    send(COMMAND_RESET)
+    #purge()
+    header = get_header_data()
 
+    if header is None:
+        return False
     if not verify_checksum(header, []):
         return False
     if header.status != STATUS_SUCCESS:
@@ -112,23 +123,24 @@ def parse_sensor_data(payload):
     #log.debug("------- SENSORS -------\r\n" + str(sensors))
     return sensors
 
-def get_header_data(ser):
+def get_header_data():
     # Get the response header, should be Header.SIZE bytes
-    data = ser.read(Header.SIZE)
-    fields = struct.unpack("<BBB", data)   # little endian
-
     header = Header()
-    header.status = fields[0]
-    header.size = fields[1]
-    header.checksum = fields[2]
+    data = ser.read(Header.SIZE)
+
+    if len(data) != Header.SIZE:
+        log.error("Failed to read header data bytes")
+        exit(ERROR)
+
+    header.unpack(data)
 
     #log.debug("------- HEADER -------\r\n" + str(header))
     return header
 
-def get_all_sensor_data(ser):
+def get_all_sensor_data():
     log.debug("SAMPLE")
-    send(ser, COMMAND_SAMPLE)
-    header = get_header_data(ser)
+    send(COMMAND_SAMPLE)
+    header = get_header_data()
     payload = ser.read(header.size)
 
     if not verify_checksum(header, payload):
@@ -139,16 +151,14 @@ def get_all_sensor_data(ser):
 
     return parse_sensor_data(payload)
 
-def burst(ser):
+def burst():
     log.debug("BURST")
-    send(ser, COMMAND_BURST)
+    send(COMMAND_BURST)
 
-    for i in range(10):
-        log.info(f"PACKET {i}")
-
+    for i in range(3):
         start_time = time.time()
 
-        header = get_header_data(ser)
+        header = get_header_data()
         payload = ser.read(header.size)
 
         end_time = time.time()
@@ -163,28 +173,55 @@ def burst(ser):
 
         parse_sensor_data(payload)
 
-def stream_start(ser):
-    command = COMMAND_STREAM | STREAM_START
-    send(ser, command)
-    header = get_header_data(ser)
+#def stream_start(ser):
+#    command = COMMAND_STREAM | STREAM_START
+#    send(ser, command)
+#    header = get_header_data(ser)
 
-    if not verify_checksum(header, []):
-        exit(ERROR)
-    if header.status != STATUS_SUCCESS:
-        log.error(f"Status: {header.status}")
-        exit(ERROR)
+#    if header is None:
+#        exit(ERROR)
+#    if not verify_checksum(header, []):
+#        exit(ERROR)
+#    if header.status != STATUS_SUCCESS:
+#        log.error(f"Status: {header.status}")
+#        exit(ERROR)
 
-def stream_stop(ser):
-    command = COMMAND_STREAM | STREAM_STOP
-    send(ser, command)
-    #ser.reset_input_buffer()
-    #ser.reset_output_buffer()
+#def stream_stop(ser):
+#    command = COMMAND_STREAM | STREAM_STOP
+#    send(ser, command)
+#    #ser.reset_input_buffer()
+#    #ser.reset_output_buffer()
 
-    #send(ser, COMMAND_PING)
-    #header = get_header_data(ser)
+#    #send(ser, COMMAND_PING)
+#    #header = get_header_data(ser)
 
-    #if not verify_checksum(header, []):
-    #    exit(ERROR)
-    #if header.status != STATUS_SUCCESS:
-    #    log.error(f"Status: {header.status}")
-    #    exit(ERROR)
+#    #if not verify_checksum(header, []):
+#    #    exit(ERROR)
+#    #if header.status != STATUS_SUCCESS:
+#    #    log.error(f"Status: {header.status}")
+#    #    exit(ERROR)
+
+def rx_thread(ser):
+    while True:
+        print("hello")
+        #start_time = time.time()
+        #end_time = time.time()
+        #latency = (end_time - start_time) * 1000
+        #print("latency: %.2f ms" % (latency))
+
+        #header = get_header_data(ser)
+        #payload = ser.read(header.size)
+
+        #if not verify_checksum(header, payload):
+        #    exit(ERROR)
+
+        #if header.status != STATUS_SUCCESS:
+        #    log.error(f"Status: {header.status}")
+        #    exit(ERROR)
+
+        #sensors = parse_sensor_data(payload)
+
+#thread = Thread(target = rx_thread, args = (ser))
+
+#def start(ser):
+#    thread.start()

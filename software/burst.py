@@ -9,11 +9,11 @@ if __name__ == '__main__':
     parser.add_argument('--port', required=True)
     args = parser.parse_args()
 
-    ser = deserializer.open(args.port)
-    deserializer.configure(ser)
+    deserializer.open(args.port)
+    deserializer.configure()
 
     while True:
         #start_time = time()
-        deserializer.burst(ser)
+        deserializer.burst()
         #end_time = time()
         #print(f"latency: {end_time - start_time}")

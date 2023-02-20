@@ -10,7 +10,6 @@ void link_respond(Status status, void * payload, U8 size)
 	Header header;
 	header.status = status;
 	header.size = size;
-
 	header.checksum = header.status ^ header.size;
 
 	if (payload != NULL)
