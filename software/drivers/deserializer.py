@@ -7,6 +7,19 @@ import struct
 import time
 import signal
 
+SERIAL_PORTS = {
+    "wireless":
+    {
+        "left": "/dev/cu.fusion-left-DevB",
+        "right": "/dev/cu.fusion-right-DevB"
+    },
+    "wired":
+    {
+        "left": "/dev/cu.usbserial-ABSCDXWM",
+        "right": "/dev/cu.usbserial-ABSCDXWM"
+    },
+}
+
 BAUDRATE = 115200   # UART baud rate
 TIMEOUT_S = 1       # serial port timeout in seconds
 RESET_DELAY_S = 2   # time to wait after issuing a reset so that MCU firmware can reboot
@@ -18,6 +31,18 @@ pending = 0   # number of pending sensor packets (burst mode only)
 def ctrl_c_handler(signum, frame):
     print()
     abort(SUCCESS)
+
+def get_serial_port(hand, mode):
+    if mode not in SERIAL_PORTS:
+        log.error(f"No such mode '{mode}'")
+        return
+    if hand not in SERIAL_PORTS[mode]:
+        log.error(f"No such hand '{hand}'")
+        return
+
+    port = SERIAL_PORTS[mode][hand]
+    log.success(f"Fusion {mode} {hand} hand via '{port}'")
+    return port
 
 def open(port, sync = True):
     global ser

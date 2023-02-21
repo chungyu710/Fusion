@@ -13,10 +13,12 @@ pyautogui.FAILSAFE = False # take out pyautogui failsafe
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--log_level', default='debug')
-    parser.add_argument('--port', required=True)
+    parser.add_argument('--hand', required=True, choices = ["left", "right"])
+    parser.add_argument('--mode', required=True, choices = ["wired", "wireless"])
 
     args = parser.parse_args()
-    PORT = args.port
+    HAND = args.hand
+    MODE = args.mode
     LOG_LEVEL = args.log_level
     set_log_level(LOG_LEVEL)
 
@@ -67,7 +69,8 @@ if __name__ == '__main__':
     prev_state = "00000"
     maxWidth, maxHeight = pyautogui.size()
 
-    deserializer.open(PORT)
+    port = deserializer.get_serial_port(HAND, MODE)
+    deserializer.open(port)
     samples = [0 for i in range(10)]
 
     log.success("Started Fusion state machine")
