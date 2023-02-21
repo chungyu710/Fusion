@@ -173,7 +173,7 @@ class Battery:
 
     def __str__(self):
         string = ""
-        string += "%s%8s%s: %.2f V\r\n" % (colours.RED, "voltage", colours.RESET, self.voltage)
+        string += "%s%8s%s: %.2f V" % (colours.RED, "voltage", colours.RESET, self.voltage)
         return string
 
     def unpack(self, data, offset = 0):

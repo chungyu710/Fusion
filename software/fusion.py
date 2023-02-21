@@ -12,11 +12,13 @@ pyautogui.FAILSAFE = False # take out pyautogui failsafe
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--log_level', default='DEBUG')
+    parser.add_argument('--log_level', default='debug')
     parser.add_argument('--port', required=True)
 
     args = parser.parse_args()
     PORT = args.port
+    LOG_LEVEL = args.log_level
+    set_log_level(LOG_LEVEL)
 
     NEUTRAL_OF_ACCEL_X = -200
     NEUTRAL_OF_ACCEL_Y = 8290
@@ -67,7 +69,8 @@ if __name__ == '__main__':
 
     deserializer.open(PORT)
     samples = [0 for i in range(10)]
-    log.suppress(log.Level.DEBUG)
+
+    log.success("Started Fusion state machine")
 
     while True:
         if CALCULATE_LATENCY:
@@ -98,24 +101,8 @@ if __name__ == '__main__':
         gyro.roll = scale_sensors(100, gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
         gyro.yaw = scale_sensors(100, gyro.yaw, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_YAW)
 
-        # apply deadzone or scale linearly if no deadzone
-
         gyro.yaw = deadzone(gyro.yaw, DEADZONE)
         gyro.pitch = deadzone(gyro.pitch, DEADZONE)
-
-        #if abs(gyro.yaw) < DEADZONE:
-        #    gyro.yaw = 0
-        #elif gyro.yaw > 0:
-        #    gyro.yaw -= DEADZONE
-        #elif gyro.yaw < 0:
-        #    gyro.yaw += DEADZONE
-
-        #if abs(gyro.pitch) < DEADZONE:
-        #    gyro.pitch = 0
-        #elif gyro.pitch > 0:
-        #    gyro.pitch -= DEADZONE
-        #elif gyro.pitch < 0:
-        #    gyro.pitch += DEADZONE
 
         #flex.thumb = scale_sensors(50, flex.thumb, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
         #flex.index = scale_sensors(50, flex.index, SENSOR_MIN_OF_FLEX, SENSOR_MAX_OF_FLEX, NEUTRAL_OF_FLEX)
