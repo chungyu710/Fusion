@@ -15,11 +15,13 @@ if __name__ == '__main__':
     parser.add_argument('--log_level', default='debug')
     parser.add_argument('--hand', required=True, choices = ["left", "right"])
     parser.add_argument('--mode', required=True, choices = ["wired", "wireless"])
+    parser.add_argument('--latency', required=False, action = "store_true")
 
     args = parser.parse_args()
     HAND = args.hand
     MODE = args.mode
     LOG_LEVEL = args.log_level
+    LATENCY = args.latency
     set_log_level(LOG_LEVEL)
 
     NEUTRAL_OF_ACCEL_X = -200
@@ -63,7 +65,6 @@ if __name__ == '__main__':
     RECENTER = "11111" # not used for now
 
     DEADZONE = 2
-    CALCULATE_LATENCY = False
 
     agent = Agent()
     prev_state = "00000"
@@ -76,12 +77,12 @@ if __name__ == '__main__':
     log.success("Started Fusion state machine")
 
     while True:
-        if CALCULATE_LATENCY:
+        if LATENCY:
             begin = time()
 
         sensors = deserializer.burst()
 
-        if CALCULATE_LATENCY:
+        if LATENCY:
             end = time()
             latency = (end - begin) * 1000
             samples.append(latency)
