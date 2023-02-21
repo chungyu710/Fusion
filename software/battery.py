@@ -6,7 +6,7 @@ from drivers.common import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--log_level', default='info')
+    parser.add_argument('--log_level', default='success')
     parser.add_argument('--hand', required=True, choices = ["left", "right"])
     parser.add_argument('--mode', required=True, choices = ["wired", "wireless"])
 
@@ -20,4 +20,4 @@ if __name__ == '__main__':
 
     while True:
         battery = deserializer.battery()
-        print(battery)
+        print(battery, end = "\r")
