@@ -11,8 +11,8 @@
 	"min": 722
 },
 "ring_closed": {
-	"max": 1043,
-	"min": 1003
+	"max": 800,
+	"min": 720
 },
 "pinky_closed": {
 	"max": 832,
@@ -31,7 +31,7 @@
 	"min": 516
 },
 "ring_open": {
-	"max": 780,
+	"max": 653,
 	"min": 525
 },
 "pinky_open": {
