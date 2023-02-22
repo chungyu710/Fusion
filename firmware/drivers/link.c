@@ -4,7 +4,6 @@
 #include <stddef.h>
 
 #include "uart.h"
-#include "led.h"
 #include "battery.h"
 #include "button.h"
 #include "accel.h"
@@ -36,53 +35,53 @@ void link_respond(Status status, void * payload, U8 size)
 	}
 }
 
-static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
+static Status read_sensors(Sensor_Group group, void * data, U8 * length)
 {
-	Sensors sensors;
-
-	accel_read(&sensors.accel);
-	gyro_read(&sensors.gyro);
-	flex_read(&sensors.flex);
-	sensors.button = button_pressed();
-
 	Status status = STATUS_SUCCESS;
 
 	switch (group)
 	{
 		case SENSOR_GROUP_ALL:
 		{
-			*data = &sensors;
-			*length = sizeof(sensors);
+			Sensors * sensors = data;
+			accel_read(&sensors->accel);
+			flex_read(&sensors->flex);
+			gyro_read(&sensors->gyro);
+			sensors->button = button_pressed();
+			*length = sizeof(Sensors);
 			break;
 		}
 		case SENSOR_GROUP_ACCEL:
 		{
-			*data = &sensors.accel;
-			*length = sizeof(sensors.accel);
+			Accel * accel = data;
+			accel_read(accel);
+			*length = sizeof(Accel);
 			break;
 		}
 		case SENSOR_GROUP_GYRO:
 		{
-			*data = &sensors.gyro;
-			*length = sizeof(sensors.gyro);
+			Gyro * gyro = data;
+			gyro_read(gyro);
+			*length = sizeof(Gyro);
 			break;
 		}
 		case SENSOR_GROUP_FLEX:
 		{
-			*data = &sensors.flex;
-			*length = sizeof(sensors.flex);
+			Flex * flex = data;
+			flex_read(flex);
+			*length = sizeof(Flex);
 			break;
 		}
 		case SENSOR_GROUP_BUTTON:
 		{
-			*data = &sensors.button;
-			*length = sizeof(sensors.button);
+			U8 * button = data;
+			*button = button_pressed();
+			*length = sizeof(U8);
 			break;
 		}
 		default:
 		{
 			status = STATUS_ERROR;
-			*data = NULL;
 			*length = 0;
 			break;
 		}
@@ -134,7 +133,7 @@ void link_service(U8 request)
 
 			for (U8 i = 0; i < burst; i++)
 			{
-				void * data;
+				U8 data [sizeof(Sensors)];   // big enough to hold all sensor groups
 				U8 length;
 				Status status = read_sensors(meta, &data, &length);
 				link_respond(status, data, length);
