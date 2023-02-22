@@ -95,6 +95,8 @@ void battery_check(void)
 
 		if (count == UNDERVOLT_MAX_COUNT)
 		{
+			U16 voltage = battery_voltage();
+			link_respond(STATUS_LOW_BATTERY, &voltage, sizeof(voltage));
 			uvlo = true;
 		}
 	}
