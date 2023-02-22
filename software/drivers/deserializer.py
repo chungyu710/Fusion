@@ -21,7 +21,7 @@ SERIAL_PORTS = {
 }
 
 BAUDRATE = 115200   # UART baud rate
-TIMEOUT_S = 1       # serial port timeout in seconds
+TIMEOUT_S = 100e-3  # serial port timeout in seconds
 RESET_DELAY_S = 2   # time to wait after issuing a reset so that MCU firmware can reboot
 MAX_RETRIES = 5     # maximum times the glove is reset before giving up on the handshake
 
@@ -106,10 +106,10 @@ def verify_checksum(header, payload):
 
 def ping():
     log.info("PING")
-    send(COMMAND_PING)
+    send(Command.PING)
 
     response = get_response_data()
-    if response is None or response.header.status != STATUS_SUCCESS:
+    if response is None or response.header.status != Status.SUCCESS:
         log.error("Invalid ping response")
         return False
 
@@ -118,8 +118,9 @@ def ping():
 
 def reset():
     log.info("RESET")
-    send(COMMAND_RESET)
+    send(Command.RESET)
     purge()
+    log.info("Waiting for glove to restart")
     time.sleep(RESET_DELAY_S)   # give the MCU time to restart the firmware
 
 def parse_sensor_data(payload):
@@ -150,14 +151,14 @@ def get_response_data():
         log.error("Checksum mismatch")
         return None
 
-    if header.status == STATUS_SUCCESS:
+    if header.status == Status.SUCCESS:
         log.debug("Status (0x%02X): SUCCESS" % (header.status))
-    elif header.status == STATUS_ERROR:
+    elif header.status == Status.ERROR:
         log.error("Status (0x%02X): ERROR" % (header.status))
-    elif header.status == STATUS_LOW_BATTERY:
+    elif header.status == Status.LOW_BATTERY:
         battery = Battery()
         battery.unpack(payload)
-        log.warning("Status (0x%02X): LOW_BATTERY [%s]" % (header.status, str(battery)))
+        log.error("Status (0x%02X): LOW_BATTERY [%s]" % (header.status, str(battery)))
     else:
         log.warning("Status (0x%02X): UNKNOWN" % (header.status))
 
@@ -165,10 +166,10 @@ def get_response_data():
 
 def sample():
     log.info("SAMPLE")
-    send(COMMAND_SAMPLE)
+    send(Command.SAMPLE)
 
     response = get_response_data()
-    if response is None or response.header.status != STATUS_SUCCESS:
+    if response is None or response.header.status != Status.SUCCESS:
         abort(ERROR)
 
     return parse_sensor_data(response.payload)
@@ -178,11 +179,11 @@ def burst():
     if pending < BURST_SIZE:
         log.info(f"Requesting {BURST_SIZE} sensor samples")
         log.info("BURST")
-        send(COMMAND_BURST)
+        send(Command.BURST)
         pending += BURST_SIZE
 
     response = get_response_data()
-    if response is None or response.header.status != STATUS_SUCCESS:
+    if response is None or response.header.status != Status.SUCCESS:
         abort(ERROR)
 
     pending -= 1
@@ -191,10 +192,10 @@ def burst():
 
 def battery():
     log.info("BATTERY")
-    send(COMMAND_BATTERY)
+    send(Command.BATTERY)
 
     response = get_response_data()
-    if response is None or response.header.status != STATUS_SUCCESS:
+    if response is None or response.header.status != Status.SUCCESS:
         abort(ERROR)
 
     battery = Battery()

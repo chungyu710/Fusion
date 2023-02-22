@@ -1,24 +1,28 @@
 import struct
 
 from log import colours
+from enum import IntEnum
 
-COMMAND_PING        = 0x00
-COMMAND_ACCEL_RANGE = 0x10
-COMMAND_GYRO_RANGE  = 0x20
-COMMAND_SAMPLE      = 0x30
-COMMAND_BATTERY     = 0x40
-COMMAND_RESET       = 0x50
-COMMAND_BURST       = 0x60
+class Command(IntEnum):
+    PING        = 0x00
+    ACCEL_RANGE = 0x10
+    GYRO_RANGE  = 0x20
+    SAMPLE      = 0x30
+    BATTERY     = 0x40
+    RESET       = 0x50
+    BURST       = 0x60
 
-SENSOR_GROUP_ALL    = 0x0
-SENSOR_GROUP_ACCEL  = 0x1
-SENSOR_GROUP_GYRO   = 0x2
-SENSOR_GROUP_FLEX   = 0x3
-SENSOR_GROUP_BUTTON = 0x4
+class Sensor_Group(IntEnum):
+    ALL    = 0x0
+    ACCEL  = 0x1
+    GYRO   = 0x2
+    FLEX   = 0x3
+    BUTTON = 0x4
 
-STATUS_SUCCESS     = 0x0
-STATUS_ERROR       = 0x1
-STATUS_LOW_BATTERY = 0x2
+class Status(IntEnum):
+    SUCCESS     = 0x0
+    ERROR       = 0x1
+    LOW_BATTERY = 0x2
 
 BURST_SIZE = 5
 
