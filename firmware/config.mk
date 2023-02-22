@@ -16,7 +16,7 @@ DIR += drivers
 DIR += tests   # keep this last since some files use the same names
 
 # artifacts folder
-ART = build
+ART = artifacts
 
 # hex binary name
 BIN = fusion
