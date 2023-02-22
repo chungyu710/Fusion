@@ -33,10 +33,9 @@
 #define LED_DELAY_US   200000
 #define LED_BLINKS     3
 
-static char * system_abort_reasons [ABORT_count] = {
+static char * abort_reasons [ABORT_count] = {
 	"NULL POINTER",
 	"IMU OFFLINE",
-	"LOW BATTERY",
 };
 
 void system_initialize(void)
@@ -93,18 +92,11 @@ void system_abort(Abort abort, char const * caller)
 {
 	while (button_released())
 	{
-		if (abort == ABORT_LOW_BATTERY)
-		{
-			led_pulse();   // Fade LED in and out during low battery.
-		}
-		else
-		{
-			led_blink();   // Blink LED during firmware errors.
-		}
+		led_blink();   // Blink LED during firmware errors.
 
 		if (abort < ABORT_count)
 		{
-			char * reason = system_abort_reasons[abort];
+			char * reason = abort_reasons[abort];
 			char * newline = "\r\n";
 			char * colon = ": ";
 

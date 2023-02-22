@@ -3,6 +3,7 @@
 #include "system.h"
 #include "battery.h"
 #include "link.h"
+#include "led.h"
 
 #define BATTERY_CHECK_POSTSCALER    100
 
@@ -18,11 +19,17 @@ void main(void)
 	{
 		if (request)
 		{
+			led_on();
 			link_service(data);
+			led_off();
 			request = false;
 		}
 
-		if (battery)
+		if (battery_uvlo())
+		{
+			led_pulse();
+		}
+		else if (battery)
 		{
 			battery_check();
 			battery = false;

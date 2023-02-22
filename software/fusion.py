@@ -12,7 +12,7 @@ pyautogui.FAILSAFE = False # take out pyautogui failsafe
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--log_level', default='debug')
+    parser.add_argument('--log_level', default='info')
     parser.add_argument('--hand', required=True, choices = ["left", "right"])
     parser.add_argument('--mode', required=True, choices = ["wired", "wireless"])
     parser.add_argument('--latency', required=False, action = "store_true")

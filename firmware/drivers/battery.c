@@ -4,6 +4,7 @@
 
 #include "system.h"
 #include "adc.h"
+#include "link.h"
 
 #define TRIS_BATTERY      TRISA2
 #define ANSEL_BATTERY     ANS2
@@ -15,16 +16,19 @@ powered from the battery since it has
 its own LDO.  The minimim input voltage
 is 3.6 V, but the module can still operate
 below this voltage.  The battery is fully
-discharged at 3.0 V.  3.3 V will be used
+discharged at 3.0 V but the system undervolts
+at 3.3 V.  Therefore, 3.4 V will be used
 as the undervolt threshold.
 */
 
-#define LOW_BATTERY_mV   3300   // 3.3 V
+#define UNDERVOLT_mV     7000   // 3.4 V
 #define MAX_VOLTAGE_mV   5000   // 5 V (ADRES = 1023)
 
 #define BOOT_DELAY_US   10000   // 10 ms
 
-#define LOW_BATTERY_MAX_COUNT   5   // maximum low battery readings before aborting
+#define UNDERVOLT_MAX_COUNT   5   // maximum low battery readings before aborting
+
+static bool uvlo = false;   // set when the battery voltage drops below
 
 void battery_initialize(void)
 {
@@ -73,20 +77,30 @@ U16 battery_voltage(void)
 
 bool battery_low(void)
 {
-	return battery_voltage() <= LOW_BATTERY_mV;
+	return battery_voltage() <= UNDERVOLT_mV;
 }
 
 void battery_check(void)
 {
+	if (uvlo)
+	{
+		return;
+	}
+
 	static U8 count = 0;
 
 	if (battery_low())
 	{
 		count++;
-	}
 
-	if (count == LOW_BATTERY_MAX_COUNT)
-	{
-		ABORT(ABORT_LOW_BATTERY);
+		if (count == UNDERVOLT_MAX_COUNT)
+		{
+			uvlo = true;
+		}
 	}
+}
+
+bool battery_uvlo(void)
+{
+	return uvlo;
 }

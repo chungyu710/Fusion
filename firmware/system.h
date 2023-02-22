@@ -25,7 +25,6 @@ enum Abort
 {
 	ABORT_NULL_POINTER,
 	ABORT_IMU_OFFLINE,
-	ABORT_LOW_BATTERY,
 
 	ABORT_count
 };

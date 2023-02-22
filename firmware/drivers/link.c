@@ -93,16 +93,21 @@ static Status read_sensors(Sensor_Group group, void ** data, U8 * length)
 
 void link_service(U8 request)
 {
-	led_on();
-
 	Command command = request & COMMAND_MASK;
 	U8 meta = request & METADATA_MASK;
+	Status status = STATUS_SUCCESS;
+
+	if (battery_uvlo())
+	{
+		status = STATUS_LOW_BATTERY;
+		command = COMMAND_BATTERY;
+	}
 
 	switch (command)
 	{
 		case COMMAND_PING:
 		{
-			link_respond(STATUS_SUCCESS, NULL, 0);
+			link_respond(status, NULL, 0);
 			break;
 		}
 		case COMMAND_ACCEL_RANGE:
@@ -140,12 +145,12 @@ void link_service(U8 request)
 		case COMMAND_BATTERY:
 		{
 			U16 voltage = battery_voltage();
-			link_respond(STATUS_SUCCESS, &voltage, sizeof(voltage));
+			link_respond(status, &voltage, sizeof(voltage));
 			break;
 		}
 		case COMMAND_RESET:
 		{
-			link_respond(STATUS_SUCCESS, NULL, 0);
+			link_respond(status, NULL, 0);
 			system_reboot();
 			break;
 		}
@@ -155,6 +160,4 @@ void link_service(U8 request)
 			break;
 		}
 	}
-
-	led_off();
 }

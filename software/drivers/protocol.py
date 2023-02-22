@@ -22,6 +22,11 @@ STATUS_LOW_BATTERY = 0x2
 
 BURST_SIZE = 5
 
+class Response:
+    def __init__(self, header = None, payload = None):
+        self.header = header
+        self.payload = payload
+
 class Header:
     FORMAT = "BBB"
     SIZE = struct.calcsize(FORMAT)
@@ -172,9 +177,7 @@ class Battery:
         self.voltage = voltage
 
     def __str__(self):
-        string = ""
-        string += "%s%8s%s: %.2f V" % (colours.RED, "voltage", colours.RESET, self.voltage)
-        return string
+        return "%s%7s%s: %.3f V" % (colours.RED, "voltage", colours.RESET, self.voltage)
 
     def unpack(self, data, offset = 0):
         # little endian
