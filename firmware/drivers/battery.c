@@ -21,7 +21,7 @@ at 3.3 V.  Therefore, 3.4 V will be used
 as the undervolt threshold.
 */
 
-#define UNDERVOLT_mV     7000   // 3.4 V
+#define UNDERVOLT_mV     3400   // 3.4 V
 #define MAX_VOLTAGE_mV   5000   // 5 V (ADRES = 1023)
 
 #define BOOT_DELAY_US   10000   // 10 ms
