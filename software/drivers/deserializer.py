@@ -24,6 +24,7 @@ BAUDRATE = 115200   # UART baud rate
 TIMEOUT_S = 100e-3  # serial port timeout in seconds
 RESET_DELAY_S = 2   # time to wait after issuing a reset so that MCU firmware can reboot
 MAX_RETRIES = 5     # maximum times the glove is reset before giving up on the handshake
+PURGE_SIZE = 1024   # number of bytes to read and discard at a time
 
 ser = None    # serial port
 pending = 0   # number of pending sensor packets (burst mode only)
@@ -41,7 +42,7 @@ def get_serial_port(hand, mode):
         return
 
     port = SERIAL_PORTS[mode][hand]
-    log.success(f"Select '{port}' for Fusion {mode} {hand} hand")
+    log.info(f"Select '{port}' for Fusion {mode} {hand} hand")
     return port
 
 def open(port, sync = True):
@@ -71,8 +72,14 @@ def close():
     log.success("Closed serial port")
 
 def purge():
+    size = 1
+    while size != 0:
+        size = len(ser.read(PURGE_SIZE))
+        log.info(f"Discarding {size} B of remnant data")
+
     ser.reset_input_buffer()
     ser.reset_output_buffer()
+    log.success("Purged serial port")
 
 def abort(result):
     close()
@@ -80,15 +87,19 @@ def abort(result):
     exit(result)
 
 def handshake():
+    log.info("Initiating handshake")
     tries = 0
     while not ping():
         tries += 1
         log.warning(f"Ping attempt {tries} failed")
         if tries > MAX_RETRIES:
-            log.error(f"Failed to establish communication with glove")
+            log.error(f"Failed to establish communication with Fusion")
             abort(ERROR)
+        log.info("Resetting Fusion")
         reset()
-    log.success(f"Established communication with glove")
+
+    purge()
+    log.success(f"Established communication with Fusion")
 
 def send(command):
     # little endian (<)
@@ -105,7 +116,7 @@ def verify_checksum(header, payload):
     return checksum == header.checksum
 
 def ping():
-    log.info("PING")
+    log.debug("PING")
     send(Command.PING)
 
     response = get_response_data()
@@ -117,14 +128,17 @@ def ping():
     return True
 
 def reset():
-    log.info("RESET")
+    log.debug("RESET")
     send(Command.RESET)
     purge()
-    log.info("Waiting for glove to restart")
+    log.info("Waiting for Fusion to restart")
     time.sleep(RESET_DELAY_S)   # give the MCU time to restart the firmware
 
 def parse_sensor_data(payload):
     sensors = Sensors()
+    if len(payload) != sensors.SIZE:
+        log.error(f"Incorrect payload size '{len(payload)} B' for sensor data ({sensors.SIZE} B)")
+        abort(ERROR)
     sensors.unpack(payload)
     log.debug("------- SENSORS -------\r\n" + str(sensors))
     return sensors
@@ -135,7 +149,7 @@ def get_response_data():
     data = ser.read(Header.SIZE)
 
     if len(data) != Header.SIZE:
-        log.error("Failed to read header data")
+        log.error(f"Received {len(data)}/{Header.SIZE} B of header data")
         return None
 
     header.unpack(data)
@@ -144,7 +158,7 @@ def get_response_data():
     payload = ser.read(header.size)
 
     if len(payload) != header.size:
-        log.error("Failed to read payload data")
+        log.error(f"Received {len(payload)}/{header.size} B of payload data")
         return None
 
     if not verify_checksum(header, payload):
@@ -165,7 +179,7 @@ def get_response_data():
     return Response(header, payload)
 
 def sample():
-    log.info("SAMPLE")
+    log.debug("SAMPLE")
     send(Command.SAMPLE)
 
     response = get_response_data()
@@ -177,8 +191,8 @@ def sample():
 def burst():
     global pending
     if pending < BURST_SIZE:
-        log.info(f"Requesting {BURST_SIZE} sensor samples")
-        log.info("BURST")
+        log.debug(f"Requesting {BURST_SIZE} sensor samples")
+        log.debug("BURST")
         send(Command.BURST)
         pending += BURST_SIZE
 
@@ -186,12 +200,13 @@ def burst():
     if response is None or response.header.status != Status.SUCCESS:
         abort(ERROR)
 
+    sensors = parse_sensor_data(response.payload)
+    log.debug("Received sensor data")
     pending -= 1
-    log.info("Received sensor data")
-    return parse_sensor_data(response.payload)
+    return sensors
 
 def battery():
-    log.info("BATTERY")
+    log.debug("BATTERY")
     send(Command.BATTERY)
 
     response = get_response_data()

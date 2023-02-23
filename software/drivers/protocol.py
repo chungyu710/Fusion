@@ -167,6 +167,7 @@ class Sensors:
 
         self.flex = Flex()
         self.flex.unpack(data, offset)
+        self.flex.ring = self.flex.pinky   # mask broken ring finger sensor
         offset += Flex.SIZE
 
         self.button = Button()

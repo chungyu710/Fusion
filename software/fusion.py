@@ -164,7 +164,7 @@ if __name__ == '__main__':
             pyautogui.moveTo(maxWidth // 2, maxHeight // 2)
 
         else:
-            log.warning("not in a recognizable state")
+            log.debug("not in a recognizable state")
 
         prev_state = state
         #print(sensors)
