@@ -56,10 +56,10 @@ if __name__ == '__main__':
     NEUTRAL_OF_ROLL = 22
     NEUTRAL_OF_YAW = -42
 
-    MOUSE_MODE = "00000"
-    CLICK_MODE = "01000" #holding mouse down
+    MOUSE_MODE = "11111"
+    CLICK_MODE = "00000" #holding mouse down
     RIGHT_CLICK_MODE = "11000"
-    SINGLE_CLICK_MODE = "00001" # single click
+    SINGLE_CLICK_MODE = "10111" # single click
     SWIPE_MODE = "01110" #not implemented
     SCROLL_MODE = "01100"
     RECENTER = "11111" # not used for now
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         state = get_flex_state(flex, prev_state)
 
         if button.pressed:
-            state = RECENTER
+            pyautogui.moveTo(maxWidth // 2, maxHeight // 2)
 
         log.debug("State: " + str(state))
 
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 
         elif state == SINGLE_CLICK_MODE:
             if(prev_state != SINGLE_CLICK_MODE):
-                pyautogui.click()
+                pyautogui.leftClick()
 
         elif state == SCROLL_MODE:
             pitch = deadzone(gyro.pitch, 10)
@@ -160,9 +160,6 @@ if __name__ == '__main__':
                 pyautogui.scroll(-1)
             elif pitch < 0:
                 pyautogui.scroll(1)
-
-        elif button.pressed:
-            pyautogui.moveTo(maxWidth // 2, maxHeight // 2)
 
         else:
             log.debug("not in a recognizable state")
