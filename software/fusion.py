@@ -74,7 +74,7 @@ if __name__ == '__main__':
     deserializer.open(port)
     samples = [0 for i in range(10)]
 
-    log.success("Start state machine")
+    log.info("Starting state machine")
 
     while True:
         if LATENCY:
