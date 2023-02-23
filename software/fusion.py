@@ -74,7 +74,7 @@ if __name__ == '__main__':
     deserializer.open(port)
     samples = [0 for i in range(10)]
 
-    log.success("Started Fusion state machine")
+    log.success("Start state machine")
 
     while True:
         if LATENCY:
@@ -155,12 +155,13 @@ if __name__ == '__main__':
                 pyautogui.click()
 
         elif state == SCROLL_MODE:
-            if gyro.pitch > 0:
-                pyautogui.scroll(1)
-            elif gyro.pitch < 0:
+            pitch = deadzone(gyro.pitch, 10)
+            if pitch > 0:
                 pyautogui.scroll(-1)
+            elif pitch < 0:
+                pyautogui.scroll(1)
 
-        elif state == RECENTER:
+        elif button.pressed:
             pyautogui.moveTo(maxWidth // 2, maxHeight // 2)
 
         else:

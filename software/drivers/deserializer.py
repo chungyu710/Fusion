@@ -21,7 +21,7 @@ SERIAL_PORTS = {
 }
 
 BAUDRATE = 115200   # UART baud rate
-TIMEOUT_S = 100e-3  # serial port timeout in seconds
+TIMEOUT_S = 1       # serial port timeout in seconds
 RESET_DELAY_S = 2   # time to wait after issuing a reset so that MCU firmware can reboot
 MAX_RETRIES = 5     # maximum times the glove is reset before giving up on the handshake
 PURGE_SIZE = 1024   # number of bytes to read and discard at a time
@@ -72,9 +72,10 @@ def close():
     log.success("Closed serial port")
 
 def purge():
-    size = 1
-    while size != 0:
+    while True:
         size = len(ser.read(PURGE_SIZE))
+        if size == 0:
+            break
         log.info(f"Discarding {size} B of remnant data")
 
     ser.reset_input_buffer()
@@ -88,18 +89,19 @@ def abort(result):
 
 def handshake():
     log.info("Initiating handshake")
+
     tries = 0
     while not ping():
         tries += 1
         log.warning(f"Ping attempt {tries} failed")
         if tries > MAX_RETRIES:
-            log.error(f"Failed to establish communication with Fusion")
+            log.error(f"Failed to establish serial link")
             abort(ERROR)
         log.info("Resetting Fusion")
         reset()
+        purge()
 
-    purge()
-    log.success(f"Established communication with Fusion")
+    log.success(f"Established serial link")
 
 def send(command):
     # little endian (<)
@@ -121,16 +123,15 @@ def ping():
 
     response = get_response_data()
     if response is None or response.header.status != Status.SUCCESS:
-        log.error("Invalid ping response")
+        log.error("Received invalid ping response")
         return False
 
-    log.success("Valid ping response")
+    log.success("Received valid ping response")
     return True
 
 def reset():
     log.debug("RESET")
     send(Command.RESET)
-    purge()
     log.info("Waiting for Fusion to restart")
     time.sleep(RESET_DELAY_S)   # give the MCU time to restart the firmware
 
@@ -149,7 +150,7 @@ def get_response_data():
     data = ser.read(Header.SIZE)
 
     if len(data) != Header.SIZE:
-        log.error(f"Received {len(data)}/{Header.SIZE} B of header data")
+        log.error(f"Read {len(data)}/{Header.SIZE} B of header data")
         return None
 
     header.unpack(data)
@@ -158,7 +159,7 @@ def get_response_data():
     payload = ser.read(header.size)
 
     if len(payload) != header.size:
-        log.error(f"Received {len(payload)}/{header.size} B of payload data")
+        log.error(f"Read {len(payload)}/{header.size} B of payload data")
         return None
 
     if not verify_checksum(header, payload):
