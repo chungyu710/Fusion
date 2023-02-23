@@ -93,8 +93,7 @@ if __name__ == '__main__':
                 average += s
             average /= len(samples)
 
-            log.info("Current Latency: %.3f ms" % (latency))
-            log.info("Average Latency: %.3f ms" % (average))
+            log.info("latency: %.3f ms (average: %.3f ms)" % (latency, average))
 
         gyro = sensors.gyro
         accel = sensors.accel
