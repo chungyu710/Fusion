@@ -62,7 +62,7 @@ if __name__ == '__main__':
     SINGLE_CLICK_MODE = "10111" # single click
     SWIPE_MODE = "01110" #not implemented
     SCROLL_MODE = "01100"
-    RECENTER = "11111" # not used for now
+    EXIT = "00100"
 
     DEADZONE = 2
 
@@ -93,8 +93,7 @@ if __name__ == '__main__':
                 average += s
             average /= len(samples)
 
-            log.info("Current Latency: %.3f ms" % (latency))
-            log.info("Average Latency: %.3f ms" % (average))
+            log.info("latency: %.3f ms (average: %.3f ms)" % (latency, average))
 
         gyro = sensors.gyro
         accel = sensors.accel
@@ -157,9 +156,13 @@ if __name__ == '__main__':
         elif state == SCROLL_MODE:
             pitch = deadzone(gyro.pitch, 10)
             if pitch > 0:
-                pyautogui.scroll(-1)
-            elif pitch < 0:
                 pyautogui.scroll(1)
+            elif pitch < 0:
+                pyautogui.scroll(-1)
+
+        elif state == EXIT:
+            print(":(")
+            deserializer.abort(SUCCESS)
 
         else:
             log.debug("not in a recognizable state")
