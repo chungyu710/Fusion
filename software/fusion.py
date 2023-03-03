@@ -124,7 +124,8 @@ if __name__ == '__main__':
         if (state in [MOUSE_MODE, CLICK_MODE, RIGHT_CLICK_MODE]):
             if(state == CLICK_MODE):
                 if prev_state != CLICK_MODE:
-                    pyautogui.mouseDown()
+                    # pyautogui.mouseDown()
+                    pyautogui.mouseDown(button='left')
             elif (state == RIGHT_CLICK_MODE):
                 pyautogui.mouseDown(button='right')
             else:   # MOUSE_MODE

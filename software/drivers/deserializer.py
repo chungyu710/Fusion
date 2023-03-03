@@ -10,7 +10,8 @@ import signal
 SERIAL_PORTS = {
     "wireless":
     {
-        "left": "/dev/cu.fusion-left-DevB",
+        # "left": "/dev/cu.fusion-left-DevB",
+        "left": "COM9",
         "right": "/dev/cu.fusion-right-DevB"
     },
     "wired":
