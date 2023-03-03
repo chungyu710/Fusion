@@ -64,7 +64,7 @@ if __name__ == '__main__':
     SCROLL_MODE = "01100"
     RECENTER = "11111" # not used for now
 
-    DEADZONE = 2
+    DEADZONE = 4
 
     agent = Agent()
     prev_state = "00000"
@@ -100,9 +100,9 @@ if __name__ == '__main__':
         flex = sensors.flex
         button = sensors.button
 
-        gyro.pitch = scale_sensors(100, gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
-        gyro.roll = scale_sensors(100, gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
-        gyro.yaw = scale_sensors(100, gyro.yaw, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_YAW)
+        gyro.pitch = scale_sensors(40, gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
+        gyro.roll = scale_sensors(40, gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
+        gyro.yaw = scale_sensors(40, gyro.yaw, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_YAW)
 
         gyro.yaw = deadzone(gyro.yaw, DEADZONE)
         gyro.pitch = deadzone(gyro.pitch, DEADZONE)
