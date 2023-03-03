@@ -62,7 +62,7 @@ if __name__ == '__main__':
     SINGLE_CLICK_MODE = "00011" # single click
     SWIPE_MODE = "01110" #not implemented
     SCROLL_MODE = "01100"
-    EXIT = "00100"
+    RECENTER = "11111" # not used for now
 
     DEADZONE = 2
 
@@ -115,6 +115,9 @@ if __name__ == '__main__':
         # state = get_stated_based_on_flex(flex)
         state = get_flex_state(flex, prev_state)
 
+        if button.pressed:
+            state = RECENTER
+
         log.debug("State: " + str(state))
 
         if (state in [MOUSE_MODE, CLICK_MODE, RIGHT_CLICK_MODE]):
@@ -155,10 +158,6 @@ if __name__ == '__main__':
                 pyautogui.scroll(-1)
             elif pitch < 0:
                 pyautogui.scroll(1)
-
-        elif state == EXIT:
-            print("Why you gotta be so rude?")
-            deserializer.abort(SUCCESS)
 
         elif button.pressed:
             pyautogui.moveTo(maxWidth // 2, maxHeight // 2)
