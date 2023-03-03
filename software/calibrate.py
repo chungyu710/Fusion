@@ -1,7 +1,7 @@
 import argparse
 from operator import iadd
 import sys
-from drivers.deserializer import *
+from drivers import deserializer
 from time import time, sleep
 
 parser = argparse.ArgumentParser()
@@ -9,7 +9,7 @@ parser.add_argument('--log_level', default='INFO')
 parser.add_argument('--port', required=True)
 args = parser.parse_args()
 
-serial_port = configure_and_open(args.port)
+deserializer.open(args.port)
 
 MIN_VAL = -sys.maxsize
 MAX_VAL = sys.maxsize
@@ -23,13 +23,15 @@ max_flex_open_fist = [MIN_VAL, MIN_VAL, MIN_VAL, MIN_VAL, MIN_VAL]
 
 trials = 3
 print("starting calibration for 5 seconds each trial ...; close fist; trials: " + str(trials))
+sleep(2)
 
 for i in range(trials):
     print("starting trial", i)
 
     start_time = time()
     while (time() - start_time < 5):
-        sensors = get_all_sensor_data(serial_port)
+        sensors = deserializer.sample()
+        # sensors = get_all_sensor_data(serial_port)
 
         min_flex_closed_fist[0] = min(min_flex_closed_fist[0], sensors.flex.thumb)
         min_flex_closed_fist[1] = min(min_flex_closed_fist[1], sensors.flex.index)
@@ -61,7 +63,8 @@ for i in range(trials):
     start_time = time()
 
     while (time() - start_time < 5):
-        sensors = get_all_sensor_data(serial_port)
+        sensors = deserializer.sample()
+        # sensors = get_all_sensor_data(serial_port)
 
         min_flex_open_fist[0] = min(min_flex_open_fist[0], sensors.flex.thumb)
         min_flex_open_fist[1] = min(min_flex_open_fist[1], sensors.flex.index)
@@ -82,7 +85,7 @@ for i in range(trials):
 print("min_flex_open_fist", min_flex_open_fist)
 print("min_flex_open_fist", min_flex_open_fist)
 
-with open('software/drivers/calibration.json', 'w') as f:
+with open('calibration.json', 'w') as f:
     # write in the format as follows:
     # FIX - want no comma on last one for json format and want everything to be encased in {}
     """

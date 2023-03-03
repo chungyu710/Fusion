@@ -1,41 +1,41 @@
 {"thumb_closed": {
-	"max": 720,
-	"min": 653
+	"max": 730,
+	"min": 668
 },
 "index_closed": {
-	"max": 780,
-	"min": 719
+	"max": 823,
+	"min": 755
 },
 "middle_closed": {
-	"max": 780,
-	"min": 722
+	"max": 832,
+	"min": 760
 },
 "ring_closed": {
-	"max": 800,
-	"min": 720
+	"max": 851,
+	"min": 792
 },
 "pinky_closed": {
-	"max": 832,
-	"min": 700
+	"max": 851,
+	"min": 792
 },
 "thumb_open": {
 	"max": 594,
-	"min": 532
+	"min": 531
 },
 "index_open": {
-	"max": 571,
+	"max": 567,
 	"min": 516
 },
 "middle_open": {
-	"max": 580,
+	"max": 603,
 	"min": 516
 },
 "ring_open": {
-	"max": 653,
-	"min": 525
+	"max": 608,
+	"min": 559
 },
 "pinky_open": {
-	"max": 624,
-	"min": 555
+	"max": 608,
+	"min": 559
 }
 }
