@@ -13,13 +13,11 @@ pyautogui.FAILSAFE = False # take out pyautogui failsafe
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--log_level', default='info')
-    parser.add_argument('--hand', required=True, choices = ["left", "right"])
-    parser.add_argument('--mode', required=True, choices = ["wired", "wireless"])
+    parser.add_argument('--port', required=True)
     parser.add_argument('--latency', required=False, action = "store_true")
 
     args = parser.parse_args()
-    HAND = args.hand
-    MODE = args.mode
+    PORT = args.port
     LOG_LEVEL = args.log_level
     LATENCY = args.latency
     set_log_level(LOG_LEVEL)
@@ -72,8 +70,7 @@ if __name__ == '__main__':
     prev_state = "00000"
     maxWidth, maxHeight = pyautogui.size()
 
-    port = deserializer.get_serial_port(HAND, MODE)
-    deserializer.open(port)
+    deserializer.open(PORT)
     samples = [0 for i in range(10)]
 
     log.info("Starting state machine")
