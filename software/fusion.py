@@ -56,6 +56,8 @@ if __name__ == '__main__':
     NEUTRAL_OF_ROLL = 22
     NEUTRAL_OF_YAW = -42
 
+    SCALE_RANGE = 50
+
     MOUSE_MODE = "00000"
     CLICK_MODE = "01000" #holding mouse down
     RIGHT_CLICK_MODE = "11000"
@@ -100,9 +102,9 @@ if __name__ == '__main__':
         flex = sensors.flex
         button = sensors.button
 
-        gyro.pitch = scale_sensors(100, gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
-        gyro.roll = scale_sensors(100, gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
-        gyro.yaw = scale_sensors(100, gyro.yaw, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_YAW)
+        gyro.pitch = scale_sensors(SCALE_RANGE, gyro.pitch, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_PITCH)
+        gyro.roll = scale_sensors(SCALE_RANGE, gyro.roll, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_ROLL)
+        gyro.yaw = scale_sensors(SCALE_RANGE, gyro.yaw, SENSOR_MAX_OF_GYRO, SENSOR_MIN_OF_GYRO, NEUTRAL_OF_YAW)
 
         gyro.yaw = deadzone(gyro.yaw, DEADZONE)
         gyro.pitch = deadzone(gyro.pitch, DEADZONE)
