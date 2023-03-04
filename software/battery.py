@@ -7,16 +7,11 @@ from drivers.common import *
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--log_level', default='success')
-    parser.add_argument('--hand', required=True, choices = ["left", "right"])
-    parser.add_argument('--mode', required=True, choices = ["wired", "wireless"])
-
+    parser.add_argument('--port', required=True)
     args = parser.parse_args()
-    HAND = args.hand
-    MODE = args.mode
 
     set_log_level(args.log_level)
-    port = deserializer.get_serial_port(HAND, MODE)
-    deserializer.open(port)
+    deserializer.open(args.port)
 
     while True:
         battery = deserializer.battery()
