@@ -73,8 +73,8 @@ def handshake():
             log.error(f"Failed to establish serial link")
             abort(ERROR)
         log.info("Resetting Fusion")
-        reset()
-        purge()
+        # reset() # commented out 3/12/2023
+        # purge() # commented out 3/12/2023
 
     log.success(f"Established serial link")
 

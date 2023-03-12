@@ -12,6 +12,8 @@ void uart_initialize(void) {
 	SPBRGH            = 0;
 	SPBRG             = 16;  // this is the calculated value based on 115200 baud and 8 MHz clk
 
+  BAUDCTLbits.SCKP  = 0;    // this makes the PIC drive TX high when idle (3/12/2023)
+
 	TXSTAbits.TXEN    = 1;		// enables transmitter circuitry
 	RCSTAbits.CREN    = 1;		// enables receiver circuitry
 	TXSTAbits.SYNC    = 0;		// configures to async operation
