@@ -182,7 +182,7 @@ class Battery:
         self.voltage = voltage
 
     def __str__(self):
-        return "%s%7s%s: %.3f V" % (colours.RED, "voltage", colours.RESET, self.voltage)
+        return "%s%8s%s: %.3f V" % (colours.RED, "voltage", colours.RESET, self.voltage)
 
     def unpack(self, data, offset = 0):
         # little endian
