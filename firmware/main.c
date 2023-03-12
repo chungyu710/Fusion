@@ -19,10 +19,10 @@ void main(void)
 	{
 		if (request)
 		{
+			request = false;
 			led_on();
 			link_service(data);
 			led_off();
-			request = false;
 		}
 
 		if (battery_uvlo())
