@@ -1,41 +1,42 @@
-{"thumb_closed": {
-	"max": 730,
-	"min": 668
-},
-"index_closed": {
-	"max": 823,
-	"min": 755
-},
-"middle_closed": {
-	"max": 832,
-	"min": 760
-},
-"ring_closed": {
-	"max": 851,
-	"min": 792
-},
-"pinky_closed": {
-	"max": 851,
-	"min": 792
-},
-"thumb_open": {
-	"max": 594,
-	"min": 531
-},
-"index_open": {
-	"max": 567,
-	"min": 516
-},
-"middle_open": {
-	"max": 603,
-	"min": 516
-},
-"ring_open": {
-	"max": 608,
-	"min": 559
-},
-"pinky_open": {
-	"max": 608,
-	"min": 559
-}
+{
+  "thumb_closed": {
+    "max": 788,
+    "min": 676
+  },
+  "index_closed": {
+    "max": 851,
+    "min": 751
+  },
+  "middle_closed": {
+    "max": 844,
+    "min": 755
+  },
+  "ring_closed": {
+    "max": 800,
+    "min": 719
+  },
+  "pinky_closed": {
+    "max": 859,
+    "min": 776
+  },
+  "thumb_open": {
+    "max": 756,
+    "min": 520
+  },
+  "index_open": {
+    "max": 851,
+    "min": 523
+  },
+  "middle_open": {
+    "max": 848,
+    "min": 476
+  },
+  "ring_open": {
+    "max": 812,
+    "min": 460
+  },
+  "pinky_open": {
+    "max": 861,
+    "min": 580
+  }
 }

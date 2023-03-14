@@ -59,7 +59,7 @@ if __name__ == '__main__':
     MOUSE_MODE = "00000"
     CLICK_MODE = "01000" #holding mouse down
     RIGHT_CLICK_MODE = "11000"
-    SINGLE_CLICK_MODE = "00011" # single click
+    SINGLE_CLICK_MODE = "00001" # single click
     SWIPE_MODE = "01110" #not implemented
     SCROLL_MODE = "01100"
     RECENTER = "11111" # not used for now
